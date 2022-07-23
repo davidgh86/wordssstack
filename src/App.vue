@@ -57,7 +57,7 @@ export default defineComponent({
     const appPages = [
       {
         title: 'Inbox',
-        url: '/folder/Inbox',
+        url: '/inbox',
         iosIcon: mailOutline,
         mdIcon: mailSharp
       },
