@@ -20,7 +20,7 @@
         <ion-grid>
           <ion-row>
             <ion-col>
-              <ion-button color="primary">Primary</ion-button>
+              <ion-button color="primary" @click="stack">Primary</ion-button>
             </ion-col>
             <ion-col>
               <ion-button color="primary">Secondary</ion-button>
@@ -50,6 +50,14 @@ export default defineComponent({
     IonRow,
     IonCol,
     IonButton
+  },
+  setup() {
+    function stack() {
+      alert("hola")
+    }
+    return {
+      stack
+    }
   }
 });
 </script>
