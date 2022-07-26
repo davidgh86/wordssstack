@@ -8,7 +8,9 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "emulate": "ionic cap run android"
+    "emulate": "npx ionic cap run android -l --external --target=Pixel_3_API_30 --public-host=192.168.1.146",
+    "emulator": "emulator -avd Pixel_3_API_30 -wipe-data"
+
   },
   "dependencies": {
     "@capacitor/android": "3.6.0",
