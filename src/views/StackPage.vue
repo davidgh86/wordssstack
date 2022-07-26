@@ -86,17 +86,11 @@ export default defineComponent({
       var fileSelector = document.getElementById("fileSelector") as HTMLInputElement
       filePath.value = fileSelector.value;
       if(event.target.files.length > 0){
-        var src = URL.createObjectURL(event.target.files[0]);
-        stackByPath(src)
+        stackByPath(event.target.files[0])
       }
     }
-    // function stackFile(){
-    //   var fileSelector = document.getElementById("fileSelector") as HTMLInputElement
-    //   
-    //   stackByPath(filePath.value)
-    // }
-    function stackByPath(fileUrl: string){
-      const stackElement = StackElementFactory.getStackElement(fileUrl)
+    function stackByPath(file: File){
+      const stackElement = StackElementFactory.getStackElement(file)
       stackRef.value.push(stackElement)
     }
     
