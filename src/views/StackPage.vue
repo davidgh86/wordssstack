@@ -18,6 +18,15 @@
     
       <div id="container">
         <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating">Title</ion-label>
+                <!-- workaround because not working -->
+                <ion-input :value="title" @ionInput="title = $event.target.value;"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
           <draggable class="dragArea list-group w-full" :list="stackRef">
             <ion-row v-for="(item, index) in stackRef" :key="index">
               <ion-col v-html="item.getPrevisualizedHtmlElement()">
@@ -40,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, IonButton } from '@ionic/vue';
 import StackElement from '../wordpressstack/stackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory';
@@ -63,6 +72,7 @@ export default defineComponent({
     draggable: VueDraggableNext,
   },
   setup() {
+    const title = ref("")
     const stack : StackElement[] = []
     const stackRef = reactive(stack)
     function askForFile() {
@@ -82,7 +92,8 @@ export default defineComponent({
     return {
       askForFile,
       stackFile,
-      stackRef
+      stackRef,
+      title
     }
   }
 });
