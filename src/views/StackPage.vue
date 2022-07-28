@@ -32,11 +32,6 @@
               <ion-button color="primary" @click="askForFile">Publish</ion-button>
             </ion-col>
           </ion-row>
-          <ion-row>
-            <ion-col>
-              {{ filePath }}
-            </ion-col>
-          </ion-row>
         </ion-grid>
       </div>
       <input id="fileSelector" hidden type="file" name="myFile" @change="stackFile"/>
@@ -45,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, reactive } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, IonButton } from '@ionic/vue';
 import StackElement from '../wordpressstack/stackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory';
@@ -68,7 +63,6 @@ export default defineComponent({
     draggable: VueDraggableNext,
   },
   setup() {
-    const filePath = ref("")
     const stack : StackElement[] = []
     const stackRef = reactive(stack)
     function askForFile() {
@@ -76,8 +70,6 @@ export default defineComponent({
       fileSelector?.click()
     }
     function stackFile(event: { target: { files: string|any[]; }; }){
-      var fileSelector = document.getElementById("fileSelector") as HTMLInputElement
-      filePath.value = fileSelector.value;
       if(event.target.files.length > 0){
         stackByPath(event.target.files[0])
       }
@@ -89,7 +81,6 @@ export default defineComponent({
     
     return {
       askForFile,
-      filePath,
       stackFile,
       stackRef
     }
