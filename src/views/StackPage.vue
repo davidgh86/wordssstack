@@ -41,6 +41,17 @@
               <ion-button color="primary" @click="askForFile">Publish</ion-button>
             </ion-col>
           </ion-row>
+          <ion-row>
+            <ion-col>
+              <!-- TODO check if delta could used as well -->
+              <QuillEditor theme="snow" v-model:content="htmlEditorContent" contentType="html"/>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
+            </ion-col>
+          </ion-row>
         </ion-grid>
       </div>
       <input id="fileSelector" hidden type="file" name="myFile" @change="stackFile"/>
@@ -49,11 +60,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
-import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, IonButton } from '@ionic/vue';
+import { defineComponent, reactive, ref } from 'vue'
+import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, IonButton, IonInput, IonItem, IonLabel } from '@ionic/vue'
 import StackElement from '../wordpressstack/stackElement'
-import StackElementFactory from '@/wordpressstack/stackElementFactory';
+import StackElementFactory from '@/wordpressstack/stackElementFactory'
 import { VueDraggableNext } from 'vue-draggable-next'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 export default defineComponent({
   name: 'FolderPage',
@@ -69,10 +82,15 @@ export default defineComponent({
     IonRow,
     IonCol,
     IonButton,
+    IonInput,
+    IonItem,
+    IonLabel,
     draggable: VueDraggableNext,
+    QuillEditor
   },
   setup() {
     const title = ref("")
+    const htmlEditorContent = ref("adfas")
     const stack : StackElement[] = []
     const stackRef = reactive(stack)
     function askForFile() {
@@ -88,12 +106,19 @@ export default defineComponent({
       const stackElement = StackElementFactory.getStackElement(file)
       stackRef.push(stackElement)
     }
+    function addHtmlContent(){
+      alert(htmlEditorContent.value)
+      htmlEditorContent.value = ""
+    }
     
     return {
       askForFile,
       stackFile,
       stackRef,
-      title
+      title,
+      htmlEditorContent,
+      addHtmlContent
+
     }
   }
 });
