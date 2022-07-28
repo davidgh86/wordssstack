@@ -18,10 +18,12 @@
     
       <div id="container">
         <ion-grid>
-          <ion-row v-for="(item, index) in htmlStack" :key="index">
-            <ion-col v-html="item">
-            </ion-col>
-          </ion-row>
+          <draggable class="dragArea list-group w-full" :list="stackRef">
+            <ion-row v-for="(item, index) in stackRef" :key="index">
+              <ion-col v-html="item.getPrevisualizedHtmlElement()">
+              </ion-col>
+            </ion-row>
+          </draggable>
           <ion-row>
             <ion-col>
               <ion-button color="primary" @click="askForFile">Primary</ion-button>
@@ -43,12 +45,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, reactive } from 'vue';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, IonButton } from '@ionic/vue';
-//import { FileTypes, getFileTypeByExtension } from '../wordpressstack/fileTypes'
 import StackElement from '../wordpressstack/stackElement'
-import UploadableStackElement from '../wordpressstack/uploadableStackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory';
+import { VueDraggableNext } from 'vue-draggable-next'
 
 export default defineComponent({
   name: 'FolderPage',
@@ -63,21 +64,13 @@ export default defineComponent({
     IonGrid,
     IonRow,
     IonCol,
-    IonButton
+    IonButton,
+    draggable: VueDraggableNext,
   },
   setup() {
     const filePath = ref("")
     const stack : StackElement[] = []
-    const stackRef = ref(stack)
-    const htmlStack = computed(() => {
-      const result = []
-      for (let element of stackRef.value) {
-        if (element instanceof UploadableStackElement){
-          result.push(element.getPrevisualizedHtmlElement())
-        }
-      }
-      return result;
-    })
+    const stackRef = reactive(stack)
     function askForFile() {
       var fileSelector = document.getElementById("fileSelector")
       fileSelector?.click()
@@ -91,14 +84,14 @@ export default defineComponent({
     }
     function stackByPath(file: File){
       const stackElement = StackElementFactory.getStackElement(file)
-      stackRef.value.push(stackElement)
+      stackRef.push(stackElement)
     }
     
     return {
       askForFile,
       filePath,
       stackFile,
-      htmlStack
+      stackRef
     }
   }
 });
