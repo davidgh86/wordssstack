@@ -1,3 +1,4 @@
+'use strict';
 export enum FileTypes {
     IMAGE = "IMAGE",
     VIDEO = "VIDEO",

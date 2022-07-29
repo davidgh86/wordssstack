@@ -1,3 +1,4 @@
+'use strict';
 import StackElement from "./stackElement";
 import ImageStackElement from "./imageStackElement";
 import { FileTypes, getFileTypeByExtension } from "./fileTypes";

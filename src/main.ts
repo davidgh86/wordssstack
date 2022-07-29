@@ -19,6 +19,7 @@ import '@ionic/vue/css/text-alignment.css';
 import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
+import * as intentInstance from 'cordova-plugin-intent/www/android/IntentPlugin';
 
 /* Theme variables */
 import './theme/variables.css';
@@ -30,3 +31,16 @@ const app = createApp(App)
 router.isReady().then(() => {
   app.mount('#app');
 });
+
+document.addEventListener('deviceReady', () => {
+  intentInstance.getCordovaIntent((Intent) => {
+    alert("Cordova Intent ->> " + JSON.stringify(Intent))
+  }, () => alert("Error"))
+})
+
+document.addEventListener('deviceReady', () => {
+  intentInstance.setNewIntentHandler((Intent) => {
+    alert("New ->> instance  " + JSON.stringify(Intent))
+  })
+})
+

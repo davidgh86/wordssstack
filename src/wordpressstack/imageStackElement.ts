@@ -1,3 +1,4 @@
+'use strict';
 import { FileTypes } from "./fileTypes";
 import UploadableStackElement from "./uploadableStackElement";
 
