@@ -1,8 +1,6 @@
 'use strict';
 import StackElement from "./stackElement";
-import ImageStackElement from "./imageStackElement";
-import { FileTypes, getFileTypeByExtension } from "./fileTypes";
-import FileSystemStoreManager from "./fileSystemStoreManager";
+import { FileTypes } from "./fileTypes";
 import StackElementFactory from "./stackElementFactory";
 import UploadableStackElement from "./uploadableStackElement";
 
@@ -34,6 +32,19 @@ class StackElementStorageManager {
     getUpdatedStackIds():Map<string, StackElement> {
         this.updateStackElementsFromLocalStorage()
         return this.ids
+    }
+
+    uploadStack(elements: Array<StackElement>) {
+        const localStorageMap = new Map<string, StackElement>()
+        for (const element of elements){
+            if (element instanceof UploadableStackElement) {
+                element.upload()
+            }
+            // TODO check if other behaviour must be done
+            localStorageMap.set(element.getId(), element)
+        }
+        localStorage.removeItem(this.IDS_LOCAL_STORAGE_KEY)
+        this.ids = new Map()
     }
 
     saveStack( elements: Array<StackElement>) {
