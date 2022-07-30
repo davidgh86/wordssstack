@@ -1,4 +1,5 @@
 'use strict';
+import FileSystemStoreManager from "./fileSystemStoreManager";
 import { FileTypes } from "./fileTypes";
 import StackElement from "./stackElement";
 
@@ -24,6 +25,14 @@ abstract class UploadableStackElement implements StackElement {
         return this.fileType
     }
 
+    getFileName(): string {
+        return this.filePath.substring(this.filePath.lastIndexOf('/') + 1)
+    }
+
+    getId(): string {
+        return this.getFileName()
+    }
+
     getUploadedPath() {
         return this.uploadedPath;
     }
@@ -38,6 +47,10 @@ abstract class UploadableStackElement implements StackElement {
 
     getPrevisualizedHtmlElement(): string {
         return this.getHtmlString(this.filePath)
+    }
+
+    async saveIntoDevice():Promise<string>{
+        return await FileSystemStoreManager.saveIntoDevice(this.filePath);
     }
 
     abstract getHtmlString(src:string|null): string;
