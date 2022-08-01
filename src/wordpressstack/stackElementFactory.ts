@@ -18,7 +18,6 @@ class StackElementFactory {
     public static getStackElementByUrl(fileType: FileTypes, url: string): StackElement {
         switch(fileType) {
             case FileTypes.IMAGE: {
-                alert(JSON.stringify(new ImageStackElement(url)))
                 return new ImageStackElement(url)
                 break;
             }
@@ -29,4 +28,4 @@ class StackElementFactory {
     }
 }
 
-export default StackElementFactory
+export default StackElementFactory 

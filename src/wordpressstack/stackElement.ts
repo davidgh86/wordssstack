@@ -2,7 +2,7 @@
 interface StackElement {
     getId(): string;
     getHtmlElement(): string
-    getPrevisualizedHtmlElement():string
+    getPrevisualizedHtmlElement(): string
 }
 
 export default StackElement

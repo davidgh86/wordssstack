@@ -13,13 +13,13 @@ class StackElementStorageManager {
     ids: Map<string, StackElement>;
 
     constructor(){
-        this.updateStackElementsFromLocalStorage()
+        //await this.updateStackElementsFromLocalStorage()
     }
 
-    updateStackElementsFromLocalStorage() {
-        let items = localStorage.getItem(this.IDS_LOCAL_STORAGE_KEY)
+    async updateStackElementsFromLocalStorage() {
+        const items = localStorage.getItem(this.IDS_LOCAL_STORAGE_KEY)
         if (items !== null){
-            this.ids = this.parseElements(items)
+            this.ids = await this.parseElements(items)
         }else {
             this.ids = new Map()
         }
@@ -29,17 +29,20 @@ class StackElementStorageManager {
         return this.ids
     }
 
-    getUpdatedStackIds():Map<string, StackElement> {
-        this.updateStackElementsFromLocalStorage()
-        return this.ids
-    }
+    // getUpdatedStackIds():Map<string, StackElement> {
+    //     this.updateStackElementsFromLocalStorage()
+    //     return this.ids
+    // }
 
     uploadStack(elements: Array<StackElement>) {
         const localStorageMap = new Map<string, StackElement>()
         for (const element of elements){
             if (element instanceof UploadableStackElement) {
-                element.upload()
+                if (!element.isUploaded){
+                    element.upload()
+                }
             }
+            // TODO remove items in cache
             // TODO check if other behaviour must be done
             localStorageMap.set(element.getId(), element)
         }
@@ -51,27 +54,44 @@ class StackElementStorageManager {
         const localStorageMap = new Map<string, StackElement>()
         for (const element of elements){
             if (element instanceof UploadableStackElement) {
-                element.saveIntoDevice()
+                if (!element.isSaved) {
+                    element.saveIntoDevice()
+                            .then(() => {
+                                const copy = Object.assign({}, element)
+                                delete copy.rawDataSrc
+                                localStorageMap.set(element.getId(), copy)
+                                localStorage.setItem(this.IDS_LOCAL_STORAGE_KEY, JSON.stringify(Array.from(localStorageMap.entries())))
+                            });
+                }
+            } else {
+                localStorageMap.set(element.getId(), element)
+                localStorage.setItem(this.IDS_LOCAL_STORAGE_KEY, JSON.stringify(Array.from(localStorageMap.entries())))
             }
             // TODO check if other behaviour must be done
-            localStorageMap.set(element.getId(), element)
+            
         }
-        localStorage.setItem(this.IDS_LOCAL_STORAGE_KEY, JSON.stringify(localStorageMap))
+        
     }
 
-    private parseElements(items: string): Map<string, StackElement> {
+    private async parseElements(items: string): Promise<Map<string, StackElement>> {
         const result = new Map<string, StackElement>()
-        const jsonMap = JSON.parse(items)
-        for (const key of Object.keys(jsonMap)){
-            const element = this.parseElement(jsonMap[key])
-            result.set(key, element)
+        const jsonMap = new Map(JSON.parse(items))
+        for (const key of jsonMap.keys()){
+            const keyString = key as string
+            const element = await this.parseElement(jsonMap.get(keyString))
+            result.set(keyString, element)
         }
         return result
     }
 
-    private parseElement(element: any): StackElement {
-        const fileType = FileTypes[element.fileType]
-        return StackElementFactory.getStackElementByUrl(fileType, element.filePath);
+    private async parseElement(element: any): Promise<StackElement> {
+        const fileType: FileTypes = FileTypes[element.fileType]
+        const stackElement = StackElementFactory.getStackElementByUrl(fileType, element.filePath);
+        if (stackElement instanceof UploadableStackElement){
+            stackElement.setSaved(element.isSaved)
+            stackElement.setUploaded(element.isUploaded)
+        }
+        return stackElement
     }
 }
 

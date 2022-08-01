@@ -34,11 +34,11 @@ router.isReady().then(() => {
   app.mount('#app');
 });
 
-document.addEventListener('deviceReady', () => {
-  intentInstance.getCordovaIntent((Intent) => {
-    alert("Cordova Intent ->> " + JSON.stringify(Intent))
-  }, () => alert("Error"))
-})
+// document.addEventListener('deviceReady', () => {
+//   intentInstance.getCordovaIntent((Intent) => {
+//     alert("Cordova Intent ->> " + JSON.stringify(Intent))
+//   }, () => alert("Error"))
+// })
 
 document.addEventListener('deviceReady', () => {
   intentInstance.setNewIntentHandler((Intent) => {

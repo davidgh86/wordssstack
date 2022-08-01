@@ -6,14 +6,25 @@ import StackElement from "./stackElement";
 abstract class UploadableStackElement implements StackElement {
     
     isUploaded: boolean;
+    isSaved: boolean;
     filePath: string;
     uploadedPath: string|null = null;
-    fileType:FileTypes = FileTypes.UNKNOWN
+    fileType:FileTypes = FileTypes.UNKNOWN;
+    rawDataSrc:string|null;
 
     constructor(filePath: string) {
         this.isUploaded = false
+        this.isSaved = false
         this.filePath = filePath
     }
+
+    setUploaded(uploaded :boolean){
+        this.isUploaded = uploaded
+    }
+
+    setSaved(saved: boolean){
+        this.isSaved = saved
+    }    
 
     upload(): string {
         // Todo implement
@@ -45,12 +56,29 @@ abstract class UploadableStackElement implements StackElement {
         }
     }
 
+    async calculateRowData() {
+        if (this.filePath.startsWith("file://")){
+            const fileType = this.filePath.split('.').pop()
+            const data = await FileSystemStoreManager.getBase64BytesFromDisk(this.filePath)
+            const src = `data:${this.fileType.toLowerCase()}/${fileType};base64,${data}`;
+            this.rawDataSrc = src
+        } 
+    }
+
+    
     getPrevisualizedHtmlElement(): string {
+        if (!this.rawDataSrc == null){
+            return this.rawDataSrc
+        }
         return this.getHtmlString(this.filePath)
     }
 
-    async saveIntoDevice():Promise<string>{
-        return await FileSystemStoreManager.saveIntoDevice(this.filePath);
+    async saveIntoDevice(): Promise<string>{
+        const path = await FileSystemStoreManager.saveIntoDevice(this.filePath);
+        this.isSaved = true;
+        this.filePath = path
+
+        return path
     }
 
     abstract getHtmlString(src:string|null): string;

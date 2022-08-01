@@ -38,7 +38,7 @@
               <ion-button color="primary" @click="askForFile">Primary</ion-button>
             </ion-col>
             <ion-col>
-              <ion-button color="primary" @click="askForFile">Publish</ion-button>
+              <ion-button color="primary" @click="cleanCache">Clean cache</ion-button>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -67,6 +67,7 @@ import StackElementFactory from '@/wordpressstack/stackElementFactory'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import StackElementStorageManager from '@/wordpressstack/stackElementStorageManager'
 
 export default defineComponent({
   name: 'FolderPage',
@@ -91,8 +92,13 @@ export default defineComponent({
   setup() {
     const title = ref("")
     const htmlEditorContent = ref("adfas")
+    const stackElementStorageManager = new StackElementStorageManager()
     const stack : StackElement[] = []
     const stackRef = reactive(stack)
+    stackElementStorageManager.updateStackElementsFromLocalStorage().then(() => {
+      Array.from(stackElementStorageManager.getStackIds().values()).forEach(el => stackRef.push(el))
+    });
+    
     function askForFile() {
       var fileSelector = document.getElementById("fileSelector")
       fileSelector?.click()
@@ -100,15 +106,21 @@ export default defineComponent({
     function stackFile(event: { target: { files: string|any[]; }; }){
       if(event.target.files.length > 0){
         stackByPath(event.target.files[0])
+        stackElementStorageManager.saveStack(stackRef)
       }
+
     }
     function stackByPath(file: File){
       const stackElement = StackElementFactory.getStackElement(file)
       stackRef.push(stackElement)
     }
     function addHtmlContent(){
-      alert(htmlEditorContent.value)
+      //alert(htmlEditorContent.value)
       htmlEditorContent.value = ""
+    }
+    function cleanCache() {
+      localStorage.clear()
+      location.reload()
     }
     
     return {
@@ -117,8 +129,8 @@ export default defineComponent({
       stackRef,
       title,
       htmlEditorContent,
-      addHtmlContent
-
+      addHtmlContent,
+      cleanCache
     }
   }
 });
