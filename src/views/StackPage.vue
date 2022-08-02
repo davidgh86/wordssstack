@@ -68,6 +68,10 @@ import { VueDraggableNext } from 'vue-draggable-next'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import StackElementStorageManager from '@/wordpressstack/stackElementStorageManager'
+import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
+
+const stackElementStorageManager = new StackElementStorageManager()
+await stackElementStorageManager.updateStackElementsFromLocalStorage()
 
 export default defineComponent({
   name: 'FolderPage',
@@ -92,12 +96,9 @@ export default defineComponent({
   setup() {
     const title = ref("")
     const htmlEditorContent = ref("adfas")
-    const stackElementStorageManager = new StackElementStorageManager()
-    const stack : StackElement[] = []
-    const stackRef = reactive(stack)
-    stackElementStorageManager.updateStackElementsFromLocalStorage().then(() => {
-      Array.from(stackElementStorageManager.getStackIds().values()).forEach(el => stackRef.push(el))
-    });
+  
+    //const stack : StackElement[] = []
+    const stackRef = reactive(Array.from(stackElementStorageManager.getStackIds().values()))
     
     function askForFile() {
       var fileSelector = document.getElementById("fileSelector")
@@ -106,16 +107,18 @@ export default defineComponent({
     function stackFile(event: { target: { files: string|any[]; }; }){
       if(event.target.files.length > 0){
         stackByPath(event.target.files[0])
-        stackElementStorageManager.saveStack(stackRef)
       }
 
     }
     function stackByPath(file: File){
       const stackElement = StackElementFactory.getStackElement(file)
-      stackRef.push(stackElement)
+      if (stackElement instanceof UploadableStackElement){
+        stackElement.saveIntoDevice().then(() => stackRef.push())
+      }else {
+        stackRef.push(stackElement)
+      }
     }
     function addHtmlContent(){
-      //alert(htmlEditorContent.value)
       htmlEditorContent.value = ""
     }
     function cleanCache() {

@@ -50,27 +50,22 @@ class StackElementStorageManager {
         this.ids = new Map()
     }
 
-    saveStack( elements: Array<StackElement>) {
+    async saveStack( elements: Array<StackElement>) {
         const localStorageMap = new Map<string, StackElement>()
         for (const element of elements){
             if (element instanceof UploadableStackElement) {
                 if (!element.isSaved) {
-                    element.saveIntoDevice()
-                            .then(() => {
-                                const copy = Object.assign({}, element)
-                                delete copy.rawDataSrc
-                                localStorageMap.set(element.getId(), copy)
-                                localStorage.setItem(this.IDS_LOCAL_STORAGE_KEY, JSON.stringify(Array.from(localStorageMap.entries())))
-                            });
+                    await element.saveIntoDevice()
+                    const copy = Object.assign({}, element)
+                    delete copy.rawDataSrc
+                    localStorageMap.set(element.getId(), copy)
                 }
             } else {
                 localStorageMap.set(element.getId(), element)
-                localStorage.setItem(this.IDS_LOCAL_STORAGE_KEY, JSON.stringify(Array.from(localStorageMap.entries())))
             }
-            // TODO check if other behaviour must be done
-            
         }
-        
+        localStorage.setItem(this.IDS_LOCAL_STORAGE_KEY, JSON.stringify(Array.from(localStorageMap.entries())))
+        return elements
     }
 
     private async parseElements(items: string): Promise<Map<string, StackElement>> {

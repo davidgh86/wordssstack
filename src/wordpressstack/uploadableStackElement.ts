@@ -77,6 +77,7 @@ abstract class UploadableStackElement implements StackElement {
         const path = await FileSystemStoreManager.saveIntoDevice(this.filePath);
         this.isSaved = true;
         this.filePath = path
+        this.calculateRowData()
 
         return path
     }
