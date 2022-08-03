@@ -68,6 +68,24 @@ class StackElementStorageManager {
         return elements
     }
 
+    async saveStackElemnt( element: StackElement) {
+        const saveMap = new Map(this.ids)
+        if (element instanceof UploadableStackElement) {
+            if (!element.isSaved) {
+                await element.saveIntoDevice()
+                const copy = Object.assign({}, element)
+                delete copy.rawDataSrc
+                this.ids.set(element.getId(), element)
+                saveMap.set(element.getId(), copy)
+            }
+        } else {
+            this.ids.set(element.getId(), element)
+            saveMap.set(element.getId(), element)
+        }
+        localStorage.setItem(this.IDS_LOCAL_STORAGE_KEY, JSON.stringify(Array.from(saveMap.entries())))
+        return element
+    }
+
     private async parseElements(items: string): Promise<Map<string, StackElement>> {
         const result = new Map<string, StackElement>()
         const jsonMap = new Map(JSON.parse(items))
@@ -85,6 +103,7 @@ class StackElementStorageManager {
         if (stackElement instanceof UploadableStackElement){
             stackElement.setSaved(element.isSaved)
             stackElement.setUploaded(element.isUploaded)
+            await stackElement.calculateRowData()
         }
         return stackElement
     }

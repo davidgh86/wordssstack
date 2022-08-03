@@ -27,7 +27,7 @@
               </ion-item>
             </ion-col>
           </ion-row>
-          <draggable class="dragArea list-group w-full" :list="stackRef">
+          <draggable class="dragArea list-group w-full" :list="stackRef" @change="log">
             <ion-row v-for="(item, index) in stackRef" :key="index">
               <ion-col v-html="item.getPrevisualizedHtmlElement()">
               </ion-col>
@@ -54,7 +54,7 @@
           </ion-row>
         </ion-grid>
       </div>
-      <input id="fileSelector" hidden type="file" name="myFile" @change="stackFile"/>
+      <input id="fileSelector" hidden type="file" name="myFile" @change="changeOrder"/>
     </ion-content>
   </ion-page>
 </template>
@@ -71,7 +71,6 @@ import StackElementStorageManager from '@/wordpressstack/stackElementStorageMana
 import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
 
 const stackElementStorageManager = new StackElementStorageManager()
-await stackElementStorageManager.updateStackElementsFromLocalStorage()
 
 export default defineComponent({
   name: 'FolderPage',
@@ -97,8 +96,16 @@ export default defineComponent({
     const title = ref("")
     const htmlEditorContent = ref("adfas")
   
-    //const stack : StackElement[] = []
-    const stackRef = reactive(Array.from(stackElementStorageManager.getStackIds().values()))
+    const stack : StackElement[] = []
+    const stackRef = reactive(stack)
+
+    stackElementStorageManager.updateStackElementsFromLocalStorage().then(
+      () => {
+        Array.from(stackElementStorageManager.getStackIds().values()).forEach(element => {
+          stackRef.push(element)
+        });
+      }
+    )
     
     function askForFile() {
       var fileSelector = document.getElementById("fileSelector")
@@ -113,7 +120,7 @@ export default defineComponent({
     function stackByPath(file: File){
       const stackElement = StackElementFactory.getStackElement(file)
       if (stackElement instanceof UploadableStackElement){
-        stackElement.saveIntoDevice().then(() => stackRef.push())
+        stackElementStorageManager.saveStackElemnt(stackElement).then(() => stackRef.push(stackElement))
       }else {
         stackRef.push(stackElement)
       }
@@ -121,6 +128,11 @@ export default defineComponent({
     function addHtmlContent(){
       htmlEditorContent.value = ""
     }
+
+    function log() {
+      stackElementStorageManager.saveStack(stackRef).then(() => {alert("saved")})
+    }
+
     function cleanCache() {
       localStorage.clear()
       location.reload()
@@ -133,7 +145,8 @@ export default defineComponent({
       title,
       htmlEditorContent,
       addHtmlContent,
-      cleanCache
+      cleanCache,
+      log
     }
   }
 });

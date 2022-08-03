@@ -8,6 +8,7 @@ export enum FileTypes {
 const extensions = new Map<string, FileTypes>(
     [
         ["jpg", FileTypes.IMAGE],
+        ["jpeg", FileTypes.IMAGE],
         ["png", FileTypes.IMAGE],
         ["gif", FileTypes.IMAGE]
     ]

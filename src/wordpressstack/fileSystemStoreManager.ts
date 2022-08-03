@@ -29,7 +29,8 @@ class FileSystemStoreManager {
 
     static async getBase64BytesFromDisk(filePath: string) {
         const readResult = await Filesystem.readFile({
-            path: filePath
+            path: filePath.split("/").pop(),
+            directory: Directory.Cache
         })
 
         return readResult.data

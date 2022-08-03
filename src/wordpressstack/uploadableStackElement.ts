@@ -67,8 +67,8 @@ abstract class UploadableStackElement implements StackElement {
 
     
     getPrevisualizedHtmlElement(): string {
-        if (!this.rawDataSrc == null){
-            return this.rawDataSrc
+        if (this.rawDataSrc){
+            return this.getHtmlString(this.rawDataSrc)
         }
         return this.getHtmlString(this.filePath)
     }
@@ -77,7 +77,7 @@ abstract class UploadableStackElement implements StackElement {
         const path = await FileSystemStoreManager.saveIntoDevice(this.filePath);
         this.isSaved = true;
         this.filePath = path
-        this.calculateRowData()
+        await this.calculateRowData()
 
         return path
     }
