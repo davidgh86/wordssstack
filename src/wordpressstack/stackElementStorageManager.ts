@@ -55,11 +55,11 @@ class StackElementStorageManager {
         for (const element of elements){
             if (element instanceof UploadableStackElement) {
                 if (!element.isSaved) {
-                    await element.saveIntoDevice()
-                    const copy = Object.assign({}, element)
-                    delete copy.rawDataSrc
-                    localStorageMap.set(element.getId(), copy)
+                    await element.saveIntoDevice()     
                 }
+                const copy = Object.assign({}, element)
+                delete copy.rawDataSrc
+                localStorageMap.set(element.getId(), copy)
             } else {
                 localStorageMap.set(element.getId(), element)
             }
@@ -73,11 +73,11 @@ class StackElementStorageManager {
         if (element instanceof UploadableStackElement) {
             if (!element.isSaved) {
                 await element.saveIntoDevice()
-                const copy = Object.assign({}, element)
-                delete copy.rawDataSrc
-                this.ids.set(element.getId(), element)
-                saveMap.set(element.getId(), copy)
             }
+            const copy = Object.assign({}, element)
+            delete copy.rawDataSrc
+            this.ids.set(element.getId(), element)
+            saveMap.set(element.getId(), copy)
         } else {
             this.ids.set(element.getId(), element)
             saveMap.set(element.getId(), element)

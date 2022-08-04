@@ -54,7 +54,7 @@
           </ion-row>
         </ion-grid>
       </div>
-      <input id="fileSelector" hidden type="file" name="myFile" @change="changeOrder"/>
+      <input id="fileSelector" hidden type="file" name="myFile" @change="stackFile "/>
     </ion-content>
   </ion-page>
 </template>
@@ -111,7 +111,7 @@ export default defineComponent({
       var fileSelector = document.getElementById("fileSelector")
       fileSelector?.click()
     }
-    function stackFile(event: { target: { files: string|any[]; }; }){
+    function stackFile(event){
       if(event.target.files.length > 0){
         stackByPath(event.target.files[0])
       }
@@ -130,7 +130,7 @@ export default defineComponent({
     }
 
     function log() {
-      stackElementStorageManager.saveStack(stackRef).then(() => {alert("saved")})
+      stackElementStorageManager.saveStack(stackRef).then()
     }
 
     function cleanCache() {
