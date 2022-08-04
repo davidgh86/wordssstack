@@ -1,6 +1,7 @@
 'use strict';
 import StackElement from "./stackElement";
 import ImageStackElement from "./imageStackElement";
+import HTMLStackElement from "./htmlStackElement";
 import { FileTypes, getFileTypeByExtension } from "./fileTypes";
 
 class StackElementFactory {
@@ -9,16 +10,20 @@ class StackElementFactory {
         const url = URL.createObjectURL(file)
         if (extension){
             const fileType = getFileTypeByExtension(extension)
-            return this.getStackElementByUrl(fileType, url)
+            return this.getStackElementByString(fileType, url)
         } else {
             throw new Error("not valid filename")
         }
     }
 
-    public static getStackElementByUrl(fileType: FileTypes, url: string): StackElement {
+    public static getStackElementByString(fileType: FileTypes, string: string): StackElement {
         switch(fileType) {
             case FileTypes.IMAGE: {
-                return new ImageStackElement(url)
+                return new ImageStackElement(string)
+                break;
+            }
+            case FileTypes.HTML: {
+                return new HTMLStackElement(string)
                 break;
             }
             default: {

@@ -12,10 +12,6 @@ class StackElementStorageManager {
 
     ids: Map<string, StackElement>;
 
-    constructor(){
-        //await this.updateStackElementsFromLocalStorage()
-    }
-
     async updateStackElementsFromLocalStorage() {
         const items = localStorage.getItem(this.IDS_LOCAL_STORAGE_KEY)
         if (items !== null){
@@ -29,11 +25,6 @@ class StackElementStorageManager {
         return this.ids
     }
 
-    // getUpdatedStackIds():Map<string, StackElement> {
-    //     this.updateStackElementsFromLocalStorage()
-    //     return this.ids
-    // }
-
     uploadStack(elements: Array<StackElement>) {
         const localStorageMap = new Map<string, StackElement>()
         for (const element of elements){
@@ -42,8 +33,6 @@ class StackElementStorageManager {
                     element.upload()
                 }
             }
-            // TODO remove items in cache
-            // TODO check if other behaviour must be done
             localStorageMap.set(element.getId(), element)
         }
         localStorage.removeItem(this.IDS_LOCAL_STORAGE_KEY)
@@ -99,7 +88,7 @@ class StackElementStorageManager {
 
     private async parseElement(element: any): Promise<StackElement> {
         const fileType: FileTypes = FileTypes[element.fileType]
-        const stackElement = StackElementFactory.getStackElementByUrl(fileType, element.filePath);
+        const stackElement = StackElementFactory.getStackElementByString(fileType, element.filePath);
         if (stackElement instanceof UploadableStackElement){
             stackElement.setSaved(element.isSaved)
             stackElement.setUploaded(element.isUploaded)

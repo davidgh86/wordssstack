@@ -69,6 +69,7 @@ import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import StackElementStorageManager from '@/wordpressstack/stackElementStorageManager'
 import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
+import { FileTypes } from '@/wordpressstack/fileTypes'
 
 const stackElementStorageManager = new StackElementStorageManager()
 
@@ -94,7 +95,7 @@ export default defineComponent({
   },
   setup() {
     const title = ref("")
-    const htmlEditorContent = ref("adfas")
+    const htmlEditorContent = ref("<p></p>")
   
     const stack : StackElement[] = []
     const stackRef = reactive(stack)
@@ -126,7 +127,8 @@ export default defineComponent({
       }
     }
     function addHtmlContent(){
-      htmlEditorContent.value = ""
+      stackRef.push(StackElementFactory.getStackElementByString(FileTypes.HTML, htmlEditorContent.value))
+      htmlEditorContent.value = "<p></p>"
     }
 
     function log() {

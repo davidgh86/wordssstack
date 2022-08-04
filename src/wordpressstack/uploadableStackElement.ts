@@ -27,7 +27,6 @@ abstract class UploadableStackElement implements StackElement {
     }    
 
     upload(): string {
-        // Todo implement
         this.uploadedPath = "Implement UploadableStackElement.upload()"
         return this.filePath;
     }
