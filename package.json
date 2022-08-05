@@ -24,6 +24,7 @@
     "@vueup/vue-quill": "^1.0.0-beta.9",
     "cordova-plugin-intent": "^0.1.2",
     "core-js": "^3.6.5",
+    "quill-delta-to-html": "^0.12.1",
     "uuid": "^8.3.2",
     "vue": "^3.2.21",
     "vue-draggable-next": "^2.1.1",

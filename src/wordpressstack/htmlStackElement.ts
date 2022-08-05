@@ -6,11 +6,12 @@ import { v4 as uuid } from 'uuid';
 
 class HTMLStackElement implements StackElement {
     
-    fileType:FileTypes = FileTypes.HTML;
+    fileType:FileTypes;
     html:string;
-    id: string
+    id: string;
 
     constructor(html: string) {
+        this.fileType = FileTypes.HTML
         this.html = html
         this.id = uuid()
     }
@@ -26,9 +27,6 @@ class HTMLStackElement implements StackElement {
     getPrevisualizedHtmlElement(): string {
         return this.html
     }
-
-    addLink
-
     
 }
 

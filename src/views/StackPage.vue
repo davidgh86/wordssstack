@@ -44,7 +44,7 @@
           <ion-row>
             <ion-col>
               <!-- TODO check if delta could used as well -->
-              <QuillEditor theme="snow" v-model:content="htmlEditorContent" contentType="html"/>
+              <QuillEditor theme="snow" v-model:content="htmlEditorContent" />
             </ion-col>
           </ion-row>
           <ion-row>
@@ -65,11 +65,13 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, Io
 import StackElement from '../wordpressstack/stackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { QuillEditor } from '@vueup/vue-quill'
+import { Delta, QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import StackElementStorageManager from '@/wordpressstack/stackElementStorageManager'
 import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
 import { FileTypes } from '@/wordpressstack/fileTypes'
+
+import { OpToHtmlConverter, QuillDeltaToHtmlConverter } from 'quill-delta-to-html'
 
 const stackElementStorageManager = new StackElementStorageManager()
 
@@ -95,7 +97,7 @@ export default defineComponent({
   },
   setup() {
     const title = ref("")
-    const htmlEditorContent = ref("<p></p>")
+    const htmlEditorContent = ref(new Delta())
   
     const stack : StackElement[] = []
     const stackRef = reactive(stack)
@@ -116,19 +118,24 @@ export default defineComponent({
       if(event.target.files.length > 0){
         stackByPath(event.target.files[0])
       }
-
     }
     function stackByPath(file: File){
       const stackElement = StackElementFactory.getStackElement(file)
       if (stackElement instanceof UploadableStackElement){
-        stackElementStorageManager.saveStackElemnt(stackElement).then(() => stackRef.push(stackElement))
+        stackElementStorageManager.saveStackElement(stackElement).then(() => stackRef.push(stackElement))
       }else {
         stackRef.push(stackElement)
       }
     }
     function addHtmlContent(){
-      stackRef.push(StackElementFactory.getStackElementByString(FileTypes.HTML, htmlEditorContent.value))
-      htmlEditorContent.value = "<p></p>"
+      const quillDeltaToHtmlConverter = new QuillDeltaToHtmlConverter(htmlEditorContent.value.ops, {})
+
+      const html = quillDeltaToHtmlConverter.convert()
+      alert(html)
+
+      const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: html})
+      stackElementStorageManager.saveStackElement(element).then(() => stackRef.push(element))
+      htmlEditorContent.value = null
     }
 
     function log() {

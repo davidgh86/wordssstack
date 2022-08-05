@@ -10,20 +10,20 @@ class StackElementFactory {
         const url = URL.createObjectURL(file)
         if (extension){
             const fileType = getFileTypeByExtension(extension)
-            return this.getStackElementByString(fileType, url)
+            return this.getStackElementByString(fileType, {filePath: url})
         } else {
             throw new Error("not valid filename")
         }
     }
 
-    public static getStackElementByString(fileType: FileTypes, string: string): StackElement {
+    public static getStackElementByString(fileType: FileTypes, element: any): StackElement {
         switch(fileType) {
             case FileTypes.IMAGE: {
-                return new ImageStackElement(string)
+                return new ImageStackElement(element.filePath)
                 break;
             }
             case FileTypes.HTML: {
-                return new HTMLStackElement(string)
+                return new HTMLStackElement(element.html)
                 break;
             }
             default: {

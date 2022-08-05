@@ -57,7 +57,7 @@ class StackElementStorageManager {
         return elements
     }
 
-    async saveStackElemnt( element: StackElement) {
+    async saveStackElement( element: StackElement) {
         const saveMap = new Map(this.ids)
         if (element instanceof UploadableStackElement) {
             if (!element.isSaved) {
@@ -88,7 +88,7 @@ class StackElementStorageManager {
 
     private async parseElement(element: any): Promise<StackElement> {
         const fileType: FileTypes = FileTypes[element.fileType]
-        const stackElement = StackElementFactory.getStackElementByString(fileType, element.filePath);
+        const stackElement = StackElementFactory.getStackElementByString(fileType, element);
         if (stackElement instanceof UploadableStackElement){
             stackElement.setSaved(element.isSaved)
             stackElement.setUploaded(element.isUploaded)
