@@ -130,12 +130,15 @@ export default defineComponent({
     function addHtmlContent(){
       const quillDeltaToHtmlConverter = new QuillDeltaToHtmlConverter(htmlEditorContent.value.ops, {})
 
+      debugger
       const html = quillDeltaToHtmlConverter.convert()
       alert(html)
 
       const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: html})
-      stackElementStorageManager.saveStackElement(element).then(() => stackRef.push(element))
-      htmlEditorContent.value = null
+      stackElementStorageManager.saveStackElement(element).then(() => {
+        stackRef.push(element)
+        htmlEditorContent.value = new Delta()
+      })
     }
 
     function log() {
