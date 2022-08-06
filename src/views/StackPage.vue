@@ -44,7 +44,9 @@
           <ion-row>
             <ion-col>
               <!-- TODO check if delta could used as well -->
-              <QuillEditor theme="snow" v-model:content="htmlEditorContent" />
+              <quill-editor
+                v-model:value="htmlEditorContent"
+              />
             </ion-col>
           </ion-row>
           <ion-row>
@@ -65,13 +67,12 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, Io
 import StackElement from '../wordpressstack/stackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { Delta, QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { quillEditor, Quill } from 'vue3-quill'
 import StackElementStorageManager from '@/wordpressstack/stackElementStorageManager'
 import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
 import { FileTypes } from '@/wordpressstack/fileTypes'
 
-import { OpToHtmlConverter, QuillDeltaToHtmlConverter } from 'quill-delta-to-html'
+//import { OpToHtmlConverter, QuillDeltaToHtmlConverter } from 'quill-delta-to-html'
 
 const stackElementStorageManager = new StackElementStorageManager()
 
@@ -93,11 +94,11 @@ export default defineComponent({
     IonItem,
     IonLabel,
     draggable: VueDraggableNext,
-    QuillEditor
+    quillEditor
   },
   setup() {
     const title = ref("")
-    const htmlEditorContent = ref(new Delta())
+    const htmlEditorContent = ref("<p></p>")
   
     const stack : StackElement[] = []
     const stackRef = reactive(stack)
@@ -128,16 +129,16 @@ export default defineComponent({
       }
     }
     function addHtmlContent(){
-      const quillDeltaToHtmlConverter = new QuillDeltaToHtmlConverter(htmlEditorContent.value.ops, {})
+      //const quillDeltaToHtmlConverter = new QuillDeltaToHtmlConverter(htmlEditorContent.value.ops, {})
 
       debugger
-      const html = quillDeltaToHtmlConverter.convert()
-      alert(html)
+      //const html = quillDeltaToHtmlConverter.convert()
+      alert(htmlEditorContent.value)
 
-      const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: html})
+      const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: htmlEditorContent.value})
       stackElementStorageManager.saveStackElement(element).then(() => {
         stackRef.push(element)
-        htmlEditorContent.value = new Delta()
+        htmlEditorContent.value = "<p></p>"
       })
     }
 
