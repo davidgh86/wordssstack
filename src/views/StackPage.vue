@@ -10,13 +10,6 @@
     </ion-header>
     
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">{{ $route.params.id }}</ion-title>
-        </ion-toolbar>
-      </ion-header>
-    
-      <div id="container">
         <ion-grid>
           <ion-row>
             <ion-col>
@@ -27,7 +20,7 @@
               </ion-item>
             </ion-col>
           </ion-row>
-          <draggable class="dragArea list-group w-full" :list="stackRef" @change="log">
+          <draggable :list="stackRef" @change="log">
             <ion-row v-for="(item, index) in stackRef" :key="index">
               <ion-col v-html="item.getPrevisualizedHtmlElement()">
               </ion-col>
@@ -41,22 +34,26 @@
               <ion-button color="primary" @click="cleanCache">Clean cache</ion-button>
             </ion-col>
           </ion-row>
-          <ion-row>
-            <ion-col>
-              <!-- TODO check if delta could used as well -->
-              <quill-editor
+        </ion-grid>
+      <input id="fileSelector" hidden type="file" name="myFile" @change="stackFile "/>
+    </ion-content>
+    <ion-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <quill-editor
                 v-model:value="htmlEditorContent"
               />
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </div>
-      <input id="fileSelector" hidden type="file" name="myFile" @change="stackFile "/>
+            <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
+          </ion-col>
+        </ion-row>
+        <!-- <ion-row>
+          <ion-col>
+            
+          </ion-col>
+        </ion-row> -->
+      </ion-grid>
+      
     </ion-content>
   </ion-page>
 </template>
@@ -130,10 +127,7 @@ export default defineComponent({
     }
     function addHtmlContent(){
       //const quillDeltaToHtmlConverter = new QuillDeltaToHtmlConverter(htmlEditorContent.value.ops, {})
-
-      debugger
       //const html = quillDeltaToHtmlConverter.convert()
-      alert(htmlEditorContent.value)
 
       const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: htmlEditorContent.value})
       stackElementStorageManager.saveStackElement(element).then(() => {
