@@ -20,12 +20,26 @@
               </ion-item>
             </ion-col>
           </ion-row>
-          <draggable :list="stackRef" @change="log">
-            <ion-row v-for="(item, index) in stackRef" :key="index">
-              <ion-col v-html="item.getPrevisualizedHtmlElement()">
-              </ion-col>
-            </ion-row>
-          </draggable>
+          <ion-row>
+            <ion-col size="2">
+              <!-- left margin -->
+            </ion-col>
+            <ion-col size="6">
+              
+              <ion-grid>
+                <draggable :list="stackRef" @change="log">
+                  <ion-row v-for="(item, index) in stackRef" :key="index">
+                    <ion-col v-html="item.getPrevisualizedHtmlElement()" class="element">
+                    </ion-col>
+                  </ion-row>
+                </draggable>
+              </ion-grid>
+            </ion-col>
+            <ion-col size="3">
+              <!-- right margin -->
+            </ion-col>
+          </ion-row>
+          
           <ion-row>
             <ion-col>
               <ion-button color="primary" @click="askForFile">Primary</ion-button>
@@ -47,11 +61,6 @@
             <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
           </ion-col>
         </ion-row>
-        <!-- <ion-row>
-          <ion-col>
-            
-          </ion-col>
-        </ion-row> -->
       </ion-grid>
       
     </ion-content>
@@ -160,28 +169,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#container {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  color: #8c8c8c;
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+.element {
+  background-color: var(--ion-color-medium);
+  margin: 0.1rem;
 }
 </style>
