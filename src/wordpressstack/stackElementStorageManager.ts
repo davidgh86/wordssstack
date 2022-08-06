@@ -39,6 +39,14 @@ class StackElementStorageManager {
         this.ids = new Map()
     }
 
+    async removeElement(element: StackElement){
+        if (element instanceof UploadableStackElement) {
+            if (element.isSaved) {
+                await element.removeFromDevice()
+            }
+        }
+    }
+
     async saveStack( elements: Array<StackElement>) {
         const localStorageMap = new Map<string, StackElement>()
         for (const element of elements){

@@ -27,6 +27,16 @@ class FileSystemStoreManager {
         return uriResult.uri
     }
 
+    static async remove(filePath: string): Promise<void> {
+
+        const fileName = filePath.substring(filePath.lastIndexOf('/') + 1)
+        
+        await Filesystem.deleteFile({
+            path: fileName,
+            directory: Directory.Cache
+        });
+    }
+
     static async getBase64BytesFromDisk(filePath: string) {
         const readResult = await Filesystem.readFile({
             path: filePath.split("/").pop(),

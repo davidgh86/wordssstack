@@ -55,6 +55,15 @@ abstract class UploadableStackElement implements StackElement {
         }
     }
 
+    async removeFromDevice(){
+        if (this.isSaved){
+            await FileSystemStoreManager.remove(this.filePath)
+            this.rawDataSrc = null
+            this.isSaved = false
+            this.filePath = null
+        }
+    }
+
     async calculateRowData() {
         if (this.filePath.startsWith("file://")){
             const fileType = this.filePath.split('.').pop()

@@ -9,6 +9,7 @@
       </ion-toolbar>
     </ion-header>
     
+    
     <ion-content :fullscreen="true">
         <ion-grid>
           <ion-row>
@@ -20,6 +21,8 @@
               </ion-item>
             </ion-col>
           </ion-row>
+        </ion-grid>
+        <ion-grid>
           <ion-row>
             <ion-col size="2">
               <!-- left margin -->
@@ -29,7 +32,14 @@
               <ion-grid>
                 <draggable :list="stackRef" @change="log">
                   <ion-row v-for="(item, index) in stackRef" :key="index">
-                    <ion-col v-html="item.getPrevisualizedHtmlElement()" class="element">
+                    <ion-col class="element">
+                      <ion-icon :src="closeCircle" class="x" @click="removeElement(index)"></ion-icon>
+                      <!-- <button class="x" >
+                        x
+                      </button> -->
+                      <div v-html="item.getPrevisualizedHtmlElement()">
+                        
+                      </div>
                     </ion-col>
                   </ion-row>
                 </draggable>
@@ -39,20 +49,19 @@
               <!-- right margin -->
             </ion-col>
           </ion-row>
-          
-          <ion-row>
-            <ion-col>
-              <ion-button color="primary" @click="askForFile">Primary</ion-button>
-            </ion-col>
-            <ion-col>
-              <ion-button color="primary" @click="cleanCache">Clean cache</ion-button>
-            </ion-col>
-          </ion-row>
         </ion-grid>
       <input id="fileSelector" hidden type="file" name="myFile" @change="stackFile "/>
     </ion-content>
     <ion-content>
       <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-button color="primary" @click="askForFile">Primary</ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button color="primary" @click="cleanCache">Clean cache</ion-button>
+          </ion-col>
+        </ion-row>
         <ion-row>
           <ion-col>
             <quill-editor
@@ -69,16 +78,17 @@
 
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
-import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, IonButton, IonInput, IonItem, IonLabel } from '@ionic/vue'
+import { IonButtons, IonContent, IonHeader, IonMenuButton, 
+          IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
+          IonButton, IonInput, IonItem, IonLabel, IonIcon } from '@ionic/vue'
 import StackElement from '../wordpressstack/stackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { quillEditor, Quill } from 'vue3-quill'
+import { quillEditor } from 'vue3-quill'
 import StackElementStorageManager from '@/wordpressstack/stackElementStorageManager'
 import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
 import { FileTypes } from '@/wordpressstack/fileTypes'
-
-//import { OpToHtmlConverter, QuillDeltaToHtmlConverter } from 'quill-delta-to-html'
+import { closeCircle } from 'ionicons/icons';
 
 const stackElementStorageManager = new StackElementStorageManager()
 
@@ -99,6 +109,7 @@ export default defineComponent({
     IonInput,
     IonItem,
     IonLabel,
+    IonIcon,
     draggable: VueDraggableNext,
     quillEditor
   },
@@ -135,14 +146,20 @@ export default defineComponent({
       }
     }
     function addHtmlContent(){
-      //const quillDeltaToHtmlConverter = new QuillDeltaToHtmlConverter(htmlEditorContent.value.ops, {})
-      //const html = quillDeltaToHtmlConverter.convert()
-
       const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: htmlEditorContent.value})
       stackElementStorageManager.saveStackElement(element).then(() => {
         stackRef.push(element)
         htmlEditorContent.value = "<p></p>"
       })
+    }
+
+    function removeElement(index){
+      stackElementStorageManager.removeElement(stackRef[index]).then(
+        () => {
+          stackRef.splice(index, 1)
+          stackElementStorageManager.saveStack(stackRef)
+        }
+      );
     }
 
     function log() {
@@ -162,7 +179,9 @@ export default defineComponent({
       htmlEditorContent,
       addHtmlContent,
       cleanCache,
-      log
+      log,
+      closeCircle,
+      removeElement
     }
   }
 });
@@ -170,7 +189,15 @@ export default defineComponent({
 
 <style scoped>
 .element {
+  border-radius: 4px;
   background-color: var(--ion-color-medium);
   margin: 0.1rem;
+  position: relative;
+}
+.x {
+    font-size: 24px;
+    position: absolute;
+    top: -10px;
+    right: -10px;
 }
 </style>
