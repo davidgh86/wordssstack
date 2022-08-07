@@ -15,7 +15,7 @@
               <ion-item>
                 <ion-label position="floating">Title</ion-label>
                 <!-- workaround because not working -->
-                <ion-input :value="title" @ionInput="title = $event.target.value;"></ion-input>
+                <ion-input :value="store.state.title" @ionInput="store.commit('setTitle', $event.target.value)"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -65,7 +65,6 @@
           </ion-col>
         </ion-row>
       </ion-grid>
-      
     </ion-content>
   </ion-page>
 </template>
