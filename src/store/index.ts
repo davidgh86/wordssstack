@@ -1,33 +1,88 @@
 import { createStore } from 'vuex'
 
+import StackElementStorageManager from '@/wordpressstack/stackElementStorageManager'
+import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
+import StackElement from '@/wordpressstack/stackElement'
+import StackElementFactory from '@/wordpressstack/stackElementFactory'
+import { FileTypes } from '@/wordpressstack/fileTypes'
+
+const stackElementStorageManager = new StackElementStorageManager()
+
+
+const stack : Array<StackElement> = []
+
+
 export const store = createStore({
   state: {
-    count: 5
+    title: "",
+    htmlEditorContent: "",
+    stack: stack
   },
   getters: {
-    getterExample(state) {
-      return state.count
+    getTitle(state) {
+      return state.title
     },
-    getterExample2(state, getters){
-      return getters.getterExample * 2
+    getHtmlContent(state) {
+      return state.htmlEditorContent
     }
   },
   // sincorno
   mutations: {
-    increment (state, payload){
-      return state.count = state.count + payload.amount;
+    async initialize(state){
+      await stackElementStorageManager.updateStackElementsFromLocalStorage();
+      Array.from(await stackElementStorageManager.getStackIds().values()).forEach(el =>{
+        state.stack.push(el)
+      });
     },
-    decrement (state, payload){
-      return state.count = state.count - payload.amount;
+    setTitle(state, title){
+      state.title = title;
+    },
+    setHtmlContent(state, htmlEditorContent) {
+      state.htmlEditorContent = htmlEditorContent
+    },
+    async stackByPath(state, file){
+      const stackElement = StackElementFactory.getStackElement(file)
+      if (stackElement instanceof UploadableStackElement){
+        await stackElementStorageManager.saveStackElement(stackElement);
+        state.stack.push(stackElement)
+      }else {
+        state.stack.push(stackElement)
+      }
+    },
+    async addHtmlContent(state){
+      const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: state.htmlEditorContent})
+      await stackElementStorageManager.saveStackElement(element);
+      state.stack.push(element)
+      state.htmlEditorContent = ""
+    },
+    async removeElement(state, index){
+      await stackElementStorageManager.removeElement(state.stack[index])
+      state.stack.splice(index, 1)
+      stackElementStorageManager.saveStack(state.stack)
+    },
+    async saveStack(state){
+      await stackElementStorageManager.saveStack(state.stack)
     }
   },
   // asincrono
   actions: {
-    increment (context, payload) {
-      context.commit('increment', payload)
+    setTitle (context, title) {
+      context.commit('setTitle', title)
     },
-    decrement (context, payload) {
-      context.commit('decrement', payload)
+    setHtmlContent(context, htmlEditorContent) {
+      context.commit('setHtmlContent', htmlEditorContent)
+    },
+    stackByPath(context, file) {
+      context.commit('stackByPath', file)
+    },
+    addHtmlContent(context) {
+      context.commit('addHtmlContent')
+    },
+    saveStack(context) {
+      context.commit('saveStack')
+    },
+    initialize(context) {
+      context.commit('initialize')
     }
   }
 })

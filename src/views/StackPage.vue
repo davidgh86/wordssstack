@@ -8,8 +8,6 @@
         <ion-title>{{ $route.params.id }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    
-    
     <ion-content :fullscreen="true">
         <ion-grid>
           <ion-row>
@@ -30,15 +28,11 @@
             <ion-col size="6">
               
               <ion-grid>
-                <draggable :list="stackRef" @change="log">
-                  <ion-row v-for="(item, index) in stackRef" :key="index">
+                <draggable :list="store.state.stack" @change="saveOrder">
+                  <ion-row v-for="(item, index) in store.state.stack" :key="index">
                     <ion-col class="element">
                       <ion-icon :src="closeCircle" class="x" @click="removeElement(index)"></ion-icon>
-                      <!-- <button class="x" >
-                        x
-                      </button> -->
                       <div v-html="item.getPrevisualizedHtmlElement()">
-                        
                       </div>
                     </ion-col>
                   </ion-row>
@@ -65,7 +59,7 @@
         <ion-row>
           <ion-col>
             <quill-editor
-                v-model:value="htmlEditorContent"
+                v-model:value="store.state.htmlEditorContent"
               />
             <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
           </ion-col>
@@ -77,21 +71,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex'
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
           IonButton, IonInput, IonItem, IonLabel, IonIcon } from '@ionic/vue'
-import StackElement from '../wordpressstack/stackElement'
-import StackElementFactory from '@/wordpressstack/stackElementFactory'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { quillEditor } from 'vue3-quill'
-import StackElementStorageManager from '@/wordpressstack/stackElementStorageManager'
-import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
-import { FileTypes } from '@/wordpressstack/fileTypes'
-import { closeCircle } from 'ionicons/icons';
 
-const stackElementStorageManager = new StackElementStorageManager()
+import { closeCircle } from 'ionicons/icons';
 
 export default defineComponent({
   name: 'FolderPage',
@@ -115,24 +103,10 @@ export default defineComponent({
     quillEditor
   },
   setup() {
-    const title = ref("")
-    const htmlEditorContent = ref("<p></p>")
-  
-    const stack : StackElement[] = []
-    const stackRef = reactive(stack)
-
+    
     const store = useStore()
 
-    //store.commit("increment")
-    console.log(store.state.count)
-
-    stackElementStorageManager.updateStackElementsFromLocalStorage().then(
-      () => {
-        Array.from(stackElementStorageManager.getStackIds().values()).forEach(element => {
-          stackRef.push(element)
-        });
-      }
-    )
+    const title = ref("")
     
     function askForFile() {
       var fileSelector = document.getElementById("fileSelector")
@@ -144,32 +118,16 @@ export default defineComponent({
       }
     }
     function stackByPath(file: File){
-      const stackElement = StackElementFactory.getStackElement(file)
-      if (stackElement instanceof UploadableStackElement){
-        stackElementStorageManager.saveStackElement(stackElement).then(() => stackRef.push(stackElement))
-      }else {
-        stackRef.push(stackElement)
-      }
+      store.commit('stackByPath', file)
     }
     function addHtmlContent(){
-      const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: htmlEditorContent.value})
-      stackElementStorageManager.saveStackElement(element).then(() => {
-        stackRef.push(element)
-        htmlEditorContent.value = ""
-      })
+      store.commit('addHtmlContent')
     }
-
     function removeElement(index){
-      stackElementStorageManager.removeElement(stackRef[index]).then(
-        () => {
-          stackRef.splice(index, 1)
-          stackElementStorageManager.saveStack(stackRef)
-        }
-      );
+      store.commit('removeElement', index)
     }
-
-    function log() {
-      stackElementStorageManager.saveStack(stackRef).then()
+    function saveOrder() {
+      store.commit('saveStack')
     }
 
     function cleanCache() {
@@ -178,16 +136,15 @@ export default defineComponent({
     }
     
     return {
+      title,
       askForFile,
       stackFile,
-      stackRef,
-      title,
-      htmlEditorContent,
       addHtmlContent,
       cleanCache,
-      log,
+      saveOrder,
       closeCircle,
-      removeElement
+      removeElement,
+      store
     }
   }
 });

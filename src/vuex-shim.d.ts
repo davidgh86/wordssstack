@@ -2,9 +2,10 @@ import { ComponentCustomProperties } from 'vue'
 import { Store } from 'vuex'
 
 declare module '@vue/runtime-core' {
-  // Declare your own store states.
   interface State {
-    count: number
+    title: string,
+    htmlEditorContent: string,
+    stack: Array<StackElement>
   }
 
   interface ComponentCustomProperties {
