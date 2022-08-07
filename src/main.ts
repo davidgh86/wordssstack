@@ -26,10 +26,13 @@ import * as intentInstance from 'cordova-plugin-intent/www/android/IntentPlugin'
 /* Theme variables */
 import './theme/variables.css';
 
+import { store } from './store'
+
 const app = createApp(App)
+  .use(store)
   .use(IonicVue)
   .use(router);
-  
+
 router.isReady().then(() => {
   app.mount('#app');
 });

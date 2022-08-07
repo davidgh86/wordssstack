@@ -77,7 +77,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive, ref } from 'vue';
+import { useStore } from 'vuex'
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
           IonButton, IonInput, IonItem, IonLabel, IonIcon } from '@ionic/vue'
@@ -120,6 +121,11 @@ export default defineComponent({
     const stack : StackElement[] = []
     const stackRef = reactive(stack)
 
+    const store = useStore()
+
+    //store.commit("increment")
+    console.log(store.state.count)
+
     stackElementStorageManager.updateStackElementsFromLocalStorage().then(
       () => {
         Array.from(stackElementStorageManager.getStackIds().values()).forEach(element => {
@@ -149,7 +155,7 @@ export default defineComponent({
       const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: htmlEditorContent.value})
       stackElementStorageManager.saveStackElement(element).then(() => {
         stackRef.push(element)
-        htmlEditorContent.value = "<p></p>"
+        htmlEditorContent.value = ""
       })
     }
 
