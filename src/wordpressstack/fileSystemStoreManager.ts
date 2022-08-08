@@ -12,6 +12,16 @@ class FileSystemStoreManager {
         if (filePath.startsWith("blob:")) {
             return await this.saveBlob(filePath, fileName)
         }
+
+        if (filePath.startsWith("content://")) {
+            const data = await FileSystemStoreManager.getBase64BytesFromDisk(filePath)
+            const uriResult = await Filesystem.writeFile({
+                path: fileName,
+                data: data,
+                directory: Directory.Cache
+            })
+            return uriResult.uri
+        }
         
         await Filesystem.copy({
             from: filePath,
@@ -39,7 +49,16 @@ class FileSystemStoreManager {
 
     static async getBase64BytesFromDisk(filePath: string) {
         const readResult = await Filesystem.readFile({
-            path: filePath.split("/").pop(),
+            path: filePath
+        })
+
+        return readResult.data
+    }
+
+    static async getBase64BytesFromCacheDisk(filePath: string) {
+        const fileName = filePath.split("/").pop()
+        const readResult = await Filesystem.readFile({
+            path: fileName,
             directory: Directory.Cache
         })
 

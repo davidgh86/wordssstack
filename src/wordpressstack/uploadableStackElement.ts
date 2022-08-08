@@ -64,10 +64,10 @@ abstract class UploadableStackElement implements StackElement {
         }
     }
 
-    async calculateRowData() {
+    async calculateRawData() {
         if (this.filePath.startsWith("file://")){
             const fileType = this.filePath.split('.').pop()
-            const data = await FileSystemStoreManager.getBase64BytesFromDisk(this.filePath)
+            const data = await FileSystemStoreManager.getBase64BytesFromCacheDisk(this.filePath)
             const src = `data:${this.fileType.toLowerCase()}/${fileType};base64,${data}`;
             this.rawDataSrc = src
         } 
@@ -85,7 +85,7 @@ abstract class UploadableStackElement implements StackElement {
         const path = await FileSystemStoreManager.saveIntoDevice(this.filePath);
         this.isSaved = true;
         this.filePath = path
-        await this.calculateRowData()
+        await this.calculateRawData()
 
         return path
     }

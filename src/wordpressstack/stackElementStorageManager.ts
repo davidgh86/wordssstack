@@ -100,7 +100,7 @@ class StackElementStorageManager {
         if (stackElement instanceof UploadableStackElement){
             stackElement.setSaved(element.isSaved)
             stackElement.setUploaded(element.isUploaded)
-            await stackElement.calculateRowData()
+            await stackElement.calculateRawData()
         }
         return stackElement
     }

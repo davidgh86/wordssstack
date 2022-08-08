@@ -4,7 +4,7 @@ import StackElementStorageManager from '@/wordpressstack/stackElementStorageMana
 import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
 import StackElement from '@/wordpressstack/stackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory'
-import { FileTypes } from '@/wordpressstack/fileTypes'
+import { FileTypes, getFileTypeByExtension } from '@/wordpressstack/fileTypes'
 
 const stackElementStorageManager = new StackElementStorageManager()
 
@@ -62,6 +62,16 @@ export const store = createStore({
     },
     async saveStack(state){
       await stackElementStorageManager.saveStack(state.stack)
+    },
+    async addElementFromSavedExternalPath(state, savedUrl){
+      const extension = savedUrl.split(".").pop()
+      const fileType = getFileTypeByExtension(extension)
+      const stackElement = StackElementFactory.getStackElementByString(fileType, {filePath: savedUrl})
+      if (stackElement instanceof UploadableStackElement){
+        await stackElementStorageManager.saveStackElement(stackElement)
+        await stackElement.calculateRawData()
+      }
+      state.stack.push(stackElement)
     }
   },
   // asincrono
@@ -83,6 +93,9 @@ export const store = createStore({
     },
     initialize(context) {
       context.commit('initialize')
+    },
+    addElementFromSavedExternalPath(context, savedUrl){
+      context.commit("addElementFromSavedExternalPath", savedUrl)
     }
   }
 })

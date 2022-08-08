@@ -38,53 +38,19 @@ router.isReady().then(() => {
   store.dispatch('initialize')
 });
 
-// document.addEventListener('deviceReady', () => {
-//   intentInstance.getCordovaIntent((Intent) => {
-//     alert("Cordova Intent ->> " + JSON.stringify(Intent))
-//   }, () => alert("Error"))
-// })
+const intentManager = (Intent) => {
+  if (Intent.clipItems) {
+    for (const clipItem of Intent.clipItems) {
+      const savedUrl = clipItem.uri
+      store.dispatch("addElementFromSavedExternalPath", savedUrl)
+    }
+  }
+}
 
 document.addEventListener('deviceReady', () => {
-  intentInstance.setNewIntentHandler((Intent) => {
-    alert("New ->> instance  " + JSON.stringify(Intent))
-  })
+  intentInstance.getCordovaIntent((Intent) => intentManager(Intent))
 })
 
-// SEE DOCS https://www.npmjs.com/package/@capacitor/filesystem/v/1.1.0
-// const writeSecretFile = async () => {
-//   await Filesystem.writeFile({
-//     path: 'secrets/text.txt',
-//     data: "This is a test",
-//     directory: Directory.Documents,
-//     encoding: Encoding.UTF8,
-//   });
-// };
-
-// const readSecretFile = async () => {
-//   const contents = await Filesystem.readFile({
-//     path: 'secrets/text.txt',
-//     directory: Directory.Documents,
-//     encoding: Encoding.UTF8,
-//   });
-
-//   console.log('secrets:', contents);
-// };
-
-// const deleteSecretFile = async () => {
-//   await Filesystem.deleteFile({
-//     path: 'secrets/text.txt',
-//     directory: Directory.Documents,
-//   });
-// };
-
-// const readFilePath = async () => {
-//   // Here's an example of reading a file with a full file path. Use this to
-//   // read binary data (base64 encoded) from plugins that return File URIs, such as
-//   // the Camera.
-//   const contents = await Filesystem.readFile({
-//     //path: 'file:///var/mobile/Containers/Data/Application/22A433FD-D82D-4989-8BE6-9FC49DEA20BB/Documents/text.txt'
-//     path: 'content:///var/mobile/Containers/Data/Application/22A433FD-D82D-4989-8BE6-9FC49DEA20BB/Documents/text.txt'
-//   });
-
-//   console.log('data:', contents);
-// };
+document.addEventListener('deviceReady', () => {
+  intentInstance.setNewIntentHandler((Intent) => intentManager(Intent))
+})
