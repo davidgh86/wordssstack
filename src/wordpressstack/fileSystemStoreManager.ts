@@ -79,7 +79,6 @@ class FileSystemStoreManager {
             directory: Directory.Cache
         })
 
-        //alert(uriResult.uri)
         return uriResult.uri
     }
 

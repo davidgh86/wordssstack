@@ -28,6 +28,8 @@ import './theme/variables.css';
 
 import { store } from './store'
 
+store.commit('initialize')
+
 const app = createApp(App)
   .use(store)
   .use(IonicVue)
@@ -35,22 +37,28 @@ const app = createApp(App)
 
 router.isReady().then(() => {
   app.mount('#app');
-  store.dispatch('initialize')
 });
+
 
 const intentManager = (Intent) => {
   if (Intent.clipItems) {
     for (const clipItem of Intent.clipItems) {
-      const savedUrl = clipItem.uri
-      store.dispatch("addElementFromSavedExternalPath", savedUrl)
+      if (clipItem.uri) {
+        const savedUrl = clipItem.uri
+        store.commit("addElementFromSavedExternalPath", savedUrl)
+      }
     }
   }
 }
 
 document.addEventListener('deviceReady', () => {
-  intentInstance.getCordovaIntent((Intent) => intentManager(Intent))
+  intentInstance.getCordovaIntent((Intent) => {
+    intentManager(Intent)
+  }, () => alert("Error"))
 })
 
 document.addEventListener('deviceReady', () => {
-  intentInstance.setNewIntentHandler((Intent) => intentManager(Intent))
+  intentInstance.setNewIntentHandler((Intent) => {
+    intentManager(Intent)
+  })
 })

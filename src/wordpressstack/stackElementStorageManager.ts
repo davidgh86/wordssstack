@@ -10,7 +10,7 @@ class StackElementStorageManager {
 
     readonly TYPE_FIELD_NAME = "type"
 
-    ids: Map<string, StackElement>;
+    ids: Map<string, StackElement> = new Map();
 
     async updateStackElementsFromLocalStorage() {
         const items = localStorage.getItem(this.IDS_LOCAL_STORAGE_KEY)
