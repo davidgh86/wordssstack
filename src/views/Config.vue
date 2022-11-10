@@ -39,10 +39,10 @@
           </ion-row>
           <ion-row>
             <ion-col>
-              <ion-button color="primary" @click="setConfig">Primary</ion-button>
+              <ion-button color="primary" @click="setConfig()">Save</ion-button>
             </ion-col>
             <ion-col>
-              <ion-button color="primary" @click="removeConfig">Clean cache</ion-button>
+              <ion-button color="primary" @click="removeConfig()">Clear</ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -55,7 +55,7 @@ import { defineComponent, onMounted, ref } from 'vue';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
           IonButton, IonInput, IonItem, IonLabel } from '@ionic/vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 import wordpressApi from '../service/wordpressApi';
 
@@ -82,7 +82,6 @@ export default defineComponent({
   setup() {
     
     const router = useRouter()
-    const route = useRoute()
 
     const title = ref("")
     
@@ -105,9 +104,10 @@ export default defineComponent({
     }
 
     function setConfig() {
-      localStorage.setItem("host", this.hostName.value)
-      localStorage.setItem("user", this.user.value)
-      localStorage.setItem("password", this.password.value)
+      alert(this.hostName.value)
+      localStorage.setItem("host", hostName.value)
+      localStorage.setItem("user", user.value)
+      localStorage.setItem("password", password.value)
       wordpressApi.init()
     }
 
