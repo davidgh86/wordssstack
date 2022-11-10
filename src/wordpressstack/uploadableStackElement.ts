@@ -1,7 +1,8 @@
 'use strict';
 import FileSystemStoreManager from "./fileSystemStoreManager";
-import { FileTypes } from "./fileTypes";
+import { FileTypes, getMimeTypeFromExtension } from "./fileTypes";
 import StackElement from "./stackElement";
+import wordpressApi from "../service/wordpressApi"
 
 abstract class UploadableStackElement implements StackElement {
     
@@ -26,9 +27,20 @@ abstract class UploadableStackElement implements StackElement {
         this.isSaved = saved
     }    
 
-    upload(): string {
-        this.uploadedPath = "Implement UploadableStackElement.upload()"
-        return this.filePath;
+    upload(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const filename = this.filePath.split("/").pop()
+
+            const mimetype = getMimeTypeFromExtension(filename.split('.').pop())
+
+            wordpressApi.uploadFile(mimetype, filename, this.rawDataSrc).then(response => {
+                this.uploadedPath = response["source_url"]
+                this.isUploaded = true
+                resolve()
+            }).catch(error => {
+                reject (error)
+            })
+        })        
     }
 
     getType(): FileTypes {

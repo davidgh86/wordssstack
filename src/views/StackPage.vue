@@ -64,6 +64,11 @@
             <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
           </ion-col>
         </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button color="primary" @click="publish">Publish</ion-button>
+          </ion-col>
+        </ion-row>
       </ion-grid>
     </ion-content>
   </ion-page>
@@ -133,6 +138,10 @@ export default defineComponent({
       localStorage.clear()
       location.reload()
     }
+
+    function publish(){
+      store.dispatch("publish", this.title?this.title:"title"+Date.now())
+    }
     
     return {
       title,
@@ -141,6 +150,7 @@ export default defineComponent({
       addHtmlContent,
       cleanCache,
       saveOrder,
+      publish,
       closeCircle,
       removeElement,
       store

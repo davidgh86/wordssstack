@@ -3,6 +3,7 @@ import StackElement from "./stackElement";
 import { FileTypes } from "./fileTypes";
 import StackElementFactory from "./stackElementFactory";
 import UploadableStackElement from "./uploadableStackElement";
+import wordpressApi from "../service/wordpressApi"
 
 class StackElementStorageManager {
 
@@ -25,18 +26,53 @@ class StackElementStorageManager {
         return this.ids
     }
 
-    uploadStack(elements: Array<StackElement>) {
-        const localStorageMap = new Map<string, StackElement>()
-        for (const element of elements){
-            if (element instanceof UploadableStackElement) {
-                if (!element.isUploaded){
-                    element.upload()
-                }
-            }
-            localStorageMap.set(element.getId(), element)
+    async publishStack(elements: Array<StackElement>, title: string): Promise<void> {
+        
+        await this.uploadStack(elements);
+        let content = ""
+        for (const element of elements) {
+            content += element.getHtmlElement()
         }
-        localStorage.removeItem(this.IDS_LOCAL_STORAGE_KEY)
-        this.ids = new Map()
+
+        content = `<!-- wp:image {"id":12,"sizeSlug":"full","linkDestination":"none"} -->
+        <figure class="wp-block-image size-full">${content}</figure>
+        <!-- /wp:image -->`
+
+        await wordpressApi.uploadPost(title, content)
+    }
+
+    uploadStack(elements: Array<StackElement>): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const elementSize = elements.length
+            let elementCount = 0
+            const localStorageMap = new Map<string, StackElement>()
+            for (const element of elements){
+                if (element instanceof UploadableStackElement) {
+                    if (!element.isUploaded){
+                        element.upload().then(() => {
+                            elementCount += 1
+                            localStorageMap.set(element.getId(), element)
+                            if (elementCount === elementSize){
+                                localStorage.removeItem(this.IDS_LOCAL_STORAGE_KEY)
+                                this.ids = new Map()
+                                resolve()
+                            }
+                        }).catch(error => reject(error))
+                    } else {
+                        elementCount += 1
+                        localStorageMap.set(element.getId(), element)
+                    }
+                } else {
+                    elementCount += 1
+                    localStorageMap.set(element.getId(), element)
+                } 
+            }
+            if (elementCount === elementSize){
+                localStorage.removeItem(this.IDS_LOCAL_STORAGE_KEY)
+                this.ids = new Map()
+                resolve()
+            }
+        });  
     }
 
     async removeElement(element: StackElement){

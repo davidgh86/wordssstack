@@ -27,4 +27,17 @@ export function getFileTypeByExtension(extension: string): FileTypes|undefined {
     }
 }
 
+export function getMimeTypeFromExtension(extension: string): string {
+    const standarizedExtension = extension.trim().toLowerCase()
+    const fileType: FileTypes = getFileTypeByExtension(standarizedExtension)
+    if (fileType === FileTypes.IMAGE) {
+        if (extension == "jpg"){
+            return "image/jpeg"
+        } else {
+            return "image/"+extension
+        }
+    }
+    return ""
+}
+
 //export default {FileTypes, getFileTypeByExtension};

@@ -6,6 +6,10 @@ import StackElement from '@/wordpressstack/stackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory'
 import { FileTypes, getFileTypeByExtension } from '@/wordpressstack/fileTypes'
 
+import wordpressApi from '../service/wordpressApi';
+
+wordpressApi.init()
+
 const stackElementStorageManager = new StackElementStorageManager()
 
 
@@ -96,6 +100,9 @@ export const store = createStore({
     },
     addElementFromSavedExternalPath(context, savedUrl){
       context.commit("addElementFromSavedExternalPath", savedUrl)
+    },
+    publish(context, title) {
+      stackElementStorageManager.publishStack(context.state.stack, title).then()
     }
   }
 })

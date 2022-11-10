@@ -1,5 +1,3 @@
-import axios from "axios";
-
 class WordpressApi {
 
     private static instance: WordpressApi;
@@ -22,37 +20,74 @@ class WordpressApi {
         return WordpressApi.instance
     }
 
-    public init(user: string, password: string, host: string) {
-        this.user = user;
-        this.password = password;
-        this.host = host;
-        this.basicToken = btoa(`${this.user}:${this.password}`);
-        this.isInitialized = true
+    constructor() {
+        this.init()
     }
 
-    public uploadFile(mimetype: string, filename: string, data: string) {
+    public init() {
+
+        localStorage.getItem("host")
+        localStorage.getItem("user")
+        localStorage.getItem("password")
+
+        this.user = localStorage.getItem("user");
+        this.password = localStorage.getItem("password");
+        this.host = localStorage.getItem("host");
+        
+        if (this.user && this.password) {
+            this.basicToken = btoa(`${this.user}:${this.password}`);
+        }
+
+        if (localStorage.getItem("host") && localStorage.getItem("user") && localStorage.getItem("password")) {
+            this.isInitialized = true
+        }
+    }
+
+    private dataURLtoFile(dataurl, filename) {
+ 
+        const arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]);
+        
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+            
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        
+        return new File([u8arr], filename, {type:mime});
+    }
+
+    public uploadFile(mimetype: string, filename: string, data: any) {
         return new Promise((resolve, reject) => {
+
             if (!this.isInitialized) {
                 reject(new Error("Client not initialized"))
                 return;
             }
-            const config = {
-            method: 'post',
-            url: this.host+'/wp-json/wp/v2/media',
-            headers: { 
-                'Content-Disposition': 'attachment; filename='+filename, 
-                'Authorization': 'Basic '+this.basicToken, 
-                'Content-Type': mimetype
-            },
-            data : data
+
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Disposition", "attachment; filename="+filename);
+            myHeaders.append("Authorization", "Basic "+this.basicToken);
+            myHeaders.append("Content-Type", mimetype);
+
+            const file = this.dataURLtoFile(data, filename);
+
+            const requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: file
             };
 
-            axios(config)
-            .then(function (response) {
-                resolve(response.data);
+            fetch(this.host+'/wp-json/wp/v2/media', requestOptions)
+            .then(response => {
+                resolve(response.json())
             })
-            .catch(function (error) {
-                reject(error);
+            //.then(result => console.log(result))
+            .catch(error => {
+                alert("KO")
+                reject(error)
             });
         });
     }
@@ -63,29 +98,31 @@ class WordpressApi {
                 reject(new Error("Client not initialized"))
                 return;
             }
-            const data = JSON.stringify({
+            
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", "Basic "+this.basicToken);
+            myHeaders.append("Content-Type", "application/json");
+
+            const raw = JSON.stringify({
                 "title": title,
                 "status": "publish",
                 "post_content": content
-              });
-              
-              const config = {
-                method: 'post',
-                url: this.host+'/wp-json/wp/v2/posts',
-                headers: { 
-                  'Authorization': `Basic ${this.basicToken}`, 
-                  'Content-Type': 'application/json'
-                },
-                data : data
-              };
-              
-              axios(config)
-              .then(function (response) {
-                resolve(response.data);
-              })
-              .catch(function (error) {
-                reject(error);
-              });
+            });
+
+            const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw
+            };
+
+            fetch(this.host + "/wp-json/wp/v2/posts", requestOptions)
+            .then(response => {
+                resolve(response.json())
+            })
+            .catch(error => {
+                alert("KO saving post")
+                reject(error)
+            });
         });
         
     } 
