@@ -2,15 +2,17 @@ class WordpressApi {
 
     private static instance: WordpressApi;
 
-    private user;
+    private getBasicToken() {
+        if (!this.isInitialized()) {
+            throw new Error("Could not get credentials, client not initialized")
+        } else {
+            return btoa(`${localStorage.getItem("user")}:${localStorage.getItem("password")}`)
+        }
+    }
 
-    private password;
-
-    private host;
-
-    private basicToken;
-
-    private isInitialized = false
+    public isInitialized(){
+        return localStorage.getItem("host") && localStorage.getItem("user") && localStorage.getItem("password")
+    }
 
     public static getInstance(): WordpressApi {
         if (!WordpressApi.instance) {
@@ -18,29 +20,6 @@ class WordpressApi {
         }
         
         return WordpressApi.instance
-    }
-
-    constructor() {
-        this.init()
-    }
-
-    public init() {
-
-        localStorage.getItem("host")
-        localStorage.getItem("user")
-        localStorage.getItem("password")
-
-        this.user = localStorage.getItem("user");
-        this.password = localStorage.getItem("password");
-        this.host = localStorage.getItem("host");
-        
-        if (this.user && this.password) {
-            this.basicToken = btoa(`${this.user}:${this.password}`);
-        }
-
-        if (localStorage.getItem("host") && localStorage.getItem("user") && localStorage.getItem("password")) {
-            this.isInitialized = true
-        }
     }
 
     private dataURLtoFile(dataurl, filename) {
@@ -62,14 +41,14 @@ class WordpressApi {
     public uploadFile(mimetype: string, filename: string, data: any) {
         return new Promise((resolve, reject) => {
 
-            if (!this.isInitialized) {
+            if (!this.isInitialized()) {
                 reject(new Error("Client not initialized"))
                 return;
             }
 
             const myHeaders = new Headers();
             myHeaders.append("Content-Disposition", "attachment; filename="+filename);
-            myHeaders.append("Authorization", "Basic "+this.basicToken);
+            myHeaders.append("Authorization", "Basic "+this.getBasicToken());
             myHeaders.append("Content-Type", mimetype);
 
             const file = this.dataURLtoFile(data, filename);
@@ -80,13 +59,11 @@ class WordpressApi {
                 body: file
             };
 
-            fetch(this.host+'/wp-json/wp/v2/media', requestOptions)
+            fetch(localStorage.getItem("user")+'/wp-json/wp/v2/media', requestOptions)
             .then(response => {
                 resolve(response.json())
             })
-            //.then(result => console.log(result))
             .catch(error => {
-                alert("KO")
                 reject(error)
             });
         });
@@ -94,19 +71,21 @@ class WordpressApi {
 
     public uploadPost(title: string, content: string) {
         return new Promise((resolve, reject) => {
-            if (!this.isInitialized) {
+
+            if (!this.isInitialized()) {
                 reject(new Error("Client not initialized"))
                 return;
             }
-            
+
             const myHeaders = new Headers();
-            myHeaders.append("Authorization", "Basic "+this.basicToken);
+            myHeaders.append("Authorization", "Basic "+this.getBasicToken());
             myHeaders.append("Content-Type", "application/json");
 
+            alert("1")
             const raw = JSON.stringify({
                 "title": title,
                 "status": "publish",
-                "post_content": content
+                "content": content
             });
 
             const requestOptions = {
@@ -115,7 +94,7 @@ class WordpressApi {
             body: raw
             };
 
-            fetch(this.host + "/wp-json/wp/v2/posts", requestOptions)
+            fetch(localStorage.getItem("host") + "/wp-json/wp/v2/posts", requestOptions)
             .then(response => {
                 resolve(response.json())
             })

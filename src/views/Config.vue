@@ -57,10 +57,6 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
           IonButton, IonInput, IonItem, IonLabel } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 
-import wordpressApi from '../service/wordpressApi';
-
-
-
 export default defineComponent({
   name: 'FolderPage',
   components: {
@@ -92,28 +88,29 @@ export default defineComponent({
     const password = ref("")
 
     function setHostName(host) {
-      this.hostName.value = host
+      hostName.value = host
     }
 
-    function setUser(user) {
-      this.user.value = user
+    function setUser(usr) {
+      user.value = usr
     }
 
-    function setPassword(password) {
-      this.password.value = password
-    }
-
-    function setConfig() {
-      alert(this.hostName.value)
-      localStorage.setItem("host", hostName.value)
-      localStorage.setItem("user", user.value)
-      localStorage.setItem("password", password.value)
-      wordpressApi.init()
+    function setPassword(pwd) {
+      password.value = pwd
     }
 
     function isConfigured(): boolean {
       return !!localStorage.getItem("host") && !!localStorage.getItem("user") && !!localStorage.getItem("password")
     }
+
+    function setConfig() {
+      localStorage.setItem("host", hostName.value)
+      localStorage.setItem("user", user.value)
+      localStorage.setItem("password", password.value)
+      if (isConfigured()) {
+        router.push("/inbox")
+      }
+    }    
 
     function removeConfig() {
       localStorage.removeItem("host")
@@ -122,13 +119,17 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      if (isConfigured()) {
-        router.push("/inbox")
+      if (localStorage.getItem("host")) {
+        hostName.value = localStorage.getItem("host")
+      }
+      if (localStorage.getItem("user")) {
+        user.value = localStorage.getItem("user")
+      }
+      if (localStorage.getItem("password")) {
+        password.value = localStorage.getItem("password")
       }
     })
 
-
-    
     return {
       title,
       hostName,

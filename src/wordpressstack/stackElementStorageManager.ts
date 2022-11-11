@@ -29,6 +29,7 @@ class StackElementStorageManager {
     async publishStack(elements: Array<StackElement>, title: string): Promise<void> {
         
         await this.uploadStack(elements);
+        
         let content = ""
         for (const element of elements) {
             content += element.getHtmlElement()

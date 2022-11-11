@@ -3,11 +3,15 @@ import { RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '',
+    path: '/config',
     component: () => import ('../views/Config.vue')
   },
   {
     path: '/inbox',
+    component: () => import ('../views/StackPage.vue')
+  },
+  {
+    path: '/',
     component: () => import ('../views/StackPage.vue')
   },
   {

@@ -140,7 +140,12 @@ export default defineComponent({
     }
 
     function publish(){
-      store.dispatch("publish", this.title?this.title:"title"+Date.now())
+      alert(store.state.title)
+      store.dispatch("publish", store.state.title?store.state.title:"title"+Date.now()).then(
+          () => alert("OK")
+        ).catch(
+          () => alert("KO")
+        )
     }
     
     return {
