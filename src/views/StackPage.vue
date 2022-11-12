@@ -50,10 +50,10 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-button color="primary" @click="askForFile">Primary</ion-button>
+            <ion-button color="primary" @click="askForFile">Add File</ion-button>
           </ion-col>
           <ion-col>
-            <ion-button color="primary" @click="cleanCache">Clean cache</ion-button>
+            <ion-button color="primary" @click="publish">Publish</ion-button>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -62,11 +62,6 @@
                 v-model:value="store.state.htmlEditorContent"
               />
             <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <ion-button color="primary" @click="publish">Publish</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -136,11 +131,6 @@ export default defineComponent({
       store.commit('saveStack')
     }
 
-    function cleanCache() {
-      localStorage.clear()
-      location.reload()
-    }
-
     const setTitle = _.debounce((postTitle) => {
         store.commit('setTitle', postTitle)
       }, 1000);
@@ -175,7 +165,6 @@ export default defineComponent({
       askForFile,
       stackFile,
       addHtmlContent,
-      cleanCache,
       saveOrder,
       publish,
       setTitle,
