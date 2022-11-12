@@ -140,8 +140,11 @@ export default defineComponent({
     }
 
     function publish(){
-      alert(store.state.title)
-      store.dispatch("publish", store.state.title?store.state.title:"title"+Date.now()).then(
+      if (!store.state.title){
+        alert("title is mandatory")
+        return
+      }
+      store.dispatch("publish").then(
           () => alert("OK")
         ).catch(
           () => alert("KO")

@@ -104,6 +104,10 @@ export default defineComponent({
     }
 
     function setConfig() {
+      hostName.value = hostName.value.trim()
+      user.value = user.value.trim()
+      password.value = password.value.trim()
+
       localStorage.setItem("host", hostName.value)
       localStorage.setItem("user", user.value)
       localStorage.setItem("password", password.value)

@@ -97,8 +97,8 @@ export const store = createStore({
     addElementFromSavedExternalPath(context, savedUrl){
       context.commit("addElementFromSavedExternalPath", savedUrl)
     },
-    async publish(context, title) {
-      await stackElementStorageManager.publishStack(context.state.stack, title)
+    async publish(context) {
+      await stackElementStorageManager.publishStack(context.state.stack, context.state.title)
     }
   }
 })
