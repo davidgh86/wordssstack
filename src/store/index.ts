@@ -14,7 +14,7 @@ const stack : Array<StackElement> = []
 
 export const store = createStore({
   state: {
-    title: "",
+    title: localStorage.getItem("title")?localStorage.getItem("title"):"",
     htmlEditorContent: "",
     stack: stack
   },
@@ -35,6 +35,7 @@ export const store = createStore({
       });
     },
     setTitle(state, title){
+      localStorage.setItem("title", title)
       state.title = title;
     },
     setHtmlContent(state, htmlEditorContent) {

@@ -15,7 +15,7 @@
               <ion-item>
                 <ion-label position="floating">Title</ion-label>
                 <!-- workaround because not working -->
-                <ion-input :value="store.state.title" @ionInput="store.commit('setTitle', $event.target.value)"></ion-input>
+                <ion-input :value="store.state.title" @ionInput="setTitle($event.target.value)"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -85,6 +85,8 @@ import { quillEditor } from 'vue3-quill'
 
 import { closeCircle } from 'ionicons/icons';
 
+import _ from 'lodash'
+
 export default defineComponent({
   name: 'FolderPage',
   components: {
@@ -139,6 +141,10 @@ export default defineComponent({
       location.reload()
     }
 
+    const setTitle = _.debounce((postTitle) => {
+        store.commit('setTitle', postTitle)
+      }, 1000);
+
     function publish(){
       if (!store.state.title){
         alert("title is mandatory")
@@ -172,6 +178,7 @@ export default defineComponent({
       cleanCache,
       saveOrder,
       publish,
+      setTitle,
       closeCircle,
       removeElement,
       store
