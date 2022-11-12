@@ -59,7 +59,7 @@ class WordpressApi {
                 body: file
             };
 
-            fetch(localStorage.getItem("user")+'/wp-json/wp/v2/media', requestOptions)
+            fetch(localStorage.getItem("host")+'/wp-json/wp/v2/media', requestOptions)
             .then(response => {
                 resolve(response.json())
             })
@@ -81,7 +81,6 @@ class WordpressApi {
             myHeaders.append("Authorization", "Basic "+this.getBasicToken());
             myHeaders.append("Content-Type", "application/json");
 
-            alert("1")
             const raw = JSON.stringify({
                 "title": title,
                 "status": "publish",

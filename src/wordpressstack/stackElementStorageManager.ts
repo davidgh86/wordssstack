@@ -58,7 +58,9 @@ class StackElementStorageManager {
                                 this.ids = new Map()
                                 resolve()
                             }
-                        }).catch(error => reject(error))
+                        }).catch(error => {
+                            reject(error)
+                        })
                     } else {
                         elementCount += 1
                         localStorageMap.set(element.getId(), element)
