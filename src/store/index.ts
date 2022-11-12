@@ -99,7 +99,14 @@ export const store = createStore({
     },
     async publish(context) {
       await stackElementStorageManager.publishStack(context.state.stack, context.state.title)
-    }
+    },
+    async clear(context) {
+      for(let i=0; i<context.state.stack.length; i++){
+        await context.commit("removeElement", i);
+      }
+      context.commit('setTitle', "")
+    },
+    
   }
 })
 

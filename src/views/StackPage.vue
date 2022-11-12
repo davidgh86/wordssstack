@@ -79,7 +79,7 @@ import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex'
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
-          IonButton, IonInput, IonItem, IonLabel, IonIcon } from '@ionic/vue'
+          IonButton, IonInput, IonItem, IonLabel, IonIcon, loadingController } from '@ionic/vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { quillEditor } from 'vue3-quill'
 
@@ -144,11 +144,24 @@ export default defineComponent({
         alert("title is mandatory")
         return
       }
-      store.dispatch("publish").then(
-          () => alert("OK")
+      loadingController.create({
+        message: "uploading"
+      }).then(l => {
+        l.present()
+        store.dispatch("publish").then(
+          () => {
+            l.dismiss()
+            alert("Published")
+            store.dispatch("clear").then()
+          }
         ).catch(
-          () => alert("KO")
+          (error) => {
+            l.dismiss()
+            alert("Failed")
+            alert(JSON.stringify(error))
+          }
         )
+      })
     }
     
     return {
