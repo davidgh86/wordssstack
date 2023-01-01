@@ -5,7 +5,6 @@ import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
 import StackElement from '@/wordpressstack/stackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory'
 import { FileTypes, getFileTypeByExtension } from '@/wordpressstack/fileTypes'
-import { StatusBarStyle } from '@capacitor/status-bar'
 
 const stackElementStorageManager = new StackElementStorageManager()
 
