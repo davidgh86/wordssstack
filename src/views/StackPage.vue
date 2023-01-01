@@ -22,7 +22,7 @@
         </ion-grid>
         <ion-grid>
           <ion-row>
-            <ion-col size="2">
+            <ion-col size="2" style="background-color: grey;">
               <!-- left margin -->
             </ion-col>
             <ion-col size="6">
@@ -39,8 +39,16 @@
                 </draggable>
               </ion-grid>
             </ion-col>
-            <ion-col size="3">
+            <ion-col size="3" style="background-color: grey;">
               <!-- right margin -->
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-button color="primary" @click="askForFile">Add File</ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button color="primary" @click="publish">Publish</ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -48,14 +56,7 @@
     </ion-content>
     <ion-content>
       <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-button color="primary" @click="askForFile">Add File</ion-button>
-          </ion-col>
-          <ion-col>
-            <ion-button color="primary" @click="publish">Publish</ion-button>
-          </ion-col>
-        </ion-row>
+        
         <ion-row>
           <ion-col>
             <quill-editor

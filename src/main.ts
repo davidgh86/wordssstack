@@ -20,7 +20,7 @@ import '@ionic/vue/css/text-transformation.css';
 import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
 import * as intentInstance from 'cordova-plugin-intent/www/android/IntentPlugin';
-import wordpressApi from './service/wordpressApi';
+//import wordpressApi from './service/wordpressApi';
 
 //import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
@@ -36,16 +36,16 @@ const app = createApp(App)
   .use(IonicVue)
   .use(router);
 
-router.beforeResolve((to, from, next) =>{
-  if (!wordpressApi.isInitialized()) {
-    next({
-      path: '/config',
-      replace: true
-    })
-  } else {
-    next()
-  }
-});
+// router.beforeResolve((to, from, next) =>{
+//   if (!wordpressApi.isInitialized()) {
+//     next({
+//       path: '/config',
+//       replace: true
+//     })
+//   } else {
+//     next()
+//   }
+// });
 
 router.isReady().then(() => {
   app.mount('#app');
