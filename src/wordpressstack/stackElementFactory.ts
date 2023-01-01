@@ -1,6 +1,7 @@
 'use strict';
 import StackElement from "./stackElement";
 import ImageStackElement from "./imageStackElement";
+import VideoStackElement from "./videoStackElement";
 import HTMLStackElement from "./htmlStackElement";
 import { FileTypes, getFileTypeByExtension } from "./fileTypes";
 
@@ -24,6 +25,10 @@ class StackElementFactory {
             }
             case FileTypes.HTML: {
                 return new HTMLStackElement(element.html)
+                break;
+            }
+            case FileTypes.VIDEO: {
+                return new VideoStackElement(element.filePath)
                 break;
             }
             default: {

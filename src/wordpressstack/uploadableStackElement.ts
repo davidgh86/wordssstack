@@ -25,11 +25,15 @@ abstract class UploadableStackElement implements StackElement {
 
     setSaved(saved: boolean){
         this.isSaved = saved
-    }    
+    }
+
+    getExtension() {
+        return this.getFileName().split('.').pop();
+    }
 
     upload(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const filename = this.filePath.split("/").pop()
+            const filename = this.getFileName()
 
             const mimetype = getMimeTypeFromExtension(filename.split('.').pop())
 

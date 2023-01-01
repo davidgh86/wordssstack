@@ -13,7 +13,8 @@ const extensions = new Map<string, FileTypes>(
         ["jpg", FileTypes.IMAGE],
         ["jpeg", FileTypes.IMAGE],
         ["png", FileTypes.IMAGE],
-        ["gif", FileTypes.IMAGE]
+        ["gif", FileTypes.IMAGE],
+        ["mp4", FileTypes.VIDEO]
     ]
 )
 
@@ -36,6 +37,8 @@ export function getMimeTypeFromExtension(extension: string): string {
         } else {
             return "image/"+extension
         }
+    } else if (fileType === FileTypes.VIDEO) {
+        return "video/"+extension
     }
     return ""
 }
