@@ -56,14 +56,31 @@
     </ion-content>
     <ion-content>
       <ion-grid>
-        
-        <ion-row>
+        <ion-list>
+          <ion-radio-group :value="plainShareType" @ionChange="radioGroupChange">
+            <ion-item>
+              <ion-label>Html</ion-label>
+              <ion-radio slot="end" value="html"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Youtube</ion-label>
+              <ion-radio slot="end" value="youtube"></ion-radio>
+            </ion-item>
+          </ion-radio-group>
+        </ion-list>
+        <ion-row v-if="plainShareType==='html'">
           <ion-col>
             <quill-editor
                 v-model:value="store.state.htmlEditorContent"
               />
-            <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
           </ion-col>
+        </ion-row>
+        <ion-row v-if="plainShareType==='youtube'">
+          <ion-input :value="store.state.youtubeContentUrl" @ionInput="setYoutubeUrl($event.target.value)"></ion-input>
+        </ion-row>
+        <ion-row v-if="plainShareType">
+          <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
         </ion-row>
       </ion-grid>
     </ion-content>
@@ -75,7 +92,8 @@ import { defineComponent, ref } from 'vue';
 import { useStore } from 'vuex'
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
-          IonButton, IonInput, IonItem, IonLabel, IonIcon, loadingController } from '@ionic/vue'
+          IonButton, IonInput, IonItem, IonLabel, IonIcon, 
+          loadingController, IonRadioGroup, IonRadio } from '@ionic/vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { quillEditor } from 'vue3-quill'
 
@@ -101,6 +119,7 @@ export default defineComponent({
     IonItem,
     IonLabel,
     IonIcon,
+    IonRadioGroup, IonRadio,
     draggable: VueDraggableNext,
     quillEditor
   },
@@ -109,25 +128,46 @@ export default defineComponent({
     const store = useStore()
 
     const title = ref("")
+
+    const plainShareType = ref("html")
+
+    const youtubeUrl = ref("")
+
+    function setYoutubeUrl(ytUrl) {
+      store.state.youtubeContentUrl = ytUrl
+    }
+
+    function radioGroupChange(event) {
+      plainShareType.value = event.target.value
+    }
     
     function askForFile() {
       var fileSelector = document.getElementById("fileSelector")
       fileSelector?.click()
     }
+
     function stackFile(event){
       if(event.target.files.length > 0){
         stackByPath(event.target.files[0])
       }
     }
+
     function stackByPath(file: File){
       store.commit('stackByPath', file)
     }
+
     function addHtmlContent(){
-      store.commit('addHtmlContent')
+      if (plainShareType.value === "html") {
+        store.commit('addHtmlContent')
+      } else if (plainShareType.value === "youtube") {
+        store.commit('addYoutubeContent')
+      }
     }
+
     function removeElement(index){
       store.commit('removeElement', index)
     }
+
     function saveOrder() {
       store.commit('saveStack')
     }
@@ -168,10 +208,14 @@ export default defineComponent({
       addHtmlContent,
       saveOrder,
       publish,
+      plainShareType,
       setTitle,
       closeCircle,
       removeElement,
-      store
+      radioGroupChange,
+      store,
+      setYoutubeUrl,
+      youtubeUrl
     }
   }
 });

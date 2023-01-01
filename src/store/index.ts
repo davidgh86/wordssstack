@@ -5,6 +5,7 @@ import UploadableStackElement from '@/wordpressstack/uploadableStackElement'
 import StackElement from '@/wordpressstack/stackElement'
 import StackElementFactory from '@/wordpressstack/stackElementFactory'
 import { FileTypes, getFileTypeByExtension } from '@/wordpressstack/fileTypes'
+import { StatusBarStyle } from '@capacitor/status-bar'
 
 const stackElementStorageManager = new StackElementStorageManager()
 
@@ -16,6 +17,7 @@ export const store = createStore({
   state: {
     title: localStorage.getItem("title")?localStorage.getItem("title"):"",
     htmlEditorContent: "",
+    youtubeContentUrl: "",
     stack: stack
   },
   getters: {
@@ -56,6 +58,12 @@ export const store = createStore({
       state.stack.push(element)
       state.htmlEditorContent = ""
     },
+    async addYoutubeContent(state){
+      const element = StackElementFactory.getStackElementByString(FileTypes.YOUTUBE, {url: state.youtubeContentUrl})
+      await stackElementStorageManager.saveStackElement(element);
+      state.stack.push(element)
+      state.youtubeContentUrl = ""
+    },
     async removeElement(state, index){
       await stackElementStorageManager.removeElement(state.stack[index])
       state.stack.splice(index, 1)
@@ -88,6 +96,9 @@ export const store = createStore({
     },
     addHtmlContent(context) {
       context.commit('addHtmlContent')
+    },
+    addYoutubeContent(context){
+      context.commit('addYoutubeContent')
     },
     saveStack(context) {
       context.commit('saveStack')

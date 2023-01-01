@@ -3,6 +3,7 @@ import StackElement from "./stackElement";
 import ImageStackElement from "./imageStackElement";
 import VideoStackElement from "./videoStackElement";
 import HTMLStackElement from "./htmlStackElement";
+import YoutubeStackElement from "./youtubeStackElement";
 import { FileTypes, getFileTypeByExtension } from "./fileTypes";
 
 class StackElementFactory {
@@ -29,6 +30,10 @@ class StackElementFactory {
             }
             case FileTypes.VIDEO: {
                 return new VideoStackElement(element.filePath)
+                break;
+            }
+            case FileTypes.YOUTUBE: {
+                return new YoutubeStackElement(element.url)
                 break;
             }
             default: {

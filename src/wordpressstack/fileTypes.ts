@@ -3,6 +3,7 @@ export enum FileTypes {
     IMAGE = "IMAGE",
     VIDEO = "VIDEO",
     HTML = "HTML",
+    YOUTUBE = "YOUTUBE",
     UNKNOWN = "UNKNOWN"
 }
 
@@ -10,11 +11,14 @@ const extensions = new Map<string, FileTypes>(
     [
         ["html", FileTypes.HTML],
         ["htm", FileTypes.HTML],
+        
         ["jpg", FileTypes.IMAGE],
         ["jpeg", FileTypes.IMAGE],
         ["png", FileTypes.IMAGE],
         ["gif", FileTypes.IMAGE],
-        ["mp4", FileTypes.VIDEO]
+        
+        ["mp4", FileTypes.VIDEO],
+        ["youtube", FileTypes.YOUTUBE],
     ]
 )
 

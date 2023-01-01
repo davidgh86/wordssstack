@@ -20,6 +20,7 @@ class HTMLStackElement implements StackElement {
         return this.id
     }
 
+    // html in wordpress
     getHtmlElement(): string {
         return this.html
     }
