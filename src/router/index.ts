@@ -11,6 +11,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import ('../views/StackPage.vue')
   },
   {
+    path: '/templates',
+    component: () => import ('../views/TemplateEditor.vue')
+  },
+  {
     path: '/',
     component: () => import ('../views/StackPage.vue')
   },

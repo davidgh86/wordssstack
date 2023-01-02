@@ -68,8 +68,8 @@ export default defineComponent({
         mdIcon: paperPlaneSharp
       },
       {
-        title: 'Favorites',
-        url: '/folder/Favorites',
+        title: 'Templates',
+        url: '/templates',
         iosIcon: heartOutline,
         mdIcon: heartSharp
       },

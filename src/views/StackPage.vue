@@ -93,7 +93,7 @@ import { useStore } from 'vuex'
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
           IonButton, IonInput, IonItem, IonLabel, IonIcon, 
-          loadingController, IonRadioGroup, IonRadio } from '@ionic/vue'
+          loadingController, IonRadioGroup, IonRadio, IonList } from '@ionic/vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { quillEditor } from 'vue3-quill'
 
@@ -119,7 +119,9 @@ export default defineComponent({
     IonItem,
     IonLabel,
     IonIcon,
-    IonRadioGroup, IonRadio,
+    IonRadioGroup,
+    IonRadio,
+    IonList,
     draggable: VueDraggableNext,
     quillEditor
   },
