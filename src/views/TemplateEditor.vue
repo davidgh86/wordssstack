@@ -24,7 +24,10 @@
             </ion-list>
           </ion-row>
         </ion-grid>
-        <SingleTemplateManager></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'image'" :variables="[{variableName: 'src', variableValue: 'https://finofilipino.org/wp-content/uploads/2023/01/yukjtyuluionui.jpg'}]"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'video'" :variables="[{variableName: 'src', variableValue: 'https://finofilipino.org/wp-content/uploads/2023/01/yukjtyuluionui.jpg'}]"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'html'" :variables="[{variableName: 'src', variableValue: 'https://finofilipino.org/wp-content/uploads/2023/01/yukjtyuluionui.jpg'}]"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'youtube'" :variables="[{variableName: 'src', variableValue: 'https://finofilipino.org/wp-content/uploads/2023/01/yukjtyuluionui.jpg'}]"></SingleTemplateManager>
     </ion-content>
   </ion-page>
 </template>

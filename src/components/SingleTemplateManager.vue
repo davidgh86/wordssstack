@@ -1,11 +1,10 @@
 <template>
     <ion-grid>
         <ion-row>
-            {{ placeholders }}
-        </ion-row>
-        <ion-row>
-            <ion-button color="primary" @click="editPlaceHolder('{dafsd}')">placeholder</ion-button>
-        </ion-row>
+          <ion-col v-for="(itm, idx) in placeholders" :key="idx">
+            <ion-button color="primary" @click="editPlaceHolder('{'+itm.variableName+'}')">{{ itm.variableName }}</ion-button>
+          </ion-col>
+        </ion-row>        
         <ion-row class="input-template">
             <textarea name="textarea" v-model="htmlEditorContent" rows="10" cols="50">Write something here</textarea>
         </ion-row>
@@ -36,11 +35,14 @@
       IonButton,
       TemplateVariablesManager
     },
-    setup() {
+    props : {
+        variables: Array
+    },
+    setup(props) {
 
       const htmlEditorContent = ref("")
 
-      const placeholders = ref([{ variableName: 'property', variableValue: 'fsf' }])
+      const placeholders = ref(props.variables)
 
       function saveTemplate() {
         // TODO emit template save
