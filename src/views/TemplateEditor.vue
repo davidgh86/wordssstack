@@ -23,20 +23,8 @@
               </ion-item>
             </ion-list>
           </ion-row>
-          <ion-row>
-            <ion-button color="primary" @click="setImagePlaceHolder()">placeholder</ion-button>
-          </ion-row>
-          <ion-row class="input-template">
-            <textarea name="textarea" v-model="htmlEditorContent" rows="10" cols="50">Write something here</textarea>
-          </ion-row>
-          <ion-row>
-            <ion-button color="primary" @click="saveTemplate()">Save template</ion-button>
-          </ion-row>
-          <ion-row>
-            <TemplateVariablesManager :defaultTemplateVariables="[{ variableName: 'property', variableValue: 'fsf' }]" @variableAdded="newVar($event)" @variableChange="confirmVar($event)" @variableRemoved="varRemoved($event)">
-            </TemplateVariablesManager>
-          </ion-row>
         </ion-grid>
+        <SingleTemplateManager></SingleTemplateManager>
     </ion-content>
   </ion-page>
 </template>
@@ -44,22 +32,16 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
-          IonPage, IonTitle, IonToolbar, IonRow, IonGrid, 
-          // IonCol, 
-          IonButton, 
-          // IonInput, 
+          IonPage, IonTitle, IonToolbar, IonRow, IonGrid,  
           IonItem,
           IonList,
-          // IonLabel,
-          // IonRadioGroup,
-          // IonRadio 
           IonSelect,
           IonSelectOption
         } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 import templateEditor from '../service/templateService'
 import templateVariableService from '../service/templateVariableService'
-import TemplateVariablesManager from '@/components/TemplateVariablesManager.vue';
+import SingleTemplateManager from '@/components/SingleTemplateManager.vue';
 //import { quillEditor } from 'vue3-quill'
 
 export default defineComponent({
@@ -74,18 +56,11 @@ export default defineComponent({
     IonToolbar,
     IonGrid,
     IonRow,
-    // IonCol,
-    IonButton,
-    // IonInput,
     IonItem,
-    //IonLabel,
     IonList,
-    // IonRadioGroup,
-    // IonRadio
     IonSelect,
     IonSelectOption,
-    //quillEditor
-    TemplateVariablesManager
+    SingleTemplateManager
 },
   setup() {
     
