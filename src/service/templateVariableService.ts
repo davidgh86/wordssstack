@@ -1,16 +1,16 @@
-class TemplateService {
+class TemplateVariableService {
 
-    private static instance: TemplateService;
+    private static instance: TemplateVariableService;
 
     private imageTemplateDefaultVariables = '[{ "variableName": "src_image", "variableValue": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" }]';
     private videoTemplateDefaultVariables = '[{ "variableName": "src_video", "variableValue": "https://videos.files.wordpress.com/2IUdmeVU/fdgshdnfgt.mp4" }, { "variableName": "video_extension", "variableValue": "mp4" }]';
     private youtubeTemplateDefaultVariables = '[{ "variableName": "youtube_video_id", "variableValue": "3oOrd-oWlaE" }]';
     private htmlTemplateDefaultVariables = '[{ "variableName": "content", "variableValue": "<p>Html content</p>" }]';
     
-    imageTemplateVariables: string;
-    videoTemplateVariables: string;
-    youtubeTemplateVariables: string;
-    htmlTemplateVariables: string;
+    imageTemplateVariables: any;
+    videoTemplateVariables: any;
+    youtubeTemplateVariables: any;
+    htmlTemplateVariables: any;
 
     constructor() {  // Constructor
         this.imageTemplateVariables = localStorage.getItem("imageTemplateVariables") || this.imageTemplateDefaultVariables;
@@ -24,12 +24,12 @@ class TemplateService {
         this.htmlTemplateVariables = JSON.parse(this.htmlTemplateVariables);
       }
 
-    public static getInstance(): TemplateService {
-        if (!TemplateService.instance) {
-            TemplateService.instance = new TemplateService()
+    public static getInstance(): TemplateVariableService {
+        if (!TemplateVariableService.instance) {
+            TemplateVariableService.instance = new TemplateVariableService()
         }
         
-        return TemplateService.instance
+        return TemplateVariableService.instance
     }
 
     getImageTemplateVariables() {
@@ -95,4 +95,4 @@ class TemplateService {
 
 }
 
-export default TemplateService.getInstance()
+export default TemplateVariableService.getInstance()

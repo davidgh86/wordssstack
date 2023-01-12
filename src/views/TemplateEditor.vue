@@ -24,10 +24,10 @@
             </ion-list>
           </ion-row>
         </ion-grid>
-        <SingleTemplateManager v-if="templateType == 'image'" :variables="[{variableName: 'src', variableValue: 'https://finofilipino.org/wp-content/uploads/2023/01/yukjtyuluionui.jpg'}]"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'video'" :variables="[{variableName: 'src', variableValue: 'https://finofilipino.org/wp-content/uploads/2023/01/yukjtyuluionui.jpg'}]"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'html'" :variables="[{variableName: 'src', variableValue: 'https://finofilipino.org/wp-content/uploads/2023/01/yukjtyuluionui.jpg'}]"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'youtube'" :variables="[{variableName: 'src', variableValue: 'https://finofilipino.org/wp-content/uploads/2023/01/yukjtyuluionui.jpg'}]"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'image'" :variables="imageTemplateVariables" :htmlContent="imageTemplate"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'video'" :variables="videoTemplateVariables" :htmlContent="videoTemplate"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'html'" :variables="htmlTemplateVariables" :htmlContent="htmlTemplate"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'youtube'" :variables="youtubeTemplateVariables" :htmlContent="youtubeTemplate"></SingleTemplateManager>
     </ion-content>
   </ion-page>
 </template>
@@ -43,7 +43,7 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
         } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 import templateEditor from '../service/templateService'
-import templateVariableService from '../service/templateVariableService'
+import templateVariableService from '../service/templateManagerService'
 import SingleTemplateManager from '@/components/SingleTemplateManager.vue';
 //import { quillEditor } from 'vue3-quill'
 
@@ -81,12 +81,15 @@ export default defineComponent({
 
     const htmlEditorContent = ref(templateEditor.getImageTemplate())
 
-    const templates = ref({
-      image: templateVariableService.getImageTemplateVariables(),
-      video: templateVariableService.getVideoTemplateVariables(),
-      youtube: templateVariableService.getYoutubeTemplateVariables(),
-      html: templateVariableService.getHtmlTemplateVariables()
-    })
+    const imageTemplateVariables = ref(templateVariableService.getImageTemplateVariables())
+    const videoTemplateVariables = ref(templateVariableService.getVideoTemplateVariables())
+    const youtubeTemplateVariables = ref(templateVariableService.getYoutubeTemplateVariables())
+    const htmlTemplateVariables = ref(templateVariableService.getHtmlTemplateVariables())
+
+    const imageTemplate = ref(templateVariableService.getImageTemplate())
+    const videoTemplate = ref(templateVariableService.getVideoTemplate())
+    const youtubeTemplate = ref(templateVariableService.getYoutubeTemplate())
+    const htmlTemplate = ref(templateVariableService.getHtmlTemplate())
 
     //const a = ref(Mustache.render("{{title}} spends {{calc}}", {title: "titulo", calc: "tis" }))
 
@@ -229,7 +232,15 @@ export default defineComponent({
       saveTemplate,
       newVar,
       confirmVar,
-      varRemoved
+      varRemoved,
+      imageTemplateVariables,
+      videoTemplateVariables,
+      youtubeTemplateVariables,
+      htmlTemplateVariables,
+      imageTemplate,
+      videoTemplate,
+      youtubeTemplate,
+      htmlTemplate
     }
   }
 });

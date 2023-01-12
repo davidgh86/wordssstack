@@ -36,11 +36,12 @@
       TemplateVariablesManager
     },
     props : {
+        htmlContent: String,
         variables: Array
     },
     setup(props) {
 
-      const htmlEditorContent = ref("")
+      const htmlEditorContent = ref(props.htmlContent)
 
       const placeholders = ref(props.variables)
 
