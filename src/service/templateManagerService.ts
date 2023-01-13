@@ -121,6 +121,14 @@ class TemplateManagerService {
         return template.replaceAll("{"+oldVarName+"}", "{"+newVarName+"}")
     }
 
+    renderTemplate(variables, template) {
+        let result = template;
+        for (const variable of variables) {
+            result = result.replaceAll("{"+variable.variableName+"}", variable.variableValue)
+        }
+        return result
+    }
+
     private static getVarNamesFromTemplate(template: string) {
         const results = template.matchAll(this.regex)
         const arrayResult = []

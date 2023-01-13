@@ -48,10 +48,12 @@
 
         function changeVariableName(name, idx) {
             templateVariables.value[idx].variableName = name
+            this.$emit("variableNameChange", { idx : idx, variableName: name })
         }
 
         function changeVariableValue(value, idx) {
             templateVariables.value[idx].variableValue = value
+            this.$emit("variableValueChange", { idx : idx, variableValue: value })
         }
 
         function emitVariable(idx) {

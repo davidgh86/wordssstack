@@ -3,10 +3,10 @@ class TemplateService {
     private static instance: TemplateService;
 
     private defaultVideoTemplate = `<div style="width: 100%;height: 100%;overflow: hidden;">
-            <video controls style="width: 100%;height: 100%;object-fit: contain;display: inline-block;">
-                <source src="{src_video}" type="video/{video_extension}">
-            </video>
-        </div>`
+    <video controls style="width: 100%;height: 100%;object-fit: contain;display: inline-block;">
+        <source src="{src_video}" type="video/{video_extension}">
+    </video>
+</div>`
     private defaultImageTemplate = `<img src="{src_image}"/>`
     private defaultYoutubeTemplate = `<iframe width="560" height="315" src="https://www.youtube.com/embed/{youtube_video_id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
     private defaultHtmlTemplate = `{content}`
