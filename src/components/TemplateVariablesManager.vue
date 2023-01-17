@@ -1,20 +1,23 @@
 <template>
     <ion-grid>
         <ion-row v-for="(templateVariable, idx) in templateVariables" :key="idx">
-            <ion-col size="4">
+            <ion-col size="4" v-if="canBeEdited">
                 <ion-input :value="templateVariable.variableName" @ionInput="changeVariableName($event.target.value, idx)"></ion-input>
+            </ion-col>
+            <ion-col size="4" v-else>
+                {{ templateVariable.variableName }}
             </ion-col>
             <ion-col size="4">
                 <ion-input :value="templateVariable.variableValue" @ionInput="changeVariableValue($event.target.value, idx)"></ion-input>
             </ion-col>
-            <ion-col size="2">
+            <ion-col size="2" v-if="canBeEdited">
                 <ion-button color="primary" @click="emitVariable(idx)">OK</ion-button>
             </ion-col>
-            <ion-col size="2">
+            <ion-col size="2" v-if="canBeEdited">
                 <ion-button color="primary" @click="removeItem(idx)">X</ion-button>
             </ion-col>
         </ion-row>
-        <ion-row>
+        <ion-row v-if="canBeEdited">
             <ion-button color="primary" @click="addVariable()">Add new variable</ion-button>
         </ion-row>
     </ion-grid>
@@ -40,11 +43,17 @@
     },
     emits: [ "variableChange", "variableRemoved",  "variableAdded" ],
     props : {
-        defaultTemplateVariables: Object
+        defaultTemplateVariables: Object,
+        editable: {
+            default: false,
+            type: Boolean
+        }
     },
     setup(props) {
 
         const templateVariables = ref(props.defaultTemplateVariables)
+
+        const canBeEdited = ref(props.editable)
 
         function changeVariableName(name, idx) {
             templateVariables.value[idx].variableName = name
@@ -76,7 +85,8 @@
             changeVariableValue,
             emitVariable,
             addVariable,
-            removeItem
+            removeItem,
+            canBeEdited
         }
     }
   });

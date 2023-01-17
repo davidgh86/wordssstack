@@ -57,6 +57,30 @@ class TemplateManagerService {
         templateService.setHtmlTemplate(template)
     }
 
+    setImageTemplateAndVariables(template, variables) {
+        this.assertVariablesConformTemplate(variables, template)
+        templateVariableService.setImageTemplateVariables(variables)
+        templateService.setImageTemplate(template)
+    }
+
+    setVideoTemplateAndVariables(template, variables) {
+        this.assertVariablesConformTemplate(variables, template)
+        templateVariableService.setVideoTemplateVariables(variables)
+        templateService.setVideoTemplate(template)
+    }
+
+    setYoutubeTemplateAndVariables(template, variables) {
+        this.assertVariablesConformTemplate(variables, template)
+        templateVariableService.setYoutubeTemplateVariables(variables)
+        templateService.setYoutubeTemplate(template)
+    }
+
+    setHtmlTemplateAndVariables(template, variables) {
+        this.assertVariablesConformTemplate(variables, template)
+        templateVariableService.setHtmlTemplateVariables(variables)
+        templateService.setHtmlTemplate(template)
+    }
+
     setImageTemplateDefault() {
         templateVariableService.setImageTemplateDefaultVariables()
         templateService.setImageTemplateDefault()

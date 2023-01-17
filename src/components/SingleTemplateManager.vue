@@ -13,11 +13,8 @@
         </ion-row>
         <ion-row>
             <TemplateVariablesManager 
-              :defaultTemplateVariables="placeholders" 
-              @variableAdded="newVar($event)" 
-              @variableChange="confirmVar($event)" 
-              @variableRemoved="varRemoved($event)"
-              @variableNameChange="replaceVariblesInTemplate($event)"
+              :defaultTemplateVariables="placeholders"
+              @variableValueChange="replaceVariblesInTemplate($event)"
             >
             </TemplateVariablesManager>
         </ion-row>
@@ -66,11 +63,10 @@
 
       const initialRender = templateManagerService.renderTemplate(oldVariables, props.htmlContent)
 
-      const renderedTemplate = ref(initialRender)//templateManagerService.renderTemplate(oldVariables, props.htmlContent))
+      const renderedTemplate = ref(initialRender)
 
       function saveTemplate() {
-        // TODO emit template save
-        return
+        this.$emit("confirmTemplate", {template: htmlEditorContent.value, variables: placeholders.value})
       }
   
       function getTextAreaElement() {
@@ -103,18 +99,11 @@
         //oldVariables = placeholders.value
       }
 
-      const replaceVariblesInTemplate = _.debounce((event) => {
-        const idx = event.idx
-        const oldVarName = oldVariables[idx].variableName
-        const replaced = templateManagerService.updateTemplateVariables(oldVarName, event.variableName, htmlEditorContent.value)
-        htmlEditorContent.value = replaced
+      const replaceVariblesInTemplate = _.debounce(() => {
+        
         oldVariables = JSON.parse(JSON.stringify(placeholders.value))
         renderedTemplate.value = templateManagerService.renderTemplate(oldVariables, htmlEditorContent.value)
       }, 1000);
-
-      // function replaceVariblesInTemplate(event) {
-      //   //
-      // }
   
   
       return {

@@ -24,10 +24,10 @@
             </ion-list>
           </ion-row>
         </ion-grid>
-        <SingleTemplateManager v-if="templateType == 'image'" :variables="imageTemplateVariables" :htmlContent="imageTemplate"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'video'" :variables="videoTemplateVariables" :htmlContent="videoTemplate"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'html'" :variables="htmlTemplateVariables" :htmlContent="htmlTemplate"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'youtube'" :variables="youtubeTemplateVariables" :htmlContent="youtubeTemplate"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'image'" :variables="imageTemplateVariables" :htmlContent="imageTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'video'" :variables="videoTemplateVariables" :htmlContent="videoTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'html'" :variables="htmlTemplateVariables" :htmlContent="htmlTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'youtube'" :variables="youtubeTemplateVariables" :htmlContent="youtubeTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
     </ion-content>
   </ion-page>
 </template>
@@ -43,7 +43,7 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
         } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 import templateEditor from '../service/templateService'
-import templateVariableService from '../service/templateManagerService'
+import templateManagerService from '../service/templateManagerService'
 import SingleTemplateManager from '@/components/SingleTemplateManager.vue';
 //import { quillEditor } from 'vue3-quill'
 
@@ -81,15 +81,15 @@ export default defineComponent({
 
     const htmlEditorContent = ref(templateEditor.getImageTemplate())
 
-    const imageTemplateVariables = ref(templateVariableService.getImageTemplateVariables())
-    const videoTemplateVariables = ref(templateVariableService.getVideoTemplateVariables())
-    const youtubeTemplateVariables = ref(templateVariableService.getYoutubeTemplateVariables())
-    const htmlTemplateVariables = ref(templateVariableService.getHtmlTemplateVariables())
+    const imageTemplateVariables = ref(templateManagerService.getImageTemplateVariables())
+    const videoTemplateVariables = ref(templateManagerService.getVideoTemplateVariables())
+    const youtubeTemplateVariables = ref(templateManagerService.getYoutubeTemplateVariables())
+    const htmlTemplateVariables = ref(templateManagerService.getHtmlTemplateVariables())
 
-    const imageTemplate = ref(templateVariableService.getImageTemplate())
-    const videoTemplate = ref(templateVariableService.getVideoTemplate())
-    const youtubeTemplate = ref(templateVariableService.getYoutubeTemplate())
-    const htmlTemplate = ref(templateVariableService.getHtmlTemplate())
+    const imageTemplate = ref(templateManagerService.getImageTemplate())
+    const videoTemplate = ref(templateManagerService.getVideoTemplate())
+    const youtubeTemplate = ref(templateManagerService.getYoutubeTemplate())
+    const htmlTemplate = ref(templateManagerService.getHtmlTemplate())
 
     //const a = ref(Mustache.render("{{title}} spends {{calc}}", {title: "titulo", calc: "tis" }))
 
@@ -108,51 +108,17 @@ export default defineComponent({
       }
     }
 
-    function saveTemplate() {
+    function saveTemplate(event) {
       let type = templateType.value
 
       if (type === "image") {
-        templateEditor.setImageTemplate(htmlEditorContent.value)
+        templateManagerService.setImageTemplateAndVariables(event.template, event.variables)
       } else if (type === "video") {
-        templateEditor.setVideoTemplate(htmlEditorContent.value)
+        templateManagerService.setVideoTemplateAndVariables(event.template, event.variables)
       } else if (type === "html") {
-        templateEditor.setHtmlTemplate(htmlEditorContent.value)
+        templateManagerService.setHtmlTemplateAndVariables(event.template, event.variables)
       } else if (type === "youtube") {
-        templateEditor.setYoutubeTemplate(htmlEditorContent.value)
-      }
-    }
-
-    function getTextAreaElement() {
-      return document.getElementsByClassName("input-template").item(0).getElementsByTagName("textarea").item(0)
-    }
-
-    function setImagePlaceHolder() {
-      let type = templateType.value
-
-      let placeholder
-
-      if (type === "image") {
-        placeholder = "{image_src}"
-      } else if (type === "video") {
-        placeholder = "{video_src}" // {video_extension}
-      } else if (type === "html") {
-        placeholder = "{html_content}"
-      } else if (type === "youtube") {
-        placeholder = "{youtube_video_id}"
-      }
-      editPlaceHolder(placeholder)
-    }
-
-    function editPlaceHolder(myValue) {
-      let myField = getTextAreaElement()
-      if (myField.selectionStart || myField.selectionStart == 0) {
-        var startPos = myField.selectionStart;
-        var endPos = myField.selectionEnd;
-        myField.value = myField.value.substring(0, startPos)
-            + myValue
-            + myField.value.substring(endPos, myField.value.length);
-      } else {
-          myField.value += myValue;
+        templateManagerService.setYoutubeTemplateAndVariables(event.template, event.variables)
       }
     }
 
@@ -228,7 +194,6 @@ export default defineComponent({
       radioGroupChange,
       templateType,
       htmlEditorContent,
-      setImagePlaceHolder,
       saveTemplate,
       newVar,
       confirmVar,
