@@ -3,6 +3,7 @@ import { FileTypes } from "./fileTypes";
 import StackElement from "./stackElement";
 
 import { v4 as uuid } from 'uuid';
+import templateManagerService from "@/service/templateManagerService";
 
 class HTMLStackElement implements StackElement {
     
@@ -22,7 +23,10 @@ class HTMLStackElement implements StackElement {
 
     // html in wordpress
     getHtmlElement(): string {
-        return this.html
+        const variables = [
+            { variableName: "content", variableValue: this.html }
+        ]
+        return templateManagerService.renderTemplate(variables, templateManagerService.getHtmlTemplate())
     }
 
     getPrevisualizedHtmlElement(): string {

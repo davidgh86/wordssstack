@@ -1,4 +1,5 @@
 'use strict';
+import templateManagerService from "@/service/templateManagerService";
 import { FileTypes } from "./fileTypes";
 import UploadableStackElement from "./uploadableStackElement";
 
@@ -11,11 +12,11 @@ class VideoStackElement extends UploadableStackElement {
     }
 
     getHtmlString(src:string|null): string {
-        return `<div style="width: 100%;height: 100%;overflow: hidden;">
-            <video controls style="width: 100%;height: 100%;object-fit: contain;display: inline-block;">
-                <source src="${src}" type="video/${this.getExtension()}">
-            </video>
-        </div>`
+        const variables = [
+            { variableName: "src_video", variableValue: src },
+            { variableName: "video_extension", variableValue: this.getExtension() }
+        ]
+        return templateManagerService.renderTemplate(variables, templateManagerService.getVideoTemplate())
     }
 
 }

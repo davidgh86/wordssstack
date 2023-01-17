@@ -4,6 +4,8 @@ import StackElement from "./stackElement";
 
 import { v4 as uuid } from 'uuid';
 
+import templateManagerService from "@/service/templateManagerService";
+
 class YoutubeStackElement implements StackElement {
     
     fileType:FileTypes;
@@ -50,7 +52,8 @@ url = 'BGL22PTIOAM';
     }
 
     getHtmlElement(): string {
-        return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${this.getYoutubeVideoId()}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+        const variables = [{ variableName: "youtube_video_id", variableValue: this.getYoutubeVideoId() }]
+        return templateManagerService.renderTemplate(variables, templateManagerService.getYoutubeTemplate())
     }
 
     getPrevisualizedHtmlElement(): string {
