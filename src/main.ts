@@ -55,14 +55,15 @@ router.isReady().then(() => {
 const intentManager = (Intent) => {
   if (Intent.clipItems) {
     for (const clipItem of Intent.clipItems) {
-      alert(JSON.stringify(clipItem))
       if (clipItem.uri) {
         const savedUrl = clipItem.uri
         store.commit("addElementFromSavedExternalPath", savedUrl)
       }
     }
   } else if (Intent.data) {
-    alert("TODO intent youtube " + Intent.data)
+    alert(Intent.data) // Intent.data is the url
+    store.state.youtubeContentUrl = Intent.data
+    store.commit('addYoutubeContent')
   }
 }
 
