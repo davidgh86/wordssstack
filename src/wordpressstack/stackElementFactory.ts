@@ -21,7 +21,7 @@ class StackElementFactory {
     public static getStackElementByString(fileType: FileTypes, element: any): StackElement {
         switch(fileType) {
             case FileTypes.IMAGE: {
-                return new ImageStackElement(element.filePath)
+                return new ImageStackElement(element.filePath, undefined)
                 break;
             }
             case FileTypes.HTML: {
@@ -29,7 +29,7 @@ class StackElementFactory {
                 break;
             }
             case FileTypes.VIDEO: {
-                return new VideoStackElement(element.filePath)
+                return new VideoStackElement(element.filePath, element.extension)
                 break;
             }
             case FileTypes.YOUTUBE: {

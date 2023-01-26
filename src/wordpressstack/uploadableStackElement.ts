@@ -12,11 +12,13 @@ abstract class UploadableStackElement implements StackElement {
     uploadedPath: string|null = null;
     fileType:FileTypes = FileTypes.UNKNOWN;
     rawDataSrc:string|null;
+    extension:string|undefined;
 
-    constructor(filePath: string) {
+    constructor(filePath: string, extension:string|undefined) {
         this.isUploaded = false
         this.isSaved = false
         this.filePath = filePath
+        this.extension = extension
     }
 
     setUploaded(uploaded :boolean){
@@ -28,7 +30,7 @@ abstract class UploadableStackElement implements StackElement {
     }
 
     getExtension() {
-        return this.getFileName().split('.').pop();
+        return !this.extension?this.getFileName().split('.').pop():this.extension;
     }
 
     upload(): Promise<void> {
@@ -82,7 +84,8 @@ abstract class UploadableStackElement implements StackElement {
 
     async calculateRawData() {
         if (this.filePath.startsWith("file://")){
-            const fileType = this.filePath.split('.').pop()
+            alert("Calculating raw data")
+            const fileType = this.getExtension()
             const data = await FileSystemStoreManager.getBase64BytesFromCacheDisk(this.filePath)
             const src = `data:${this.fileType.toLowerCase()}/${fileType};base64,${data}`;
             this.rawDataSrc = src

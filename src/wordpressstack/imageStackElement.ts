@@ -6,8 +6,8 @@ import UploadableStackElement from "./uploadableStackElement";
 class ImageStackElement extends UploadableStackElement {
     
 
-    constructor(filePath: string) {
-        super(filePath);
+    constructor(filePath: string, extension: string|undefined) {
+        super(filePath, extension);
         this.fileType = FileTypes.IMAGE
     }
 

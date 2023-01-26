@@ -71,14 +71,18 @@ export const store = createStore({
     async saveStack(state){
       await stackElementStorageManager.saveStack(state.stack)
     },
-    async addElementFromSavedExternalPath(state, savedUrl){
-      const extension = savedUrl.split(".").pop()
+    async addElementFromSavedExternalPath(state, { savedUrl, mimeType }){
+      alert("store index addElementFromSavedExternalPath 1 "+ savedUrl)
+      const extension = !mimeType?savedUrl.split(".").pop():mimeType.split("/").pop()
       const fileType = getFileTypeByExtension(extension)
-      const stackElement = StackElementFactory.getStackElementByString(fileType, {filePath: savedUrl})
+      alert("store index addElementFromSavedExternalPath 2 extension: "+ JSON.stringify(extension) + " filetype: " + JSON.stringify(fileType) )
+      const stackElement = StackElementFactory.getStackElementByString(fileType, {filePath: savedUrl, extension: extension})
+      alert("store index addElementFromSavedExternalPath 3 stakElement: "+ JSON.stringify(stackElement) )
       if (stackElement instanceof UploadableStackElement){
         await stackElementStorageManager.saveStackElement(stackElement)
         await stackElement.calculateRawData()
       }
+      alert("add stack " + JSON.stringify(stackElement))
       state.stack.push(stackElement)
     }
   },
@@ -105,8 +109,8 @@ export const store = createStore({
     initialize(context) {
       context.commit('initialize')
     },
-    addElementFromSavedExternalPath(context, savedUrl){
-      context.commit("addElementFromSavedExternalPath", savedUrl)
+    addElementFromSavedExternalPath(context, { savedUrl, mimeType }){
+      context.commit("addElementFromSavedExternalPath", { savedUrl, mimeType })
     },
     async publish(context) {
       await stackElementStorageManager.publishStack(context.state.stack, context.state.title)

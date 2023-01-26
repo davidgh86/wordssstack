@@ -105,10 +105,12 @@ class StackElementStorageManager {
     }
 
     async saveStackElement( element: StackElement) {
+        alert("stackElementStorageManager saveStackElement 1 " + JSON.stringify(element))
         const saveMap = new Map(this.ids)
         if (element instanceof UploadableStackElement) {
             if (!element.isSaved) {
                 await element.saveIntoDevice()
+                alert("stackElementStorageManager saveStackElement 2 Element saved")
             }
             const copy = Object.assign({}, element)
             delete copy.rawDataSrc

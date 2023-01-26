@@ -53,15 +53,26 @@ router.isReady().then(() => {
 
 
 const intentManager = (Intent) => {
+  alert("main ts 1.1" + JSON.stringify(Intent))
   if (Intent.clipItems) {
+    const mimeType = Intent.type
+    alert("main ts 1.2" + JSON.stringify(Intent.clipItems))
     for (const clipItem of Intent.clipItems) {
-      if (clipItem.uri) {
+      alert("main ts 3" + JSON.stringify(clipItem))
+      if (clipItem.uri) { // is file
         const savedUrl = clipItem.uri
-        store.commit("addElementFromSavedExternalPath", savedUrl)
+        store.commit("addElementFromSavedExternalPath", { savedUrl, mimeType })
+      } else if (clipItem.text) {
+        // TODO refactor
+        const isYoutubeLink = true
+        if (isYoutubeLink) {
+          store.state.youtubeContentUrl = clipItem.text
+          store.commit('addYoutubeContent')
+        }
       }
     }
   } else if (Intent.data) {
-    alert(Intent.data) // Intent.data is the url
+    // Intent.data is the url
     store.state.youtubeContentUrl = Intent.data
     store.commit('addYoutubeContent')
   }
@@ -69,12 +80,14 @@ const intentManager = (Intent) => {
 
 document.addEventListener('deviceReady', () => {
   intentInstance.getCordovaIntent((Intent) => {
+    alert("main ts 1")
     intentManager(Intent)
   }, () => alert("Error"))
 })
 
 document.addEventListener('deviceReady', () => {
   intentInstance.setNewIntentHandler((Intent) => {
+    alert("main ts 2")
     intentManager(Intent)
   })
 })
