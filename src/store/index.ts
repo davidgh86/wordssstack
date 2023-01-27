@@ -17,6 +17,7 @@ export const store = createStore({
     title: localStorage.getItem("title")?localStorage.getItem("title"):"",
     htmlEditorContent: "",
     youtubeContentUrl: "",
+    twitterContentUrl: "",
     stack: stack
   },
   getters: {
@@ -57,6 +58,12 @@ export const store = createStore({
       state.stack.push(element)
       state.htmlEditorContent = ""
     },
+    async addTwitterContent(state) {
+      const element = StackElementFactory.getStackElementByString(FileTypes.YOUTUBE, {url: state.twitterContentUrl})
+      await stackElementStorageManager.saveStackElement(element);
+      state.stack.push(element)
+      state.twitterContentUrl = ""
+    }, 
     async addYoutubeContent(state){
       const element = StackElementFactory.getStackElementByString(FileTypes.YOUTUBE, {url: state.youtubeContentUrl})
       await stackElementStorageManager.saveStackElement(element);
@@ -102,6 +109,9 @@ export const store = createStore({
     },
     addYoutubeContent(context){
       context.commit('addYoutubeContent')
+    },
+    addTwitterContent(context){
+      context.commit('addTwitterContent')
     },
     saveStack(context) {
       context.commit('saveStack')

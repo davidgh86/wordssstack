@@ -33,6 +33,10 @@ class TemplateManagerService {
         return templateService.getHtmlTemplate()
     }
 
+    getTwitterTemplate() {
+        return templateService.getTwitterTemplate()
+    }
+
     setImageTemplate(template) {
         const variables = templateVariableService.getImageTemplateVariables()
         this.assertVariablesConformTemplate(variables, template)
@@ -75,30 +79,16 @@ class TemplateManagerService {
         templateService.setYoutubeTemplate(template)
     }
 
+    setTwitterTemplateAndVariables(template, variables) {
+        this.assertVariablesConformTemplate(variables, template)
+        templateVariableService.setTwitterTemplateVariables(variables)
+        templateService.setTwitterTemplate(template)
+    }
+
     setHtmlTemplateAndVariables(template, variables) {
         this.assertVariablesConformTemplate(variables, template)
         templateVariableService.setHtmlTemplateVariables(variables)
         templateService.setHtmlTemplate(template)
-    }
-
-    setImageTemplateDefault() {
-        templateVariableService.setImageTemplateDefaultVariables()
-        templateService.setImageTemplateDefault()
-    }
-
-    setVideoTemplateDefault() {
-        templateVariableService.setVideoTemplateDefaultVariables()
-        templateService.setVideoTemplateDefault()
-    }
-
-    setYoutubeTemplateDefault() {
-        templateVariableService.setYoutubeTemplateDefaultVariables()
-        templateService.setYoutubeTemplateDefault()
-    }
-
-    setHtmlTemplateDefault() {
-        templateVariableService.setHtmlTemplateDefaultVariables()
-        templateService.setHtmlTemplateDefault()
     }
 
     getImageTemplateVariables() {
@@ -116,6 +106,11 @@ class TemplateManagerService {
     getHtmlTemplateVariables() {
         return templateVariableService.getHtmlTemplateVariables()
     }
+
+    getTwitterTemplateVariables() {
+        return templateVariableService.getTwitterTemplateVariables()
+    }
+
 
     setImageTemplateVariables(variables) {
         const template = templateService.getImageTemplate()

@@ -67,6 +67,10 @@
               <ion-label>Youtube</ion-label>
               <ion-radio slot="end" value="youtube"></ion-radio>
             </ion-item>
+            <ion-item>
+              <ion-label>Twitter</ion-label>
+              <ion-radio slot="end" value="twitter"></ion-radio>
+            </ion-item>
           </ion-radio-group>
         </ion-list>
         <ion-row v-if="plainShareType==='html'">
@@ -78,6 +82,9 @@
         </ion-row>
         <ion-row v-if="plainShareType==='youtube'">
           <ion-input :value="store.state.youtubeContentUrl" @ionInput="setYoutubeUrl($event.target.value)"></ion-input>
+        </ion-row>
+        <ion-row v-if="plainShareType==='twitter'">
+          <ion-input :value="store.state.twitterContentUrl" @ionInput="setTwitterUrl($event.target.value)"></ion-input>
         </ion-row>
         <ion-row v-if="plainShareType">
           <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
@@ -133,10 +140,12 @@ export default defineComponent({
 
     const plainShareType = ref("html")
 
-    const youtubeUrl = ref("")
-
     function setYoutubeUrl(ytUrl) {
       store.state.youtubeContentUrl = ytUrl
+    }
+
+    function setTwitterUrl(tUrl) {
+      store.state.twitterContentUrl = tUrl
     }
 
     function radioGroupChange(event) {
@@ -163,6 +172,8 @@ export default defineComponent({
         store.commit('addHtmlContent')
       } else if (plainShareType.value === "youtube") {
         store.commit('addYoutubeContent')
+      } else if (plainShareType.value === "twitter") {
+        store.commit('addTwitterContent')
       }
     }
 
@@ -217,7 +228,7 @@ export default defineComponent({
       radioGroupChange,
       store,
       setYoutubeUrl,
-      youtubeUrl
+      setTwitterUrl
     }
   }
 });

@@ -10,17 +10,20 @@ class TemplateService {
     private defaultImageTemplate = `<img src="{src_image}"/>`
     private defaultYoutubeTemplate = `<iframe width="560" height="315" src="https://www.youtube.com/embed/{youtube_video_id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
     private defaultHtmlTemplate = `{content}`
+    private defaultTwitterTemplate = `{content}`
     
     imageTemplate: string;
     videoTemplate: string;
     youtubeTemplate: string;
     htmlTemplate: string;
+    twitterTemplate: string;
 
     constructor() {  // Constructor
         this.imageTemplate = localStorage.getItem("imageTemplate") || this.defaultImageTemplate;
         this.videoTemplate = localStorage.getItem("videoTemplate") || this.defaultVideoTemplate;
         this.youtubeTemplate = localStorage.getItem("youtubeTemplate") || this.defaultYoutubeTemplate;
         this.htmlTemplate = localStorage.getItem("htmlTemplate") || this.defaultHtmlTemplate;
+        this.twitterTemplate = localStorage.getItem("twitterTemplate") || this.defaultTwitterTemplate;
       }
 
     public static getInstance(): TemplateService {
@@ -47,6 +50,10 @@ class TemplateService {
         return this.htmlTemplate;
     }
 
+    getTwitterTemplate() {
+        return this.twitterTemplate;
+    }
+
     setImageTemplate(template) {
         this.imageTemplate = template;
         localStorage.setItem("imageTemplate", template);
@@ -62,35 +69,15 @@ class TemplateService {
         localStorage.setItem("youtubeTemplate", template);
     }
 
+    setTwitterTemplate(template) {
+        this.twitterTemplate = template;
+        localStorage.setItem("twitterTemplate", template);
+    }
+
     setHtmlTemplate(template) {
         this.htmlTemplate = template;
         localStorage.setItem("htmlTemplate", template);
     }
-
-    setImageTemplateDefault() {
-        const template = this.defaultImageTemplate
-        this.imageTemplate = template;
-        localStorage.setItem("imageTemplate", template);
-    }
-
-    setVideoTemplateDefault() {
-        const template = this.defaultVideoTemplate;
-        this.videoTemplate = template;
-        localStorage.setItem("videoTemplate", template);
-    }
-
-    setYoutubeTemplateDefault() {
-        const template = this.defaultYoutubeTemplate
-        this.youtubeTemplate = template;
-        localStorage.setItem("youtubeTemplate", template);
-    }
-
-    setHtmlTemplateDefault() {
-        const template = this.defaultHtmlTemplate
-        this.htmlTemplate = template;
-        localStorage.setItem("htmlTemplate", template);
-    }
-
 
 }
 

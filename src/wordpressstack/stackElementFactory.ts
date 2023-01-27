@@ -5,6 +5,7 @@ import VideoStackElement from "./videoStackElement";
 import HTMLStackElement from "./htmlStackElement";
 import YoutubeStackElement from "./youtubeStackElement";
 import { FileTypes, getFileTypeByExtension } from "./fileTypes";
+import TwitterStackElement from "./twitterStackElement";
 
 class StackElementFactory {
     public static getStackElement(file: File): StackElement {
@@ -34,6 +35,10 @@ class StackElementFactory {
             }
             case FileTypes.YOUTUBE: {
                 return new YoutubeStackElement(element.url)
+                break;
+            }
+            case FileTypes.TWITTER: {
+                return new TwitterStackElement(element.url)
                 break;
             }
             default: {

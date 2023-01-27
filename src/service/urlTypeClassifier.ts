@@ -12,7 +12,15 @@ class UrlTypeClassifier {
         return UrlTypeClassifier.instance
     }
 
-    private getUrlType(url: string) {
+    public getUrlType(url: string) {
+        const hostname = (new URL(url)).hostname
+        
+        if (hostname === "www.youtube.com" || hostname === "youtu.be") {
+            return FileTypes.YOUTUBE
+        } else if (hostname === "twitter.com") {
+            return FileTypes.TWITTER
+        }
+
         return FileTypes.YOUTUBE
     }
 }

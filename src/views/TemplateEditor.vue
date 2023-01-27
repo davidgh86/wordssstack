@@ -19,6 +19,7 @@
                   <ion-select-option value="video">Video</ion-select-option>
                   <ion-select-option value="html">Html</ion-select-option>
                   <ion-select-option value="youtube">Youtube</ion-select-option>
+                  <ion-select-option value="twitter">Twitter</ion-select-option>
                 </ion-select>
               </ion-item>
             </ion-list>
@@ -28,12 +29,13 @@
         <SingleTemplateManager v-if="templateType == 'video'" :variables="videoTemplateVariables" :htmlContent="videoTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
         <SingleTemplateManager v-if="templateType == 'html'" :variables="htmlTemplateVariables" :htmlContent="htmlTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
         <SingleTemplateManager v-if="templateType == 'youtube'" :variables="youtubeTemplateVariables" :htmlContent="youtubeTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
+        <SingleTemplateManager v-if="templateType == 'twitter'" :variables="twitterTemplateVariables" :htmlContent="twitterTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid,  
           IonItem,
@@ -41,7 +43,6 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
           IonSelect,
           IonSelectOption
         } from '@ionic/vue'
-import { useRouter } from 'vue-router'
 import templateEditor from '../service/templateService'
 import templateManagerService from '../service/templateManagerService'
 import SingleTemplateManager from '@/components/SingleTemplateManager.vue';
@@ -66,16 +67,6 @@ export default defineComponent({
     SingleTemplateManager
 },
   setup() {
-    
-    const router = useRouter()
-
-    const title = ref("")
-    
-    const hostName = ref("")
-
-    const user = ref("")
-
-    const password = ref("")
 
     const templateType = ref("image")
 
@@ -85,11 +76,14 @@ export default defineComponent({
     const videoTemplateVariables = ref(templateManagerService.getVideoTemplateVariables())
     const youtubeTemplateVariables = ref(templateManagerService.getYoutubeTemplateVariables())
     const htmlTemplateVariables = ref(templateManagerService.getHtmlTemplateVariables())
+    const twitterTemplateVariables = ref(templateManagerService.getTwitterTemplateVariables())
+
 
     const imageTemplate = ref(templateManagerService.getImageTemplate())
     const videoTemplate = ref(templateManagerService.getVideoTemplate())
     const youtubeTemplate = ref(templateManagerService.getYoutubeTemplate())
     const htmlTemplate = ref(templateManagerService.getHtmlTemplate())
+    const twitterTemplate = ref(templateManagerService.getTwitterTemplate())
 
     //const a = ref(Mustache.render("{{title}} spends {{calc}}", {title: "titulo", calc: "tis" }))
 
@@ -105,6 +99,8 @@ export default defineComponent({
         htmlEditorContent.value = templateEditor.getHtmlTemplate()
       } else if (type === "youtube") {
         htmlEditorContent.value = templateEditor.getYoutubeTemplate()
+      } else if (type === "twitter") {
+        htmlEditorContent.value = templateEditor.getTwitterTemplate()
       }
     }
 
@@ -119,43 +115,10 @@ export default defineComponent({
         templateManagerService.setHtmlTemplateAndVariables(event.template, event.variables)
       } else if (type === "youtube") {
         templateManagerService.setYoutubeTemplateAndVariables(event.template, event.variables)
+      } else if (type === "twitter") {
+        templateManagerService.setTwitterTemplateAndVariables(event.template, event.variables)
       }
-    }
-
-    function setHostName(host) {
-      hostName.value = host
-    }
-
-    function setUser(usr) {
-      user.value = usr
-    }
-
-    function setPassword(pwd) {
-      password.value = pwd
-    }
-
-    function isConfigured(): boolean {
-      return !!localStorage.getItem("host") && !!localStorage.getItem("user") && !!localStorage.getItem("password")
-    }
-
-    function setConfig() {
-      hostName.value = hostName.value.trim()
-      user.value = user.value.trim()
-      password.value = password.value.trim()
-
-      localStorage.setItem("host", hostName.value)
-      localStorage.setItem("user", user.value)
-      localStorage.setItem("password", password.value)
-      if (isConfigured()) {
-        router.push("/inbox")
-      }
-    }    
-
-    function removeConfig() {
-      localStorage.removeItem("host")
-      localStorage.removeItem("user")
-      localStorage.removeItem("password")
-    }
+    } 
 
     function newVar(event) {
       alert(JSON.stringify(event))
@@ -169,28 +132,7 @@ export default defineComponent({
       alert(event)
     }
 
-    onMounted(() => {
-      if (localStorage.getItem("host")) {
-        hostName.value = localStorage.getItem("host")
-      }
-      if (localStorage.getItem("user")) {
-        user.value = localStorage.getItem("user")
-      }
-      if (localStorage.getItem("password")) {
-        password.value = localStorage.getItem("password")
-      }
-    })
-
     return {
-      title,
-      hostName,
-      setHostName,
-      setUser,
-      setPassword,
-      user,
-      password,
-      setConfig,
-      removeConfig,
       radioGroupChange,
       templateType,
       htmlEditorContent,
@@ -202,10 +144,12 @@ export default defineComponent({
       videoTemplateVariables,
       youtubeTemplateVariables,
       htmlTemplateVariables,
+      twitterTemplateVariables,
       imageTemplate,
       videoTemplate,
       youtubeTemplate,
-      htmlTemplate
+      htmlTemplate,
+      twitterTemplate
     }
   }
 });

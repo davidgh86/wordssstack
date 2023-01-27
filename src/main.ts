@@ -22,12 +22,15 @@ import '@ionic/vue/css/display.css';
 import * as intentInstance from 'cordova-plugin-intent/www/android/IntentPlugin';
 //import wordpressApi from './service/wordpressApi';
 
+import urlTypeClassifier from './service/UrlTypeClassifier'
+
 //import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 /* Theme variables */
 import './theme/variables.css';
 
 import { store } from './store'
+import { FileTypes } from './wordpressstack/fileTypes';
 
 store.commit('initialize')
 
@@ -52,6 +55,15 @@ router.isReady().then(() => {
 });
 
 
+const processTextUrl = (url: string) => {
+  const type = urlTypeClassifier.getUrlType(url)
+
+  if (FileTypes.YOUTUBE === type) {
+    store.state.youtubeContentUrl = url
+    store.commit('addYoutubeContent')
+  }
+}
+
 const intentManager = (Intent) => {
   alert("main ts 1.1" + JSON.stringify(Intent))
   if (Intent.clipItems) {
@@ -64,17 +76,13 @@ const intentManager = (Intent) => {
         store.commit("addElementFromSavedExternalPath", { savedUrl, mimeType })
       } else if (clipItem.text) {
         // TODO refactor
-        const isYoutubeLink = true
-        if (isYoutubeLink) {
-          store.state.youtubeContentUrl = clipItem.text
-          store.commit('addYoutubeContent')
-        }
+        processTextUrl(clipItem.text)
+        
       }
     }
   } else if (Intent.data) {
     // Intent.data is the url
-    store.state.youtubeContentUrl = Intent.data
-    store.commit('addYoutubeContent')
+    processTextUrl(Intent.data)
   }
 }
 
