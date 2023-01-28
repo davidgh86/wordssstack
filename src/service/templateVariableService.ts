@@ -6,7 +6,8 @@ class TemplateVariableService {
     private videoTemplateDefaultVariables = '[{ "variableName": "src_video", "variableValue": "https://videos.files.wordpress.com/2IUdmeVU/fdgshdnfgt.mp4" }, { "variableName": "video_extension", "variableValue": "mp4" }]';
     private youtubeTemplateDefaultVariables = '[{ "variableName": "youtube_video_id", "variableValue": "3oOrd-oWlaE" }]';
     private htmlTemplateDefaultVariables = '[{ "variableName": "content", "variableValue": "<p>Html content</p>" }]';
-    private twitterTemplateDefaultVariables = '[{ "variableName": "content", "variableValue": "<blockquote class=\'twitter-tweet\'><p lang=\'es\' dir=\'ltr\'>Hola, soy bi-color:P<a href=\'https://t.co/VJ8sZKJAPt\'>https://t.co/VJ8sZKJAPt</a> <br><br>Minecraft extremo 🥸<br>Simón dice con el ded 🥸<br>Otras cosas 🥸 <a href=\'https://t.co/kOVvqQAyF1\'>pic.twitter.com/kOVvqQAyF1</a></p>&mdash; Ari Gameplays 💗 (@arigameplays) <a href=\'https://twitter.com/arigameplays/status/1618378584397336576?ref_src=twsrc%5Etfw\'>January 25, 2023</a></blockquote>\n<script async src=\'https://platform.twitter.com/widgets.js\' charset=\'utf-8\'></script>\n" }]';
+    private auxTwitterTemplate = "<blockquote class=\"twitter-tweet\"><p lang=\"es\" dir=\"ltr\">Hola, soy bi-color:P<a href=\"https://t.co/VJ8sZKJAPt\">https://t.co/VJ8sZKJAPt</a> <br><br>Minecraft extremo 🥸<br>Simón dice con el ded 🥸<br>Otras cosas 🥸 <a href=\"https://t.co/kOVvqQAyF1\">pic.twitter.com/kOVvqQAyF1</a></p>&mdash; Ari Gameplays 💗 (@arigameplays) <a href=\"https://twitter.com/arigameplays/status/1618378584397336576?ref_src=twsrc%5Etfw\">January 25, 2023</a></blockquote>\n<script async src=\"https://platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>\n"
+    private twitterTemplateDefaultVariables = JSON.stringify([{ variableName: "content", variableValue: this.auxTwitterTemplate }]);
 
     imageTemplateVariables: any;
     videoTemplateVariables: any;

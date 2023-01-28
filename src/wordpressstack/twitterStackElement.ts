@@ -20,9 +20,10 @@ class TwitterStackElement implements StackElement {
         this.fileType = FileTypes.TWITTER
         this.url = url
         this.id = uuid()
-        twitterApi.getEmbbededTwitter(this.url).then(rsp => {
-            this.html = rsp
-        })
+        this.html = twitterApi.getEmbbededTwitter(this.url)
+        // twitterApi.getEmbbededTwitter(this.url).then(rsp => {
+        //     this.html = rsp
+        // })
     }
 
     getId(): string {

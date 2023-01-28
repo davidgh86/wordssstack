@@ -22,7 +22,7 @@ import '@ionic/vue/css/display.css';
 import * as intentInstance from 'cordova-plugin-intent/www/android/IntentPlugin';
 //import wordpressApi from './service/wordpressApi';
 
-import urlTypeClassifier from './service/UrlTypeClassifier'
+import urlTypeClassifier from './service/urlTypeClassifier'
 
 //import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
@@ -61,6 +61,9 @@ const processTextUrl = (url: string) => {
   if (FileTypes.YOUTUBE === type) {
     store.state.youtubeContentUrl = url
     store.commit('addYoutubeContent')
+  } else if (FileTypes.TWITTER === type) {
+    store.state.twitterContentUrl = url
+    store.commit('addTwitterContent')
   }
 }
 

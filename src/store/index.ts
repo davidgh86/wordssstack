@@ -59,7 +59,7 @@ export const store = createStore({
       state.htmlEditorContent = ""
     },
     async addTwitterContent(state) {
-      const element = StackElementFactory.getStackElementByString(FileTypes.YOUTUBE, {url: state.twitterContentUrl})
+      const element = StackElementFactory.getStackElementByString(FileTypes.TWITTER, {url: state.twitterContentUrl})
       await stackElementStorageManager.saveStackElement(element);
       state.stack.push(element)
       state.twitterContentUrl = ""
