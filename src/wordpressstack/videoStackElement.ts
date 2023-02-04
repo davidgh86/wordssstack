@@ -16,7 +16,7 @@ class VideoStackElement extends UploadableStackElement {
             { variableName: "src_video", variableValue: src },
             { variableName: "video_extension", variableValue: this.getExtension() }
         ]
-        return templateManagerService.renderTemplate(variables, templateManagerService.getVideoTemplate())
+        return templateManagerService.renderTemplate(variables, templateManagerService.getTemplate("video"))
     }
 
 }

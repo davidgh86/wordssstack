@@ -70,20 +70,20 @@ export default defineComponent({
 
     const templateType = ref("image")
 
-    const htmlEditorContent = ref(templateEditor.getImageTemplate())
+    const htmlEditorContent = ref(templateEditor.getTemplate("image"))
 
-    const imageTemplateVariables = ref(templateManagerService.getImageTemplateVariables())
-    const videoTemplateVariables = ref(templateManagerService.getVideoTemplateVariables())
-    const youtubeTemplateVariables = ref(templateManagerService.getYoutubeTemplateVariables())
-    const htmlTemplateVariables = ref(templateManagerService.getHtmlTemplateVariables())
-    const twitterTemplateVariables = ref(templateManagerService.getTwitterTemplateVariables())
+    const imageTemplateVariables = ref(templateManagerService.getTemplateVariables("image"))
+    const videoTemplateVariables = ref(templateManagerService.getTemplateVariables("video"))
+    const youtubeTemplateVariables = ref(templateManagerService.getTemplateVariables("youtube"))
+    const htmlTemplateVariables = ref(templateManagerService.getTemplateVariables("html"))
+    const twitterTemplateVariables = ref(templateManagerService.getTemplateVariables("twitter"))
 
 
-    const imageTemplate = ref(templateManagerService.getImageTemplate())
-    const videoTemplate = ref(templateManagerService.getVideoTemplate())
-    const youtubeTemplate = ref(templateManagerService.getYoutubeTemplate())
-    const htmlTemplate = ref(templateManagerService.getHtmlTemplate())
-    const twitterTemplate = ref(templateManagerService.getTwitterTemplate())
+    const imageTemplate = ref(templateManagerService.getTemplate("image"))
+    const videoTemplate = ref(templateManagerService.getTemplate("video"))
+    const youtubeTemplate = ref(templateManagerService.getTemplate("youtube"))
+    const htmlTemplate = ref(templateManagerService.getTemplate("html"))
+    const twitterTemplate = ref(templateManagerService.getTemplate("twitter"))
 
     //const a = ref(Mustache.render("{{title}} spends {{calc}}", {title: "titulo", calc: "tis" }))
 
@@ -91,33 +91,13 @@ export default defineComponent({
       templateType.value = event.target.value
       let type = event.target.value
 
-      if (type === "image") {
-        htmlEditorContent.value = templateEditor.getImageTemplate()
-      } else if (type === "video") {
-        htmlEditorContent.value = templateEditor.getVideoTemplate()
-      } else if (type === "html") {
-        htmlEditorContent.value = templateEditor.getHtmlTemplate()
-      } else if (type === "youtube") {
-        htmlEditorContent.value = templateEditor.getYoutubeTemplate()
-      } else if (type === "twitter") {
-        htmlEditorContent.value = templateEditor.getTwitterTemplate()
-      }
+      htmlEditorContent.value = templateEditor.getTemplate(type)
     }
 
     function saveTemplate(event) {
       let type = templateType.value
 
-      if (type === "image") {
-        templateManagerService.setImageTemplateAndVariables(event.template, event.variables)
-      } else if (type === "video") {
-        templateManagerService.setVideoTemplateAndVariables(event.template, event.variables)
-      } else if (type === "html") {
-        templateManagerService.setHtmlTemplateAndVariables(event.template, event.variables)
-      } else if (type === "youtube") {
-        templateManagerService.setYoutubeTemplateAndVariables(event.template, event.variables)
-      } else if (type === "twitter") {
-        templateManagerService.setTwitterTemplateAndVariables(event.template, event.variables)
-      }
+      templateManagerService.setTemplateAndVariables(type, event.template, event.variables)
     } 
 
     function newVar(event) {

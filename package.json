@@ -13,6 +13,7 @@
     "emulator": "emulator -avd Pixel_3_API_30 -wipe-data"
   },
   "dependencies": {
+    "@capacitor-community/http": "^1.4.1",
     "@capacitor/android": "3.6.0",
     "@capacitor/app": "1.1.1",
     "@capacitor/core": "3.6.0",

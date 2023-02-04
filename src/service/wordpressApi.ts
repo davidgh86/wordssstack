@@ -1,3 +1,5 @@
+import debug from './debug';
+
 class WordpressApi {
 
     private static instance: WordpressApi;
@@ -98,7 +100,7 @@ class WordpressApi {
                 resolve(response.json())
             })
             .catch(error => {
-                alert("KO saving post")
+                debug.debugAlert("KO saving post")
                 reject(error)
             });
         });

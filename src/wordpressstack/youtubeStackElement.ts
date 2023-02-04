@@ -53,7 +53,7 @@ url = 'BGL22PTIOAM';
 
     getHtmlElement(): string {
         const variables = [{ variableName: "youtube_video_id", variableValue: this.getYoutubeVideoId() }]
-        return templateManagerService.renderTemplate(variables, templateManagerService.getYoutubeTemplate())
+        return templateManagerService.renderTemplate(variables, templateManagerService.getTemplate("youtube"))
     }
 
     getPrevisualizedHtmlElement(): string {

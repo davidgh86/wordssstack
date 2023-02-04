@@ -20,10 +20,12 @@ class TwitterStackElement implements StackElement {
         this.fileType = FileTypes.TWITTER
         this.url = url
         this.id = uuid()
-        this.html = twitterApi.getEmbbededTwitter(this.url)
-        // twitterApi.getEmbbededTwitter(this.url).then(rsp => {
-        //     this.html = rsp
-        // })
+    }
+
+    async initialize() {
+        if (!this.html) {
+            this.html = await twitterApi.getEmbbededTwitter(this.url)
+        }
     }
 
     getId(): string {
@@ -34,7 +36,7 @@ class TwitterStackElement implements StackElement {
         const variables = [
             { variableName: "content", variableValue: this.html }
         ]
-        return templateManagerService.renderTemplate(variables, templateManagerService.getTwitterTemplate())
+        return templateManagerService.renderTemplate(variables, templateManagerService.getTemplate("twitter"))
     }
 
     getPrevisualizedHtmlElement(): string {

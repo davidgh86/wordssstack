@@ -4,10 +4,7 @@ import templateService from '../service/templateService'
 class TemplateManagerService {
 
     private static instance: TemplateManagerService;
-    private static regex = /\{[a-zA-Z-_0-9]+\}/g
-
-    constructor() {  // Constructor    
-    }
+    private static regex = /\{[a-zA-Z-_0-9]+\}/g;
 
     public static getInstance(): TemplateManagerService {
         if (!TemplateManagerService.instance) {
@@ -17,123 +14,32 @@ class TemplateManagerService {
         return TemplateManagerService.instance
     }
 
-    getImageTemplate() {
-        return templateService.getImageTemplate()
-    }
+    getTemplate(type: string) {
+        debugger;
+        return templateService.getTemplate(type)
+    }    
 
-    getVideoTemplate() {
-        return templateService.getVideoTemplate()
-    }
-
-    getYoutubeTemplate() {
-        return templateService.getYoutubeTemplate()
-    }
-
-    getHtmlTemplate() {
-        return templateService.getHtmlTemplate()
-    }
-
-    getTwitterTemplate() {
-        return templateService.getTwitterTemplate()
-    }
-
-    setImageTemplate(template) {
-        const variables = templateVariableService.getImageTemplateVariables()
+    setTemplate(type: string, template) {
+        const variables = templateVariableService.getTemplateVariable(type)
         this.assertVariablesConformTemplate(variables, template)
-        templateService.setImageTemplate(template)
+        templateService.setTemplate(type, template)
     }
 
-    setVideoTemplate(template) {
-        const variables = templateVariableService.getVideoTemplateVariables()
+    getTemplateVariables(type: string) {
+        debugger;
+        return templateVariableService.getTemplateVariable(type)
+    }
+
+    setTemplateVariables(type: string, variables) {
+        const template = templateService.getTemplate(type)
         this.assertVariablesConformTemplate(variables, template)
-        templateService.setVideoTemplate(template)
+        templateVariableService.setTemplateVariables(type, variables)
     }
 
-    setYoutubeTemplate(template) {
-        const variables = templateVariableService.getYoutubeTemplateVariables()
+    setTemplateAndVariables(type: string, template, variables) {
         this.assertVariablesConformTemplate(variables, template)
-        templateService.setYoutubeTemplate(template)
-    }
-
-    setHtmlTemplate(template) {
-        const variables = templateVariableService.getHtmlTemplateVariables()
-        this.assertVariablesConformTemplate(variables, template)
-        templateService.setHtmlTemplate(template)
-    }
-
-    setImageTemplateAndVariables(template, variables) {
-        this.assertVariablesConformTemplate(variables, template)
-        templateVariableService.setImageTemplateVariables(variables)
-        templateService.setImageTemplate(template)
-    }
-
-    setVideoTemplateAndVariables(template, variables) {
-        this.assertVariablesConformTemplate(variables, template)
-        templateVariableService.setVideoTemplateVariables(variables)
-        templateService.setVideoTemplate(template)
-    }
-
-    setYoutubeTemplateAndVariables(template, variables) {
-        this.assertVariablesConformTemplate(variables, template)
-        templateVariableService.setYoutubeTemplateVariables(variables)
-        templateService.setYoutubeTemplate(template)
-    }
-
-    setTwitterTemplateAndVariables(template, variables) {
-        this.assertVariablesConformTemplate(variables, template)
-        templateVariableService.setTwitterTemplateVariables(variables)
-        templateService.setTwitterTemplate(template)
-    }
-
-    setHtmlTemplateAndVariables(template, variables) {
-        this.assertVariablesConformTemplate(variables, template)
-        templateVariableService.setHtmlTemplateVariables(variables)
-        templateService.setHtmlTemplate(template)
-    }
-
-    getImageTemplateVariables() {
-        return templateVariableService.getImageTemplateVariables()
-    }
-
-    getVideoTemplateVariables() {
-        return templateVariableService.getVideoTemplateVariables()
-    }
-
-    getYoutubeTemplateVariables() {
-        return templateVariableService.getYoutubeTemplateVariables()
-    }
-
-    getHtmlTemplateVariables() {
-        return templateVariableService.getHtmlTemplateVariables()
-    }
-
-    getTwitterTemplateVariables() {
-        return templateVariableService.getTwitterTemplateVariables()
-    }
-
-
-    setImageTemplateVariables(variables) {
-        const template = templateService.getImageTemplate()
-        this.assertVariablesConformTemplate(variables, template)
-        templateVariableService.setImageTemplateVariables(variables)
-    }
-
-    setVideoTemplateVariables(variables) {
-        const template = templateService.getImageTemplate()
-        this.assertVariablesConformTemplate(variables, template)
-        templateVariableService.setImageTemplateVariables(variables)
-    }
-
-    setYoutubeTemplateVariables(variables) {
-        const template = templateService.getImageTemplate()
-        this.assertVariablesConformTemplate(variables, template)
-        templateVariableService.setImageTemplateVariables(variables)
-    }
-
-    setHtmlTemplateVariables(variables) {
-        const template = templateService.getImageTemplate()
-        this.assertVariablesConformTemplate(variables, template)
-        templateVariableService.setImageTemplateVariables(variables)
+        templateVariableService.setTemplateVariables(type, variables)
+        templateService.setTemplate(type, template)
     }
 
     updateTemplateVariables(oldVarName, newVarName, template) {

@@ -15,7 +15,7 @@ class ImageStackElement extends UploadableStackElement {
         const variables = [
             { variableName: "src_image", variableValue: src }
         ]
-        return templateManagerService.renderTemplate(variables, templateManagerService.getImageTemplate())
+        return templateManagerService.renderTemplate(variables, templateManagerService.getTemplate("image"))
     }
 
 }

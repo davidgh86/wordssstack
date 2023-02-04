@@ -3,6 +3,7 @@ import FileSystemStoreManager from "./fileSystemStoreManager";
 import { FileTypes, getMimeTypeFromExtension } from "./fileTypes";
 import StackElement from "./stackElement";
 import wordpressApi from "../service/wordpressApi"
+import debug from "@/service/debug";
 
 abstract class UploadableStackElement implements StackElement {
     
@@ -84,7 +85,7 @@ abstract class UploadableStackElement implements StackElement {
 
     async calculateRawData() {
         if (this.filePath.startsWith("file://")){
-            alert("Calculating raw data")
+            debug.debugAlert("Calculating raw data")
             const fileType = this.getExtension()
             const data = await FileSystemStoreManager.getBase64BytesFromCacheDisk(this.filePath)
             const src = `data:${this.fileType.toLowerCase()}/${fileType};base64,${data}`;

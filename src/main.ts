@@ -22,7 +22,7 @@ import '@ionic/vue/css/display.css';
 import * as intentInstance from 'cordova-plugin-intent/www/android/IntentPlugin';
 //import wordpressApi from './service/wordpressApi';
 
-import urlTypeClassifier from './service/urlTypeClassifier'
+import stackManager from './service/stackManager';
 
 //import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
@@ -30,7 +30,9 @@ import urlTypeClassifier from './service/urlTypeClassifier'
 import './theme/variables.css';
 
 import { store } from './store'
-import { FileTypes } from './wordpressstack/fileTypes';
+import debug from './service/debug';
+
+debug.enableDebug()
 
 store.commit('initialize')
 
@@ -56,28 +58,22 @@ router.isReady().then(() => {
 
 
 const processTextUrl = (url: string) => {
-  const type = urlTypeClassifier.getUrlType(url)
-
-  if (FileTypes.YOUTUBE === type) {
-    store.state.youtubeContentUrl = url
-    store.commit('addYoutubeContent')
-  } else if (FileTypes.TWITTER === type) {
-    store.state.twitterContentUrl = url
-    store.commit('addTwitterContent')
-  }
+  stackManager.processTextUrl(url)
 }
 
 const intentManager = (Intent) => {
-  alert("main ts 1.1" + JSON.stringify(Intent))
+  debug.debugAlert("main ts 1.1" + JSON.stringify(Intent))
   if (Intent.clipItems) {
     const mimeType = Intent.type
-    alert("main ts 1.2" + JSON.stringify(Intent.clipItems))
+    debug.debugAlert("main ts 1.2" + JSON.stringify(Intent.clipItems))
     for (const clipItem of Intent.clipItems) {
-      alert("main ts 3" + JSON.stringify(clipItem))
+      debug.debugAlert("main ts 3" + JSON.stringify(clipItem))
       if (clipItem.uri) { // is file
+        debug.debugAlert("Loading File " + clipItem.uri)
         const savedUrl = clipItem.uri
-        store.commit("addElementFromSavedExternalPath", { savedUrl, mimeType })
+        stackManager.processFileUrl(savedUrl, mimeType)
       } else if (clipItem.text) {
+        debug.debugAlert("Loading Uri " + clipItem.text)
         // TODO refactor
         processTextUrl(clipItem.text)
         
@@ -85,20 +81,21 @@ const intentManager = (Intent) => {
     }
   } else if (Intent.data) {
     // Intent.data is the url
+    debug.debugAlert("Loading Uri 2 " + JSON.stringify(Intent.data))
     processTextUrl(Intent.data)
   }
 }
 
 document.addEventListener('deviceReady', () => {
   intentInstance.getCordovaIntent((Intent) => {
-    alert("main ts 1")
+    debug.debugAlert("main ts 1")
     intentManager(Intent)
-  }, () => alert("Error"))
+  }, () => debug.debugAlert("Error"))
 })
 
 document.addEventListener('deviceReady', () => {
   intentInstance.setNewIntentHandler((Intent) => {
-    alert("main ts 2")
+    debug.debugAlert("main ts 2")
     intentManager(Intent)
   })
 })

@@ -134,12 +134,5 @@
       top: -10px;
       right: -10px;
   }
-  /* .no-style {
-    all: initial;
-  }
-
-  .no-style * {
-    all: unset;
-  } */
   </style>
   

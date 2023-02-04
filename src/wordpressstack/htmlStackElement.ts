@@ -26,7 +26,7 @@ class HTMLStackElement implements StackElement {
         const variables = [
             { variableName: "content", variableValue: this.html }
         ]
-        return templateManagerService.renderTemplate(variables, templateManagerService.getHtmlTemplate())
+        return templateManagerService.renderTemplate(variables, templateManagerService.getTemplate("html"))
     }
 
     getPrevisualizedHtmlElement(): string {
