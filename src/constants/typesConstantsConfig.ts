@@ -1,3 +1,10 @@
+import { FileTypes } from "@/wordpressstack/fileTypes";
+import HTMLStackElement from "@/wordpressstack/htmlStackElement";
+import ImageStackElement from "@/wordpressstack/imageStackElement";
+import StackElement from "@/wordpressstack/stackElement";
+import TwitterStackElement from "@/wordpressstack/twitterStackElement";
+import VideoStackElement from "@/wordpressstack/videoStackElement";
+import YoutubeStackElement from "@/wordpressstack/youtubeStackElement";
 import TemplateEntity from "../service/TemplateEntity"
 
 class TypesConstantsConfig {
@@ -56,6 +63,34 @@ class TypesConstantsConfig {
             twitterTemplate,
             twitterTemplateVariables
         ));
+    }
+
+    public static getStackElementByString(fileType: FileTypes, element: any): StackElement {
+        switch(fileType) {
+            case FileTypes.IMAGE: {
+                return new ImageStackElement(element.filePath, undefined)
+                break;
+            }
+            case FileTypes.HTML: {
+                return new HTMLStackElement(element.html)
+                break;
+            }
+            case FileTypes.VIDEO: {
+                return new VideoStackElement(element.filePath, element.extension)
+                break;
+            }
+            case FileTypes.YOUTUBE: {
+                return new YoutubeStackElement(element.url)
+                break;
+            }
+            case FileTypes.TWITTER: {
+                return new TwitterStackElement(element.url)
+                break;
+            }
+            default: {
+                throw new Error("Not implemented exception")
+            }
+        } 
     }
 }
 

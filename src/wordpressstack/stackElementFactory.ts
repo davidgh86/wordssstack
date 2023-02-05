@@ -1,11 +1,7 @@
 'use strict';
 import StackElement from "./stackElement";
-import ImageStackElement from "./imageStackElement";
-import VideoStackElement from "./videoStackElement";
-import HTMLStackElement from "./htmlStackElement";
-import YoutubeStackElement from "./youtubeStackElement";
 import { FileTypes, getFileTypeByExtension } from "./fileTypes";
-import TwitterStackElement from "./twitterStackElement";
+import TypesConstantsConfig from "@/constants/typesConstantsConfig";
 
 class StackElementFactory {
     public static getStackElement(file: File): StackElement {
@@ -20,31 +16,7 @@ class StackElementFactory {
     }
 
     public static getStackElementByString(fileType: FileTypes, element: any): StackElement {
-        switch(fileType) {
-            case FileTypes.IMAGE: {
-                return new ImageStackElement(element.filePath, undefined)
-                break;
-            }
-            case FileTypes.HTML: {
-                return new HTMLStackElement(element.html)
-                break;
-            }
-            case FileTypes.VIDEO: {
-                return new VideoStackElement(element.filePath, element.extension)
-                break;
-            }
-            case FileTypes.YOUTUBE: {
-                return new YoutubeStackElement(element.url)
-                break;
-            }
-            case FileTypes.TWITTER: {
-                return new TwitterStackElement(element.url)
-                break;
-            }
-            default: {
-                throw new Error("Not implemented exception")
-            }
-        } 
+        return TypesConstantsConfig.getStackElementByString(fileType, element)
     }
 }
 
