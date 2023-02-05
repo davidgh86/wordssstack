@@ -1,6 +1,6 @@
-import TemplateEntity from "./TemplateEntity";
+import TemplateEntity from "../service/TemplateEntity"
 
-export class TypesConstantsConfig {
+class TypesConstantsConfig {
 
     public static templateMap: Map<string, TemplateEntity> = new Map();
 
@@ -36,25 +36,27 @@ export class TypesConstantsConfig {
         const htmlTemplate = localStorage.getItem("htmlTemplate") || defaultHtmlTemplate;
         const twitterTemplate = localStorage.getItem("twitterTemplate") || defaultTwitterTemplate;
 
-        this.templateMap.set("html", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("html", new TemplateEntity(
             htmlTemplate,
             htmlTemplateVariables
         ));
-        this.templateMap.set("image", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("image", new TemplateEntity(
             imageTemplate,
             imageTemplateVariables
         ));
-        this.templateMap.set("video", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("video", new TemplateEntity(
             videoTemplate,
             videoTemplateVariables
         ));
-        this.templateMap.set("youtube", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("youtube", new TemplateEntity(
             youtubeTemplate,
             youtubeTemplateVariables
         ));
-        this.templateMap.set("twitter", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("twitter", new TemplateEntity(
             twitterTemplate,
             twitterTemplateVariables
         ));
     }
 }
+
+export default TypesConstantsConfig.templateMap;

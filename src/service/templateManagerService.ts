@@ -15,7 +15,6 @@ class TemplateManagerService {
     }
 
     getTemplate(type: string) {
-        debugger;
         return templateService.getTemplate(type)
     }    
 
@@ -26,7 +25,6 @@ class TemplateManagerService {
     }
 
     getTemplateVariables(type: string) {
-        debugger;
         return templateVariableService.getTemplateVariable(type)
     }
 

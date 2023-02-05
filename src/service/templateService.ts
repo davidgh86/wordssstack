@@ -1,4 +1,4 @@
-import { TypesConstantsConfig } from './TypesConstantsConfig'
+import typesConstantsConfig from "@/constants/typesConstantsConfig";
 
 class TemplateService {
 
@@ -13,11 +13,11 @@ class TemplateService {
     }
 
     getTemplate(type: string) {
-        TypesConstantsConfig.templateMap.get(type).getTemplate()
+        return typesConstantsConfig.templateMap.get(type).getTemplate()
     }
 
     setTemplate(type: string, template) {
-        TypesConstantsConfig.templateMap.get(type).setTemplate(template)
+        typesConstantsConfig.templateMap.get(type).setTemplate(template)
         localStorage.setItem(type+"Template", JSON.stringify(template));
     }
 
