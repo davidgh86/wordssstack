@@ -86,18 +86,6 @@
         }
         this.$emit("templateChanged", htmlEditorContent.value)
       }
-  
-      function newVar(event) {
-        //oldVariables = placeholders.value
-      }
-  
-      function confirmVar(event) {
-        //oldVariables = placeholders.value
-      }
-  
-      function varRemoved(event) {
-        //oldVariables = placeholders.value
-      }
 
       const replaceVariblesInTemplate = _.debounce(() => {
         
@@ -105,15 +93,11 @@
         renderedTemplate.value = templateManagerService.renderTemplate(oldVariables, htmlEditorContent.value)
       }, 1000);
   
-  
       return {
         htmlEditorContent,
         placeholders,
         editPlaceHolder,
         saveTemplate,
-        newVar,
-        confirmVar,
-        varRemoved,
         replaceVariblesInTemplate,
         renderedTemplate
       }

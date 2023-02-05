@@ -15,21 +15,18 @@
             <ion-list>
               <ion-item>
                 <ion-select placeholder="Select template" :value="templateType" @ionChange="radioGroupChange">
-                  <ion-select-option value="image">Image</ion-select-option>
-                  <ion-select-option value="video">Video</ion-select-option>
-                  <ion-select-option value="html">Html</ion-select-option>
-                  <ion-select-option value="youtube">Youtube</ion-select-option>
-                  <ion-select-option value="twitter">Twitter</ion-select-option>
+                  <ion-select-option v-for="(__, propertyName) in templateMap" :key="propertyName" :value="propertyName">{{propertyName}}</ion-select-option>
                 </ion-select>
               </ion-item>
             </ion-list>
           </ion-row>
         </ion-grid>
-        <SingleTemplateManager v-if="templateType == 'image'" :variables="imageTemplateVariables" :htmlContent="imageTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'video'" :variables="videoTemplateVariables" :htmlContent="videoTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'html'" :variables="htmlTemplateVariables" :htmlContent="htmlTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'youtube'" :variables="youtubeTemplateVariables" :htmlContent="youtubeTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
-        <SingleTemplateManager v-if="templateType == 'twitter'" :variables="twitterTemplateVariables" :htmlContent="twitterTemplate" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
+        
+        <ion-row v-for="(value, propertyName) in templateMap" :key="propertyName">
+          <SingleTemplateManager v-if="templateType == propertyName" 
+                :variables="value.variables" 
+                :htmlContent="value.template" @confirmTemplate="saveTemplate($event)"></SingleTemplateManager>
+        </ion-row>
     </ion-content>
   </ion-page>
 </template>
@@ -46,6 +43,7 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
 import templateEditor from '../service/templateService'
 import templateManagerService from '../service/templateManagerService'
 import SingleTemplateManager from '@/components/SingleTemplateManager.vue';
+import typesConstantsConfig from '@/constants/typesConstantsConfig';
 //import { quillEditor } from 'vue3-quill'
 
 export default defineComponent({
@@ -68,24 +66,23 @@ export default defineComponent({
 },
   setup() {
 
+    const templateMap = ref(getTemplateMap())
+
     const templateType = ref("image")
 
     const htmlEditorContent = ref(templateEditor.getTemplate("image"))
 
-    const imageTemplateVariables = ref(templateManagerService.getTemplateVariables("image"))
-    const videoTemplateVariables = ref(templateManagerService.getTemplateVariables("video"))
-    const youtubeTemplateVariables = ref(templateManagerService.getTemplateVariables("youtube"))
-    const htmlTemplateVariables = ref(templateManagerService.getTemplateVariables("html"))
-    const twitterTemplateVariables = ref(templateManagerService.getTemplateVariables("twitter"))
-
-
-    const imageTemplate = ref(templateManagerService.getTemplate("image"))
-    const videoTemplate = ref(templateManagerService.getTemplate("video"))
-    const youtubeTemplate = ref(templateManagerService.getTemplate("youtube"))
-    const htmlTemplate = ref(templateManagerService.getTemplate("html"))
-    const twitterTemplate = ref(templateManagerService.getTemplate("twitter"))
-
-    //const a = ref(Mustache.render("{{title}} spends {{calc}}", {title: "titulo", calc: "tis" }))
+    function getTemplateMap() {
+      const result = {}
+      const keys = typesConstantsConfig.templateMap.keys()
+      for (const key of keys) {
+        result[key] = {
+          variables: templateManagerService.getTemplateVariables(key),
+          template: templateManagerService.getTemplate(key)
+        }
+      }
+      return result
+    }
 
     function radioGroupChange(event) {
       templateType.value = event.target.value
@@ -96,7 +93,7 @@ export default defineComponent({
 
     function saveTemplate(event) {
       let type = templateType.value
-
+      debugger;
       templateManagerService.setTemplateAndVariables(type, event.template, event.variables)
     } 
 
@@ -120,16 +117,7 @@ export default defineComponent({
       newVar,
       confirmVar,
       varRemoved,
-      imageTemplateVariables,
-      videoTemplateVariables,
-      youtubeTemplateVariables,
-      htmlTemplateVariables,
-      twitterTemplateVariables,
-      imageTemplate,
-      videoTemplate,
-      youtubeTemplate,
-      htmlTemplate,
-      twitterTemplate
+      templateMap,
     }
   }
 });
@@ -149,3 +137,5 @@ export default defineComponent({
     right: -10px;
 }
 </style>
+
+

@@ -1,13 +1,11 @@
-
-import TemplateEntity from '@/service/TemplateEntity';
+import TemplateEntity from "../service/TemplateEntity"
 
 class TypesConstantsConfig {
 
-    private static instance: TypesConstantsConfig;
+    public static templateMap: Map<string, TemplateEntity> = new Map();
 
-    public templateMap: Map<string, TemplateEntity> = new Map();
+    static {
 
-    constructor(){
         const imageTemplateDefaultVariables = '[{ "variableName": "src_image", "variableValue": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" }]';
         const videoTemplateDefaultVariables = '[{ "variableName": "src_video", "variableValue": "https://videos.files.wordpress.com/2IUdmeVU/fdgshdnfgt.mp4" }, { "variableName": "video_extension", "variableValue": "mp4" }]';
         const youtubeTemplateDefaultVariables = '[{ "variableName": "youtube_video_id", "variableValue": "3oOrd-oWlaE" }]';
@@ -38,39 +36,27 @@ class TypesConstantsConfig {
         const htmlTemplate = localStorage.getItem("htmlTemplate") || defaultHtmlTemplate;
         const twitterTemplate = localStorage.getItem("twitterTemplate") || defaultTwitterTemplate;
 
-        this.templateMap.set("html", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("html", new TemplateEntity(
             htmlTemplate,
             htmlTemplateVariables
         ));
-        this.templateMap.set("image", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("image", new TemplateEntity(
             imageTemplate,
             imageTemplateVariables
         ));
-        this.templateMap.set("video", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("video", new TemplateEntity(
             videoTemplate,
             videoTemplateVariables
         ));
-        this.templateMap.set("youtube", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("youtube", new TemplateEntity(
             youtubeTemplate,
             youtubeTemplateVariables
         ));
-        this.templateMap.set("twitter", new TemplateEntity(
+        TypesConstantsConfig.templateMap.set("twitter", new TemplateEntity(
             twitterTemplate,
             twitterTemplateVariables
         ));
     }
-
-    public static getInstance(): TypesConstantsConfig {
-        if (!TypesConstantsConfig.instance) {
-            TypesConstantsConfig.instance = new TypesConstantsConfig()
-        }
-        
-        return TypesConstantsConfig.instance
-    }
-
 }
 
-export default TypesConstantsConfig.getInstance()
-
-
-
+export default TypesConstantsConfig;
