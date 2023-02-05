@@ -59,4 +59,4 @@ class TypesConstantsConfig {
     }
 }
 
-export default TypesConstantsConfig.templateMap;
+export default TypesConstantsConfig;
