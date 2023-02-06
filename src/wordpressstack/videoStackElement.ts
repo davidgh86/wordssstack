@@ -1,6 +1,6 @@
 'use strict';
+import { FileTypes } from "@/constants/typesConstantsConfig";
 import templateManagerService from "@/service/templateManagerService";
-import { FileTypes } from "./fileTypes";
 import UploadableStackElement from "./uploadableStackElement";
 
 class VideoStackElement extends UploadableStackElement {

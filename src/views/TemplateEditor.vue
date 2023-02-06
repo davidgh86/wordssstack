@@ -43,7 +43,7 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
 import templateEditor from '../service/templateService'
 import templateManagerService from '../service/templateManagerService'
 import SingleTemplateManager from '@/components/SingleTemplateManager.vue';
-import typesConstantsConfig from '@/constants/typesConstantsConfig';
+import { TypesConstantsConfig } from '@/constants/typesConstantsConfig';
 //import { quillEditor } from 'vue3-quill'
 
 export default defineComponent({
@@ -66,23 +66,11 @@ export default defineComponent({
 },
   setup() {
 
-    const templateMap = ref(getTemplateMap())
+    const templateMap = ref(TypesConstantsConfig.getTemplateMap())
 
     const templateType = ref("image")
 
     const htmlEditorContent = ref(templateEditor.getTemplate("image"))
-
-    function getTemplateMap() {
-      const result = {}
-      const keys = typesConstantsConfig.templateMap.keys()
-      for (const key of keys) {
-        result[key] = {
-          variables: templateManagerService.getTemplateVariables(key),
-          template: templateManagerService.getTemplate(key)
-        }
-      }
-      return result
-    }
 
     function radioGroupChange(event) {
       templateType.value = event.target.value

@@ -1,10 +1,10 @@
-import { FileTypes, getFileTypeByExtension } from '@/wordpressstack/fileTypes';
 import StackElementFactory from '@/wordpressstack/stackElementFactory';
 import StackElementStorageManager from '@/wordpressstack/stackElementStorageManager';
 import TwitterStackElement from '@/wordpressstack/twitterStackElement';
 import UploadableStackElement from '@/wordpressstack/uploadableStackElement';
 import {store} from '@/store'
 import debug from './debug';
+import { FileTypes, TypesConstantsConfig } from '@/constants/typesConstantsConfig';
 
 
 class StackManager {
@@ -113,7 +113,7 @@ class StackManager {
     async addElementFromSavedExternalPath(state, { savedUrl, mimeType }){
         debug.debugAlert("store index addElementFromSavedExternalPath 1 "+ savedUrl)
         const extension = !mimeType?savedUrl.split(".").pop():mimeType.split("/").pop()
-        const fileType = getFileTypeByExtension(extension)
+        const fileType = TypesConstantsConfig.getFileTypeByExtension(extension)
         debug.debugAlert("store index addElementFromSavedExternalPath 2 extension: "+ JSON.stringify(extension) + " filetype: " + JSON.stringify(fileType) )
         const stackElement = StackElementFactory.getStackElementByString(fileType, {filePath: savedUrl, extension: extension})
         debug.debugAlert("store index addElementFromSavedExternalPath 3 stakElement: "+ JSON.stringify(stackElement) )

@@ -1,9 +1,9 @@
 'use strict';
-import { FileTypes } from "./fileTypes";
 import StackElement from "./stackElement";
 
 import { v4 as uuid } from 'uuid';
 import templateManagerService from "@/service/templateManagerService";
+import { FileTypes } from "@/constants/typesConstantsConfig";
 
 class HTMLStackElement implements StackElement {
     

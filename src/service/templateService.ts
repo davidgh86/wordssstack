@@ -1,4 +1,4 @@
-import TypesConstantsConfig from "@/constants/typesConstantsConfig";
+import { TypesConstantsConfig } from "@/constants/typesConstantsConfig";
 
 class TemplateService {
 

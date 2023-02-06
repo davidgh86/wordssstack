@@ -62,14 +62,9 @@
               <ion-label>Html</ion-label>
               <ion-radio slot="end" value="html"></ion-radio>
             </ion-item>
-
             <ion-item>
-              <ion-label>Youtube</ion-label>
-              <ion-radio slot="end" value="youtube"></ion-radio>
-            </ion-item>
-            <ion-item>
-              <ion-label>Twitter</ion-label>
-              <ion-radio slot="end" value="twitter"></ion-radio>
+              <ion-label>Url</ion-label>
+              <ion-radio slot="end" value="url"></ion-radio>
             </ion-item>
           </ion-radio-group>
         </ion-list>
@@ -79,12 +74,9 @@
                 v-model:value="store.state.htmlEditorContent"
               />
           </ion-col>
-        </ion-row>
-        <ion-row v-if="plainShareType==='youtube'">
-          <ion-input :value="store.state.youtubeContentUrl" @ionInput="setYoutubeUrl($event.target.value)"></ion-input>
-        </ion-row>
-        <ion-row v-if="plainShareType==='twitter'">
-          <ion-input :value="store.state.twitterContentUrl" @ionInput="setTwitterUrl($event.target.value)"></ion-input>
+        </ion-row>        
+        <ion-row v-if="plainShareType==='url'">
+          <ion-input :value="inputUrlContent" @ionInput="setInputUrl($event.target.value)"></ion-input>
         </ion-row>
         <ion-row v-if="plainShareType">
           <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
@@ -107,6 +99,7 @@ import { quillEditor } from 'vue3-quill'
 import { closeCircle } from 'ionicons/icons';
 
 import _ from 'lodash'
+import stackManager from '@/service/stackManager';
 
 export default defineComponent({
   name: 'FolderPage',
@@ -138,14 +131,12 @@ export default defineComponent({
 
     const title = ref("")
 
+    const inputUrlContent = ref("")
+
     const plainShareType = ref("html")
 
-    function setYoutubeUrl(ytUrl) {
-      store.state.youtubeContentUrl = ytUrl
-    }
-
-    function setTwitterUrl(tUrl) {
-      store.state.twitterContentUrl = tUrl
+    function setInputUrl(url) {
+      inputUrlContent.value = url
     }
 
     function radioGroupChange(event) {
@@ -170,10 +161,9 @@ export default defineComponent({
     function addHtmlContent(){
       if (plainShareType.value === "html") {
         store.commit('addHtmlContent')
-      } else if (plainShareType.value === "youtube") {
-        store.commit('addYoutubeContent')
-      } else if (plainShareType.value === "twitter") {
-        store.commit('addTwitterContent')
+      } else if (plainShareType.value === "url") {
+        stackManager.processTextUrl(inputUrlContent.value)
+        inputUrlContent.value = ""
       }
     }
 
@@ -227,8 +217,8 @@ export default defineComponent({
       removeElement,
       radioGroupChange,
       store,
-      setYoutubeUrl,
-      setTwitterUrl
+      setInputUrl,
+      inputUrlContent
     }
   }
 });

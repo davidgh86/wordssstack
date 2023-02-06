@@ -1,4 +1,3 @@
-import { FileTypes } from "@/wordpressstack/fileTypes";
 import HTMLStackElement from "@/wordpressstack/htmlStackElement";
 import ImageStackElement from "@/wordpressstack/imageStackElement";
 import StackElement from "@/wordpressstack/stackElement";
@@ -7,9 +6,34 @@ import VideoStackElement from "@/wordpressstack/videoStackElement";
 import YoutubeStackElement from "@/wordpressstack/youtubeStackElement";
 import TemplateEntity from "../service/TemplateEntity"
 
+enum FileTypes {
+    IMAGE = "IMAGE",
+    VIDEO = "VIDEO",
+    HTML = "HTML",
+    YOUTUBE = "YOUTUBE",
+    TWITTER = "TWITTER",
+    UNKNOWN = "UNKNOWN"
+}
+
 class TypesConstantsConfig {
 
     public static templateMap: Map<string, TemplateEntity> = new Map();
+
+    private static extensions = new Map<string, FileTypes>(
+        [
+            ["html", FileTypes.HTML],
+            ["htm", FileTypes.HTML],
+            
+            ["jpg", FileTypes.IMAGE],
+            ["jpeg", FileTypes.IMAGE],
+            ["png", FileTypes.IMAGE],
+            ["gif", FileTypes.IMAGE],
+            
+            ["mp4", FileTypes.VIDEO],
+            ["youtube", FileTypes.YOUTUBE],
+            ["twitter", FileTypes.TWITTER],
+        ]
+    )
 
     static {
 
@@ -45,24 +69,53 @@ class TypesConstantsConfig {
 
         TypesConstantsConfig.templateMap.set("html", new TemplateEntity(
             htmlTemplate,
-            htmlTemplateVariables
+            htmlTemplateVariables,
+            false
         ));
         TypesConstantsConfig.templateMap.set("image", new TemplateEntity(
             imageTemplate,
-            imageTemplateVariables
+            imageTemplateVariables,
+            false
         ));
         TypesConstantsConfig.templateMap.set("video", new TemplateEntity(
             videoTemplate,
-            videoTemplateVariables
+            videoTemplateVariables,
+            false
         ));
         TypesConstantsConfig.templateMap.set("youtube", new TemplateEntity(
             youtubeTemplate,
-            youtubeTemplateVariables
+            youtubeTemplateVariables,
+            true
         ));
         TypesConstantsConfig.templateMap.set("twitter", new TemplateEntity(
             twitterTemplate,
-            twitterTemplateVariables
+            twitterTemplateVariables,
+            true
         ));
+    }
+
+    public static getTemplateMap() {
+        const result = {}
+        const keys = TypesConstantsConfig.templateMap.keys()
+        for (const key of keys) {
+          result[key] = {
+            variables: TypesConstantsConfig.templateMap.get(key).getVariables(),
+            template: TypesConstantsConfig.templateMap.get(key).getTemplate(),
+            isUrl: TypesConstantsConfig.templateMap.get(key).isUrl()
+          }
+        }
+        return result
+    }
+
+    public static getUrlTypes(){
+        const result = []
+        const keys = TypesConstantsConfig.templateMap.keys()
+        for (const key of keys) {
+            if (TypesConstantsConfig.templateMap.get(key).isUrl()) {
+                result.push(key)
+            }
+        }
+        return result
     }
 
     public static getStackElementByString(fileType: FileTypes, element: any): StackElement {
@@ -92,6 +145,31 @@ class TypesConstantsConfig {
             }
         } 
     }
+
+    public static getFileTypeByExtension(extension: string): FileTypes|undefined {
+        const standarizedExtension = extension.trim().toLowerCase()
+        if (!TypesConstantsConfig.extensions.has(standarizedExtension)) {
+            return FileTypes.UNKNOWN
+        }
+        else {
+            return TypesConstantsConfig.extensions.get(standarizedExtension)
+        }
+    }
+
+    public static getMimeTypeFromExtension(extension: string): string {
+        const standarizedExtension = extension.trim().toLowerCase()
+        const fileType: FileTypes = TypesConstantsConfig.getFileTypeByExtension(standarizedExtension)
+        if (fileType === FileTypes.IMAGE) {
+            if (extension == "jpg"){
+                return "image/jpeg"
+            } else {
+                return "image/"+extension
+            }
+        } else if (fileType === FileTypes.VIDEO) {
+            return "video/"+extension
+        }
+        return ""
+    }
 }
 
-export default TypesConstantsConfig;
+export {TypesConstantsConfig, FileTypes};

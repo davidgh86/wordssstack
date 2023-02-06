@@ -1,10 +1,10 @@
 'use strict';
 import StackElement from "./stackElement";
-import { FileTypes } from "./fileTypes";
 import StackElementFactory from "./stackElementFactory";
 import UploadableStackElement from "./uploadableStackElement";
 import wordpressApi from "../service/wordpressApi"
 import debug from "@/service/debug";
+import { FileTypes } from "@/constants/typesConstantsConfig";
 
 class StackElementStorageManager {
 

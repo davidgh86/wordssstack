@@ -2,10 +2,12 @@ export default class TemplateEntity {
 
     private template: string;
     private variables: any;
+    private _isUrl: boolean;
 
-    constructor(template, variables) {
+    constructor(template, variables, isUrl) {
         this.template = template;
-        this.variables = variables
+        this.variables = variables;
+        this._isUrl = isUrl;
     }
 
     public setTemplate(template: string) {
@@ -22,5 +24,9 @@ export default class TemplateEntity {
 
     public getVariables() {
         return this.variables;
+    }
+
+    public isUrl() {
+        return this._isUrl;
     }
 }
