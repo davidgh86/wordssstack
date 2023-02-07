@@ -32,11 +32,9 @@ class StackManager {
         const type = this.getUrlType(url)
       
         if (FileTypes.YOUTUBE === type) {
-          store.state.youtubeContentUrl = url
-          store.commit('addYoutubeContent')
+          this.addYoutubeContent(store.state, url)
         } else if (FileTypes.TWITTER === type) {
-          store.state.twitterContentUrl = url
-          store.commit('addTwitterContent')
+          this.addTwitterContent(store.state, url)
         }
     }
 
@@ -54,7 +52,7 @@ class StackManager {
             return FileTypes.TWITTER
         }
 
-        return FileTypes.YOUTUBE
+        return FileTypes.HTML
     }
 
     async addHtmlContent(state){
@@ -64,19 +62,21 @@ class StackManager {
         state.htmlEditorContent = ""
     }
 
-    async addTwitterContent(state) {
-        const element = StackElementFactory.getStackElementByString(FileTypes.TWITTER, {url: state.twitterContentUrl}) as TwitterStackElement 
+    async addTwitterContent(state, url) {
+        const element = StackElementFactory.getStackElementByString(FileTypes.TWITTER, {url: url}) as TwitterStackElement 
         await element.initialize()
         await this.stackElementStorageManager.saveStackElement(element);
         state.stack.push(element)
-        state.twitterContentUrl = ""
     }
 
-    async addYoutubeContent(state){
-        const element = StackElementFactory.getStackElementByString(FileTypes.YOUTUBE, {url: state.youtubeContentUrl})
+    async addYoutubeContent(state, url){
+        const element = StackElementFactory.getStackElementByString(FileTypes.YOUTUBE, {url: url})
         await this.stackElementStorageManager.saveStackElement(element);
         state.stack.push(element)
-        state.youtubeContentUrl = ""
+    }
+
+    async addUrlContent(url){
+        await this.processTextUrl(url)
     }
 
     async removeElement(state, index){

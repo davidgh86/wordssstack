@@ -10,8 +10,6 @@ export const store = createStore({
   state: {
     title: localStorage.getItem("title")?localStorage.getItem("title"):"",
     htmlEditorContent: "",
-    youtubeContentUrl: "",
-    twitterContentUrl: "",
     stack: stack
   },
   getters: {
@@ -40,11 +38,8 @@ export const store = createStore({
     async addHtmlContent(state){
       await stackManager.addHtmlContent(state)
     },
-    async addTwitterContent(state) {
-      await stackManager.addTwitterContent(state)
-    }, 
-    async addYoutubeContent(state){
-      await stackManager.addYoutubeContent(state)
+    async addUrlContent(state, url){
+      await stackManager.addUrlContent(url)
     },
     async removeElement(state, index){
       await stackManager.removeElement(state, index)
@@ -70,11 +65,8 @@ export const store = createStore({
     addHtmlContent(context) {
       context.commit('addHtmlContent')
     },
-    addYoutubeContent(context){
-      context.commit('addYoutubeContent')
-    },
-    addTwitterContent(context){
-      context.commit('addTwitterContent')
+    addUrlContent(context, url){
+      context.commit('addUrlContent', url)
     },
     saveStack(context) {
       context.commit('saveStack')
