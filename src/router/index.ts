@@ -19,6 +19,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import ('../views/RestoreDefault.vue')
   },
   {
+    path: '/poll',
+    component: () => import ('../views/CreatePoll.vue')
+  },
+  {
     path: '/',
     component: () => import ('../views/StackPage.vue')
   }

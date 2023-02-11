@@ -25,7 +25,7 @@
 import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonNote, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { logoBuffer, settingsOutline, archiveOutline, albumsOutline, refreshOutline } from 'ionicons/icons';
+import { logoBuffer, settingsOutline, archiveOutline, albumsOutline, refreshOutline, statsChartOutline } from 'ionicons/icons';
 
 export default defineComponent({
   name: 'App',
@@ -59,6 +59,12 @@ export default defineComponent({
         mdIcon: settingsOutline
       },
       {
+        title: 'Create Poll',
+        url: '/poll',
+        iosIcon: statsChartOutline,
+        mdIcon: statsChartOutline
+      },
+      {
         title: 'Templates',
         url: '/templates',
         iosIcon: albumsOutline,
@@ -89,6 +95,7 @@ export default defineComponent({
       refreshOutline,
       logoBuffer,
       albumsOutline,
+      statsChartOutline,
       isSelected: (url: string) => url === route.path ? 'selected' : ''
     }
   }

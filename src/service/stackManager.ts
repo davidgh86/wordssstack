@@ -5,6 +5,7 @@ import UploadableStackElement from '@/wordpressstack/uploadableStackElement';
 import {store} from '@/store'
 import debug from './debug';
 import { FileTypes, TypesConstantsConfig } from '@/constants/typesConstantsConfig';
+import StrawpollStackElement from '@/wordpressstack/strawpollStackElement';
 
 
 class StackManager {
@@ -35,6 +36,8 @@ class StackManager {
           this.addYoutubeContent(store.state, url)
         } else if (FileTypes.TWITTER === type) {
           this.addTwitterContent(store.state, url)
+        } else if (FileTypes.STRAWPOLL === type) {
+            this.addStrawpollContent(store.state, url)
         }
     }
 
@@ -50,6 +53,8 @@ class StackManager {
             return FileTypes.YOUTUBE
         } else if (hostname === "twitter.com") {
             return FileTypes.TWITTER
+        } else if (hostname === "strawpoll.com") {
+            return FileTypes.STRAWPOLL
         }
 
         return FileTypes.HTML
@@ -65,6 +70,12 @@ class StackManager {
     async addTwitterContent(state, url) {
         const element = StackElementFactory.getStackElementByString(FileTypes.TWITTER, {url: url}) as TwitterStackElement 
         await element.initialize()
+        await this.stackElementStorageManager.saveStackElement(element);
+        state.stack.push(element)
+    }
+
+    async addStrawpollContent(state, url) {
+        const element = StackElementFactory.getStackElementByString(FileTypes.STRAWPOLL, {url: url})
         await this.stackElementStorageManager.saveStackElement(element);
         state.stack.push(element)
     }

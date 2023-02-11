@@ -58,7 +58,7 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  name: 'ConfigComponent',
+  name: 'CreatePoll',
   components: {
     IonButtons,
     IonContent,

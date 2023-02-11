@@ -1,6 +1,7 @@
 import HTMLStackElement from "@/wordpressstack/htmlStackElement";
 import ImageStackElement from "@/wordpressstack/imageStackElement";
 import StackElement from "@/wordpressstack/stackElement";
+import StrawpollStackElement from "@/wordpressstack/strawpollStackElement";
 import TwitterStackElement from "@/wordpressstack/twitterStackElement";
 import VideoStackElement from "@/wordpressstack/videoStackElement";
 import YoutubeStackElement from "@/wordpressstack/youtubeStackElement";
@@ -12,7 +13,8 @@ enum FileTypes {
     HTML = "HTML",
     YOUTUBE = "YOUTUBE",
     TWITTER = "TWITTER",
-    UNKNOWN = "UNKNOWN"
+    UNKNOWN = "UNKNOWN",
+    STRAWPOLL = "STRAWPOLL"
 }
 
 class TypesConstantsConfig {
@@ -32,6 +34,7 @@ class TypesConstantsConfig {
             ["mp4", FileTypes.VIDEO],
             ["youtube", FileTypes.YOUTUBE],
             ["twitter", FileTypes.TWITTER],
+            ["strawpoll", FileTypes.STRAWPOLL],
         ]
     )
 
@@ -40,6 +43,7 @@ class TypesConstantsConfig {
         const imageTemplateDefaultVariables = '[{ "variableName": "src_image", "variableValue": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" }]';
         const videoTemplateDefaultVariables = '[{ "variableName": "src_video", "variableValue": "https://videos.files.wordpress.com/2IUdmeVU/fdgshdnfgt.mp4" }, { "variableName": "video_extension", "variableValue": "mp4" }]';
         const youtubeTemplateDefaultVariables = '[{ "variableName": "youtube_video_id", "variableValue": "3oOrd-oWlaE" }]';
+        const strawpollTemplateDefaultVariables = '[{ "variableName": "strawpoll_embed_url", "variableValue": "https://strawpoll.com/embed/rae5gcp1" }]';
         const htmlTemplateDefaultVariables = '[{ "variableName": "content", "variableValue": "<p>Html content</p>" }]';
         const auxTwitterTemplate = "<blockquote class=\"twitter-tweet\"><p lang=\"es\" dir=\"ltr\">Hola, soy bi-color:P<a href=\"https://t.co/VJ8sZKJAPt\">https://t.co/VJ8sZKJAPt</a> <br><br>Minecraft extremo 🥸<br>Simón dice con el ded 🥸<br>Otras cosas 🥸 <a href=\"https://t.co/kOVvqQAyF1\">pic.twitter.com/kOVvqQAyF1</a></p>&mdash; Ari Gameplays 💗 (@arigameplays) <a href=\"https://twitter.com/arigameplays/status/1618378584397336576?ref_src=twsrc%5Etfw\">January 25, 2023</a></blockquote>\n<script async src=\"https://platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>\n"
         const twitterTemplateDefaultVariables = JSON.stringify([{ variableName: "content", variableValue: auxTwitterTemplate }]);
@@ -51,6 +55,7 @@ class TypesConstantsConfig {
 </div>`
         const defaultImageTemplate = `<img src="{src_image}"/>`
         const defaultYoutubeTemplate = `<iframe width="560" height="315" src="https://www.youtube.com/embed/{youtube_video_id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+        const defaultStrawpollTemplate = `<iframe width="620" height="512" src="{strawpoll_embed_url}" style="width: 100%; height: 515px;" frameborder="0" allowfullscreen></iframe>`
         const defaultHtmlTemplate = `{content}`
         const defaultTwitterTemplate = `{content}`
 
@@ -58,12 +63,14 @@ class TypesConstantsConfig {
         const imageTemplateVariables = JSON.parse(localStorage.getItem("imageTemplateVariables") || imageTemplateDefaultVariables);
         const videoTemplateVariables = JSON.parse(localStorage.getItem("videoTemplateVariables") || videoTemplateDefaultVariables);
         const youtubeTemplateVariables = JSON.parse(localStorage.getItem("youtubeTemplateVariables") || youtubeTemplateDefaultVariables);
+        const strawpollTemplateVariables = JSON.parse(localStorage.getItem("strawpollTemplateVariables") || strawpollTemplateDefaultVariables);
         const htmlTemplateVariables = JSON.parse(localStorage.getItem("htmlTemplateVariables") || htmlTemplateDefaultVariables);
         const twitterTemplateVariables = JSON.parse(localStorage.getItem("twitterTemplateVariables") || twitterTemplateDefaultVariables);
 
         const imageTemplate = localStorage.getItem("imageTemplate") || defaultImageTemplate;
         const videoTemplate = localStorage.getItem("videoTemplate") || defaultVideoTemplate;
         const youtubeTemplate = localStorage.getItem("youtubeTemplate") || defaultYoutubeTemplate;
+        const strawpollTemplate = localStorage.getItem("strawpollTemplate") || defaultStrawpollTemplate;
         const htmlTemplate = localStorage.getItem("htmlTemplate") || defaultHtmlTemplate;
         const twitterTemplate = localStorage.getItem("twitterTemplate") || defaultTwitterTemplate;
 
@@ -90,6 +97,11 @@ class TypesConstantsConfig {
         TypesConstantsConfig.templateMap.set("twitter", new TemplateEntity(
             twitterTemplate,
             twitterTemplateVariables,
+            true
+        ));
+        TypesConstantsConfig.templateMap.set("strawpoll", new TemplateEntity(
+            strawpollTemplate,
+            strawpollTemplateVariables,
             true
         ));
     }
@@ -138,6 +150,10 @@ class TypesConstantsConfig {
             }
             case FileTypes.TWITTER: {
                 return new TwitterStackElement(element.url)
+                break;
+            }
+            case FileTypes.STRAWPOLL: {
+                return new StrawpollStackElement(element.url, element.embedUrl)
                 break;
             }
             default: {

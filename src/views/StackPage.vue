@@ -15,7 +15,8 @@
               <ion-item>
                 <ion-label position="floating">Title</ion-label>
                 <!-- workaround because not working -->
-                <ion-input :value="store.state.title" @ionInput="setTitle($event.target.value)"></ion-input>
+                <ion-input :value="store.state.title" @ionInput="setTitle($event.target.value)"
+                ></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -68,10 +69,16 @@
             </ion-item>
           </ion-radio-group>
         </ion-list>
+        <ion-row>Here {{ position }} - range {{ rangeCount }} - Node name - {{ nodeName }} - {{ store.state.htmlEditorContent }}</ion-row>
+        <ion-row><ion-button color="primary" @click="addLink">Link</ion-button></ion-row>
         <ion-row v-if="plainShareType==='html'">
           <ion-col>
             <quill-editor
-                v-model:value="store.state.htmlEditorContent"
+                v-model:value="store.state.htmlEditorContent" 
+                
+                @focus="debugEvent($event)"
+                @ready="debugEvent($event)"
+                @change="debugEvent($event)"
               />
           </ion-col>
         </ion-row>        
@@ -135,6 +142,10 @@ export default defineComponent({
 
     const plainShareType = ref("html")
 
+    const position = ref(-1)
+    const rangeCount = ref(-1)
+    const nodeName = ref("")
+
     function setInputUrl(url) {
       inputUrlContent.value = url
     }
@@ -156,6 +167,50 @@ export default defineComponent({
 
     function stackByPath(file: File){
       store.commit('stackByPath', file)
+    }
+
+    const addLink = () =>{
+      debugger;
+      const htmlContent = store.state.htmlEditorContent
+      const link = "<a href=\"https://www.youtube.com/watch?v=4-JtEYLmlYM\" rel=\"noopener noreferrer\" target=\"_blank\">youtube</a>"
+      if (nodeName.value.toUpperCase() === "A" || position.value === -1) {
+        store.state.htmlEditorContent = htmlContent + " " + link
+      } else if(position.value == 0) {
+        store.state.htmlEditorContent = link + " " + htmlContent
+      } else {
+        store.state.htmlEditorContent = htmlContent.substring(0, position.value) + " " + link + " " + htmlContent.substring(position.value)
+      }
+    }
+
+    function debugEvent(event) {
+      
+      position.value = getCaretPosition()
+    }
+
+    function getCaretPosition() {
+      if (window.getSelection && window.getSelection().getRangeAt) {
+
+        if (window.getSelection().rangeCount == 0) {
+          return -1
+        }
+        var range = window.getSelection().getRangeAt(0);
+        var selectedObj = window.getSelection();
+        var rangeCount = 0;
+        var childNodes = selectedObj.anchorNode.parentNode.childNodes;
+        nodeName.value = selectedObj.anchorNode.parentNode.nodeName
+        for (var i = 0; i < childNodes.length; i++) {
+            if (childNodes[i] == selectedObj.anchorNode) {
+                break;
+            }
+            if ((childNodes[i] as HTMLElement).outerHTML)
+                rangeCount += (childNodes[i] as HTMLElement).outerHTML.length;
+            else if (childNodes[i].nodeType == 3) {
+                rangeCount += childNodes[i].textContent.length;                       
+            }
+        }
+        return range.startOffset + rangeCount;
+      }
+      return -1;
     }
 
     function addHtmlContent(){
@@ -218,7 +273,12 @@ export default defineComponent({
       radioGroupChange,
       store,
       setInputUrl,
-      inputUrlContent
+      inputUrlContent,
+      debugEvent,
+      position,
+      rangeCount,
+      nodeName,
+      addLink
     }
   }
 });
