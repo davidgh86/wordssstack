@@ -69,16 +69,15 @@
             </ion-item>
           </ion-radio-group>
         </ion-list>
-        <ion-row>Here {{ position }} - range {{ rangeCount }} - Node name - {{ nodeName }} - {{ store.state.htmlEditorContent }}</ion-row>
-        <ion-row><ion-button color="primary" @click="addLink">Link</ion-button></ion-row>
+        <!-- <ion-row>Here {{ store.state.caretPosition }} - Node name - {{ store.state.caretPositionNodeName }} - {{ store.state.htmlEditorContent }}</ion-row> -->
         <ion-row v-if="plainShareType==='html'">
           <ion-col>
             <quill-editor
                 v-model:value="store.state.htmlEditorContent" 
                 
-                @focus="debugEvent($event)"
-                @ready="debugEvent($event)"
-                @change="debugEvent($event)"
+                @focus="updateCaretPosition($event)"
+                @ready="updateCaretPosition($event)"
+                @change="updateCaretPosition($event)"
               />
           </ion-col>
         </ion-row>        
@@ -142,9 +141,12 @@ export default defineComponent({
 
     const plainShareType = ref("html")
 
-    const position = ref(-1)
-    const rangeCount = ref(-1)
-    const nodeName = ref("")
+    //const position = ref(-1)
+    //const nodeName = ref("")
+
+    // caretPosition: -1, 
+    //store.state.caretPositionNodeName
+    // caretPositionNodeName: ""
 
     function setInputUrl(url) {
       inputUrlContent.value = url
@@ -169,22 +171,9 @@ export default defineComponent({
       store.commit('stackByPath', file)
     }
 
-    const addLink = () =>{
-      debugger;
-      const htmlContent = store.state.htmlEditorContent
-      const link = "<a href=\"https://www.youtube.com/watch?v=4-JtEYLmlYM\" rel=\"noopener noreferrer\" target=\"_blank\">youtube</a>"
-      if (nodeName.value.toUpperCase() === "A" || position.value === -1) {
-        store.state.htmlEditorContent = htmlContent + " " + link
-      } else if(position.value == 0) {
-        store.state.htmlEditorContent = link + " " + htmlContent
-      } else {
-        store.state.htmlEditorContent = htmlContent.substring(0, position.value) + " " + link + " " + htmlContent.substring(position.value)
-      }
-    }
-
-    function debugEvent(event) {
+    function updateCaretPosition(event) {
       
-      position.value = getCaretPosition()
+      store.state.caretPosition = getCaretPosition()
     }
 
     function getCaretPosition() {
@@ -197,7 +186,7 @@ export default defineComponent({
         var selectedObj = window.getSelection();
         var rangeCount = 0;
         var childNodes = selectedObj.anchorNode.parentNode.childNodes;
-        nodeName.value = selectedObj.anchorNode.parentNode.nodeName
+        store.state.caretPositionNodeName = selectedObj.anchorNode.parentNode.nodeName
         for (var i = 0; i < childNodes.length; i++) {
             if (childNodes[i] == selectedObj.anchorNode) {
                 break;
@@ -274,11 +263,7 @@ export default defineComponent({
       store,
       setInputUrl,
       inputUrlContent,
-      debugEvent,
-      position,
-      rangeCount,
-      nodeName,
-      addLink
+      updateCaretPosition
     }
   }
 });

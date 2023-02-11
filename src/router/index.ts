@@ -23,6 +23,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import ('../views/CreatePoll.vue')
   },
   {
+    path: '/link',
+    component: () => import ('../views/AddUrlToText.vue')
+  },
+  {
     path: '/',
     component: () => import ('../views/StackPage.vue')
   }

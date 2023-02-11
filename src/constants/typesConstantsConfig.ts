@@ -14,7 +14,9 @@ enum FileTypes {
     YOUTUBE = "YOUTUBE",
     TWITTER = "TWITTER",
     UNKNOWN = "UNKNOWN",
-    STRAWPOLL = "STRAWPOLL"
+    STRAWPOLL = "STRAWPOLL",
+
+    LINK = "LINK"
 }
 
 class TypesConstantsConfig {
@@ -35,6 +37,8 @@ class TypesConstantsConfig {
             ["youtube", FileTypes.YOUTUBE],
             ["twitter", FileTypes.TWITTER],
             ["strawpoll", FileTypes.STRAWPOLL],
+
+            ["link", FileTypes.LINK],
         ]
     )
 

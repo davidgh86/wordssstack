@@ -14,7 +14,6 @@
             <ion-col>
               <ion-item>
                 <ion-label position="floating">Title</ion-label>
-                <!-- workaround because not working -->
                 <ion-input :value="pollTitle" @ionInput="setPollTitle($event.target.value)"></ion-input>
               </ion-item>
             </ion-col>
@@ -23,7 +22,6 @@
             <ion-col size="11">
               <ion-item>
                 <ion-label position="floating">Option {{ index + 1 }}</ion-label>
-                <!-- workaround because not working -->
                 <ion-input :value="options[index]" @ionInput="setOption($event.target.value, index)"></ion-input>
               </ion-item>
             </ion-col>
@@ -46,6 +44,8 @@
               <ion-button color="primary" @click="createPoll()">Create</ion-button>
             </ion-col>
           </ion-row>
+          <ion-row>Here {{ store.state.caretPosition }} - Node name - {{ store.state.caretPositionNodeName }} - {{ store.state.htmlEditorContent }}</ion-row>
+        
         </ion-grid>
     </ion-content>
   </ion-page>
@@ -60,6 +60,7 @@ import { useRouter } from 'vue-router'
 import { addCircleOutline, trashOutline } from 'ionicons/icons';
 import strawpollApi from '@/service/strawpollApi';
 import stackManager from '@/service/stackManager';
+import { useStore } from 'vuex';
 
 export default defineComponent({
   name: 'CreatePoll',
@@ -74,7 +75,6 @@ export default defineComponent({
     IonGrid,
     IonRow,
     IonCol,
-    //IonButton,
     IonInput,
     IonItem,
     IonLabel,
@@ -82,6 +82,8 @@ export default defineComponent({
     
   },
   setup() {
+
+    const store = useStore()
     
     const router = useRouter()
     
@@ -121,9 +123,6 @@ export default defineComponent({
         .catch((e) => alert("failed cerating poll "+ JSON.stringify(e)))
     }
 
-    // onMounted(() => {
-    // })
-
     return {
       pollTitle,
       setPollTitle,
@@ -133,7 +132,8 @@ export default defineComponent({
       addOption,
       setOption,
       removeOption,
-      createPoll
+      createPoll,
+      store
     }
   }
 });

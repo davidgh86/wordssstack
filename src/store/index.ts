@@ -10,6 +10,8 @@ export const store = createStore({
   state: {
     title: localStorage.getItem("title")?localStorage.getItem("title"):"",
     htmlEditorContent: "",
+    caretPosition: -1,
+    caretPositionNodeName: "",
     stack: stack
   },
   getters: {

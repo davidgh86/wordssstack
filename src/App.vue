@@ -4,8 +4,8 @@
       <ion-menu content-id="main-content" type="overlay">
         <ion-content>
           <ion-list id="inbox-list">
-            <ion-list-header>Inbox</ion-list-header>
-            <ion-note>hi@ionicframework.com</ion-note>
+            <ion-list-header>Wordpressstack</ion-list-header>
+            <ion-note>agile wordpress publisher app</ion-note>
   
             <ion-menu-toggle auto-hide="false" v-for="(p, i) in appPages" :key="i">
               <ion-item @click="selectedIndex = i" router-direction="root" :router-link="p.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
@@ -25,7 +25,7 @@
 import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonNote, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { logoBuffer, settingsOutline, archiveOutline, albumsOutline, refreshOutline, statsChartOutline } from 'ionicons/icons';
+import { logoBuffer, settingsOutline, archiveOutline, albumsOutline, refreshOutline, statsChartOutline, linkOutline } from 'ionicons/icons';
 
 export default defineComponent({
   name: 'App',
@@ -53,10 +53,10 @@ export default defineComponent({
         mdIcon: logoBuffer
       },
       {
-        title: 'Config',
-        url: '/config',
-        iosIcon: settingsOutline,
-        mdIcon: settingsOutline
+        title: 'Add Link',
+        url: '/link',
+        iosIcon: linkOutline,
+        mdIcon: linkOutline
       },
       {
         title: 'Create Poll',
@@ -69,6 +69,12 @@ export default defineComponent({
         url: '/templates',
         iosIcon: albumsOutline,
         mdIcon: albumsOutline
+      },
+      {
+        title: 'Config',
+        url: '/config',
+        iosIcon: settingsOutline,
+        mdIcon: settingsOutline
       },
       {
         title: 'Restore',
@@ -96,6 +102,7 @@ export default defineComponent({
       logoBuffer,
       albumsOutline,
       statsChartOutline,
+      linkOutline,
       isSelected: (url: string) => url === route.path ? 'selected' : ''
     }
   }
