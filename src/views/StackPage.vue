@@ -49,7 +49,11 @@
               <ion-button color="primary" @click="askForFile">Add File</ion-button>
             </ion-col>
             <ion-col>
-              <ion-button color="primary" @click="publish">Publish</ion-button>
+              <ion-button color="primary" 
+              id="open-modal" expand="block"
+              
+              >Publish</ion-button>
+              <!-- @click="publish" -->
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -88,6 +92,41 @@
           <ion-button color="primary" @click="addHtmlContent">Add Content</ion-button>
         </ion-row>
       </ion-grid>
+      <ion-modal ref="modal" trigger="open-modal" @willDismiss="onWillDismiss">
+        <ion-header>
+          <ion-toolbar>
+            <ion-buttons slot="start">
+              <ion-button @click="cancel()">Cancel</ion-button>
+            </ion-buttons>
+            <ion-title>Add tags</ion-title>
+            <ion-buttons slot="end">
+              <ion-button :strong="true" @click="confirm()">Confirm</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <ion-row>
+            <vue3-tags-input :tags="tags" placeholder="tags" />
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              <autocomplete 
+                v-model="test"
+                :items="items"
+                permitArbitraryValues
+                @keyup="alerta()"
+              />
+            </ion-col>
+            <ion-col size="3">
+              <ion-button @click="addTag(test)">Add tag</ion-button>
+            </ion-col>
+            <ion-col size="3">
+              <ion-button @click="addTag(closestItem)">{{ closestItem }}</ion-button>
+            </ion-col>
+            
+          </ion-row>
+        </ion-content>
+      </ion-modal>
     </ion-content>
   </ion-page>
 </template>
@@ -98,14 +137,21 @@ import { useStore } from 'vuex'
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
           IonButton, IonInput, IonItem, IonLabel, IonIcon, 
-          loadingController, IonRadioGroup, IonRadio, IonList } from '@ionic/vue'
+          loadingController, IonRadioGroup, IonRadio, IonList,
+          IonModal } from '@ionic/vue'
+import { OverlayEventDetail } from '@ionic/core/components';
 import { VueDraggableNext } from 'vue-draggable-next'
 import { quillEditor } from 'vue3-quill'
 
 import { closeCircle } from 'ionicons/icons';
 
 import _ from 'lodash'
+import { distance, closest } from 'fastest-levenshtein'
+
 import stackManager from '@/service/stackManager';
+
+import autocomplete from 'vue-autocomplete-input-tag'
+import Vue3TagsInput from 'vue3-tags-input';
 
 export default defineComponent({
   name: 'FolderPage',
@@ -128,8 +174,11 @@ export default defineComponent({
     IonRadioGroup,
     IonRadio,
     IonList,
+    IonModal,
     draggable: VueDraggableNext,
-    quillEditor
+    quillEditor,
+    Vue3TagsInput,
+    autocomplete
   },
   setup() {
     
@@ -141,12 +190,34 @@ export default defineComponent({
 
     const plainShareType = ref("html")
 
+    const test = ref("")
+
+    const items = ref(["Banana",
+          "Strawberry",
+          "Orange",
+          "Lemon",
+          "Pineapple",
+          "Watermelon",
+          "Melon"])
+
+    const tags = ref([])
+
+    const closestItem = ref("")
+
+    function addTag(tag) {
+      tags.value.push(tag)
+    }
+
     //const position = ref(-1)
     //const nodeName = ref("")
 
     // caretPosition: -1, 
     //store.state.caretPositionNodeName
     // caretPositionNodeName: ""
+
+    function alerta() {
+      closestItem.value = closest(test.value, items.value)
+    }
 
     function setInputUrl(url) {
       inputUrlContent.value = url
@@ -224,28 +295,44 @@ export default defineComponent({
       }, 1000);
 
     function publish(){
-      if (!store.state.title){
-        alert("title is mandatory")
-        return
+      
+      // if (!store.state.title){
+      //   alert("title is mandatory")
+      //   return
+      // }
+      // loadingController.create({
+      //   message: "uploading"
+      // }).then(l => {
+      //   l.present()
+      //   store.dispatch("publish").then(
+      //     () => {
+      //       l.dismiss()
+      //       alert("Published")
+      //       store.dispatch("clear").then()
+      //     }
+      //   ).catch(
+      //     (error) => {
+      //       l.dismiss()
+      //       alert("Failed")
+      //       alert(JSON.stringify(error))
+      //     }
+      //   )
+      // })
+    }
+
+    function cancel() {
+      this.$refs.modal.$el.dismiss(null, 'cancel');
+    }
+    
+    function confirm() {
+      const name = this.$refs.input.$el.value;
+      this.$refs.modal.$el.dismiss(name, 'confirm');
+    }
+    
+    function onWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
+      if (ev.detail.role === 'confirm') {
+        this.message = `Hello, ${ev.detail.data}!`;
       }
-      loadingController.create({
-        message: "uploading"
-      }).then(l => {
-        l.present()
-        store.dispatch("publish").then(
-          () => {
-            l.dismiss()
-            alert("Published")
-            store.dispatch("clear").then()
-          }
-        ).catch(
-          (error) => {
-            l.dismiss()
-            alert("Failed")
-            alert(JSON.stringify(error))
-          }
-        )
-      })
     }
     
     return {
@@ -263,7 +350,9 @@ export default defineComponent({
       store,
       setInputUrl,
       inputUrlContent,
-      updateCaretPosition
+      updateCaretPosition,
+      cancel, confirm, onWillDismiss,
+      test, tags, items, addTag, alerta, closestItem
     }
   }
 });

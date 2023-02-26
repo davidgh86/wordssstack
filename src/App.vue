@@ -8,7 +8,7 @@
             <ion-note>agile wordpress publisher app</ion-note>
   
             <ion-menu-toggle auto-hide="false" v-for="(p, i) in appPages" :key="i">
-              <ion-item @click="selectedIndex = i" router-direction="root" :router-link="p.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
+              <ion-item v-if="isDebuEnabled || p.url !== '/restore'" @click="selectedIndex = i" router-direction="root" :router-link="p.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
                 <ion-icon slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
                 <ion-label>{{ p.title }}</ion-label>
               </ion-item>
@@ -26,6 +26,8 @@ import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader,
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { logoBuffer, settingsOutline, archiveOutline, albumsOutline, refreshOutline, statsChartOutline, linkOutline } from 'ionicons/icons';
+import debug from './service/debug';
+
 
 export default defineComponent({
   name: 'App',
@@ -44,6 +46,7 @@ export default defineComponent({
     IonSplitPane,
   },
   setup() {
+    const isDebuEnabled = ref(debug.isEnabled())
     const selectedIndex = ref(0);
     const appPages = [
       {
@@ -103,6 +106,7 @@ export default defineComponent({
       albumsOutline,
       statsChartOutline,
       linkOutline,
+      isDebuEnabled,
       isSelected: (url: string) => url === route.path ? 'selected' : ''
     }
   }

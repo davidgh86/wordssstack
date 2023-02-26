@@ -1,4 +1,5 @@
 import { Http } from '@capacitor-community/http';
+import debug from './debug';
 
 class Strawpoll {
 
@@ -29,36 +30,42 @@ class Strawpoll {
         const body = {
             title: title,
             poll_config: {
-                  allow_comments: false,
-                  allow_indeterminate: false,
-                  allow_other_option: false,
-                  allow_vpn_users: false,
-                  deadline_at: null,
-                  duplication_checking: "ip",
-                  edit_vote_permissions: "nobody",
-                  force_appearance: null,
-                  hide_participants: false,
-                  is_multiple_choice: false,
-                  is_private: true,
-                  layout: null,
-                  randomize_options: false,
-                  require_voter_account: false,
-                  require_voter_names: false,
-                  results_visibility: "always",
-                  show_write_in_options: false,
-                  vote_type: "default"
-              },
+                allow_comments: false,
+                allow_indeterminate: false,
+                allow_other_option: false,
+                allow_vpn_users: false,
+                deadline_at: null,
+                duplication_checking: "ip",
+                edit_vote_permissions: "nobody",
+                force_appearance: null,
+                hide_participants: false,
+                is_multiple_choice: false,
+                is_private: true,
+                layout: null,
+                randomize_options: false,
+                require_voter_account: false,
+                require_voter_names: false,
+                results_visibility: "always",
+                show_write_in_options: false,
+                vote_type: "default"
+            },
               
-              poll_options: this.getOptions(opts),
-            type: "multiple_choice"
+            poll_options: this.getOptions(opts),
           }
+        debug.debugAlert("Title: "+ title)
+        debug.debugAlert("Request: "+ JSON.stringify(body))
 
         const options = {
             url: `https://api.strawpoll.com/v3/polls`,
-            data: body
+            data: body,
+            headers: {
+                "Content-Type": "application/json",
+                "Content-Length": JSON.stringify(body).length+""
+            }
         };
         
         const response = await Http.post(options)
+        debug.debugAlert(JSON.stringify(response))
         return {
             embed_url : response.data.embed_url,
             id: response.data.id,

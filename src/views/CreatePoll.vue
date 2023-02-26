@@ -43,9 +43,7 @@
             <ion-col>
               <ion-button color="primary" @click="createPoll()">Create</ion-button>
             </ion-col>
-          </ion-row>
-          <ion-row>Here {{ store.state.caretPosition }} - Node name - {{ store.state.caretPositionNodeName }} - {{ store.state.htmlEditorContent }}</ion-row>
-        
+          </ion-row>        
         </ion-grid>
     </ion-content>
   </ion-page>
@@ -60,7 +58,6 @@ import { useRouter } from 'vue-router'
 import { addCircleOutline, trashOutline } from 'ionicons/icons';
 import strawpollApi from '@/service/strawpollApi';
 import stackManager from '@/service/stackManager';
-import { useStore } from 'vuex';
 
 export default defineComponent({
   name: 'CreatePoll',
@@ -82,8 +79,6 @@ export default defineComponent({
     
   },
   setup() {
-
-    const store = useStore()
     
     const router = useRouter()
     
@@ -91,8 +86,8 @@ export default defineComponent({
 
     const options = ref([""])
 
-    function setPollTitle(host) {
-      pollTitle.value = host
+    function setPollTitle(title) {
+      pollTitle.value = title
     }
 
     function setOption(option, position){
@@ -132,8 +127,7 @@ export default defineComponent({
       addOption,
       setOption,
       removeOption,
-      createPoll,
-      store
+      createPoll
     }
   }
 });

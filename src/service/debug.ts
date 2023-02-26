@@ -19,6 +19,10 @@ class Debug {
         Debug.debugEnabled = false
     }
 
+    isEnabled() {
+        return Debug.debugEnabled
+    }
+
 
     public static getInstance(): Debug {
         if (!Debug.instance) {
