@@ -109,7 +109,7 @@
             <vue3-tags-input :tags="tags" placeholder="tags" />
           </ion-row>
           <ion-row>
-            <ion-col size="8">
+            <ion-col size="6">
               <autocomplete 
                 v-model="test"
                 :items="items"
@@ -117,19 +117,54 @@
                 @keyup="alerta()"
               />
             </ion-col>
-            <ion-col size="4">
-              <ion-button @click="addTag(test)">{{ test }}</ion-button>
+            <ion-col size="6">
+              <ion-button v-if="test" @click="addTag(test)"> Add tags{{ test }}</ion-button>
             </ion-col>            
           </ion-row>
-          <ion-row>
-            <ion-col size="2" v-for="tag in suggestedTags" :key="tag">
+          <ion-row v-for="(value, propertyName) in suggestionsObject" :key="propertyName">
+            <ion-col size="2" v-for="tag in value.suggested" :key="tag">
               <ion-button @click="addTag(tag)">{{ tag }}</ion-button>
             </ion-col>
           </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-button @click="addTagToLibrary(test)">To library</ion-button>
+          <!-- <ion-row v-if="!tagInLibrary">
+            <ion-col size="2" v-for="tag in suggestedTags" :key="tag">
+              <ion-button @click="addTag(tag)">{{ tag }}</ion-button>
             </ion-col>
+          </ion-row> -->
+          <ion-row v-if="test">
+            <ion-col v-for="(value, propertyName) in suggestionsObject" :key="propertyName">
+              <ion-button v-if="!value.exists" @click="openAddTagToLibraryMenu(propertyName)">Add {{propertyName}} tag to library</ion-button>
+              
+            </ion-col>
+          </ion-row>
+        </ion-content>
+      </ion-modal>
+      <ion-modal :is-open="libraryModalOpen">
+        <ion-header>
+          <ion-toolbar>
+            <ion-buttons slot="start">
+              <ion-button @click="closeTagLibrary()">Cancel</ion-button>
+            </ion-buttons>
+            <ion-title>Add tags to library</ion-title>
+            <ion-buttons slot="end">
+              <ion-button :strong="true" @click="addTagToLibrary()">Confirm</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <ion-row v-if="tagsToAddToLibrary.length==1">
+            La palabra {{ tagsToAddToLibrary.join(", ") }} no existe en la biblioteca como tag desea añadirla.
+          </ion-row>
+          <ion-row v-else>
+            Las palabras {{ tagsToAddToLibrary.join(", ") }} no existen en la biblioteca como tag desea añadirla.
+          </ion-row>
+          <br>
+          <ion-row v-if="suggestedTags">
+            Tenga en cuenta que los siguientes tags similares si existen {{ suggestedTags.join(", ") }}
+          </ion-row>
+          <br>
+          <ion-row>
+            <ion-button @click="addTagToLibrary()">Add tag {{ test }}</ion-button>
           </ion-row>
         </ion-content>
       </ion-modal>
@@ -199,20 +234,36 @@ export default defineComponent({
 
     const test = ref("")
 
-    const items = ref(tagsManager.getTags())
+    const items = tagsManager.tags
 
-    const tags = ref([])
+    const tags = tagsManager.articleTags
 
     const closestItem = ref("")
 
     const suggestedTags = ref([])
 
+    const libraryModalOpen = ref(false)
+
+    const tagsToAddToLibrary = ref([])
+
+    const tagInLibrary = ref(false)
+
+    const suggestionsObject = ref({})
+
     function addTag(tag) {
-      tags.value.push(tag)
+      try {
+        tagsManager.addArticleTag(tag)
+      } catch(e) {
+        alert(e.message)
+      }
     }
 
-    function addTagToLibrary(tag) {
-      alert(tag)
+    function openAddTagToLibraryMenu(tag) {
+      libraryModalOpen.value = true
+    }
+
+    function closeTagLibrary() {
+      libraryModalOpen.value = false
     }
 
     //const position = ref(-1)
@@ -223,8 +274,28 @@ export default defineComponent({
     // caretPositionNodeName: ""
 
     const alerta = _.debounce(() => {
+      calculateIfTagInLibrary()
       suggestedTags.value = tagsManager.getSuggested(test.value)
     }, 500)
+
+    function calculateIfTagInLibrary(){
+      //suggestionsObject
+      try {
+        const splittedTags = tagsManager.getSplittedTags(test.value)
+        suggestionsObject.value = {}
+        for (const splitTags of splittedTags) {
+          const exists = tagsManager.tagsInLibrary(splitTags)
+          suggestionsObject.value[splitTags] = {
+            suggested: exists?[]:tagsManager.getSuggested(splitTags),
+            exists: exists
+          }
+        }
+        tagInLibrary.value = tagsManager.tagsInLibrary(test.value)
+        //suggestionsObject
+      } catch (e){
+        alert(e.message)
+      }
+    }
 
     function setInputUrl(url) {
       inputUrlContent.value = url
@@ -302,6 +373,7 @@ export default defineComponent({
       }, 1000);
 
     function publish(){
+      alert("publish")
       
       // if (!store.state.title){
       //   alert("title is mandatory")
@@ -332,8 +404,22 @@ export default defineComponent({
     }
     
     function confirm() {
+      publish()
       const name = this.$refs.input.$el.value;
       this.$refs.modal.$el.dismiss(name, 'confirm');
+    }
+
+    function addTagToLibrary() {
+
+      tagsToAddToLibrary.value = tagsManager.getSplittedTags(test.value)
+
+      tagsManager.addTag(test.value)
+      tagsManager.addArticleTag(test.value)
+      libraryModalOpen.value = false
+      suggestedTags.value = []
+
+      tagsToAddToLibrary.value = []
+      test.value = ""
     }
     
     function onWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
@@ -359,8 +445,14 @@ export default defineComponent({
       inputUrlContent,
       updateCaretPosition,
       cancel, confirm, onWillDismiss,
-      test, tags, items, addTag, alerta, closestItem, addTagToLibrary,
-      suggestedTags
+      test, tags, items, addTag, alerta, closestItem, openAddTagToLibraryMenu,
+      suggestedTags,
+      libraryModalOpen,
+      closeTagLibrary,
+      addTagToLibrary,
+      tagsToAddToLibrary,
+      tagInLibrary,
+      suggestionsObject
     }
   }
 });

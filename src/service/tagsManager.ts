@@ -43,13 +43,7 @@ class TagsManager {
     }
 
     public addTag(tag: string) {
-        
-        if (!tag.match(this.splitTagsRegex)) {
-            throw new Error("Solo se permiten letras y espacios o comas para separar tags")
-        }
-        const tags = tag.split(/[\s,]+/)
-            .filter(w => w && w.length>0)
-            .map(w => w.toLowerCase())
+        const tags = this.getSplittedTags(tag)
 
         for (const tag of tags) {
             if(!TagsManager.tagsSet.has(tag)){
@@ -60,6 +54,31 @@ class TagsManager {
         this.updateStructure()
         localStorage.setItem("tags", JSON.stringify(this.tags.value))
         
+    }
+
+    public addArticleTag(tag: string) {
+        const tags = this.getSplittedTags(tag)
+
+        for (const tag of tags) {
+            if(!TagsManager.articleTagsSet.has(tag)){
+                TagsManager.articleTagsSet.add(tag)   
+            }
+        }
+        
+        this.updateStructure()
+        localStorage.setItem("articleTags", JSON.stringify(this.articleTags.value))
+        
+    }
+
+    public getSplittedTags(tagsString: string):string[] {
+        
+        if (!tagsString.match(this.splitTagsRegex)) {
+            throw new Error("Solo se permiten letras y espacios o comas para separar tags")
+        }
+
+        return tagsString.split(/[\s,]+/)
+            .filter(w => w && w.length>0)
+            .map(w => w.toLowerCase())
     }
 
     public addSingleTag(tag: string) {
@@ -74,6 +93,10 @@ class TagsManager {
 
     public getTags():string[] {
         return this.tags.value
+    }
+
+    public getArticleTags():string[] {
+        return this.articleTags.value
     }
 
     public removeTag(tag: string) {
@@ -95,7 +118,19 @@ class TagsManager {
     }
 
     public getSuggested(str: string):string[] {
+        const splittedTags = this.getSplittedTags(str)
+        Array.from(splittedTags.flatMap(s => suggested(s, this.tags.value, 3)))
         return suggested(str, this.tags.value, 3)
+    }
+
+    public tagsInLibrary(str: string):boolean {
+        const splittedTags = this.getSplittedTags(str)
+        for (const splittedTag of splittedTags) {
+            if (!TagsManager.tagsSet.has(splittedTag)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
