@@ -15,6 +15,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import ('../views/TemplateEditor.vue')
   },
   {
+    path: '/tags',
+    component: () => import ('../views/TagManager.vue')
+  },
+  {
     path: '/restore',
     component: () => import ('../views/RestoreDefault.vue')
   },

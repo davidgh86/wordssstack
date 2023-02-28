@@ -118,12 +118,17 @@
               />
             </ion-col>
             <ion-col size="3">
-              <ion-button @click="addTag(test)">Add tag</ion-button>
+              <ion-button @click="addTag(test)">{{ test }}</ion-button>
             </ion-col>
             <ion-col size="3">
               <ion-button @click="addTag(closestItem)">{{ closestItem }}</ion-button>
             </ion-col>
             
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-button @click="addTagToLibrary(test)">To library</ion-button>
+            </ion-col>
           </ion-row>
         </ion-content>
       </ion-modal>
@@ -152,6 +157,7 @@ import stackManager from '@/service/stackManager';
 
 import autocomplete from 'vue-autocomplete-input-tag'
 import Vue3TagsInput from 'vue3-tags-input';
+import tagsManager from '@/service/tagsManager';
 
 export default defineComponent({
   name: 'FolderPage',
@@ -192,13 +198,7 @@ export default defineComponent({
 
     const test = ref("")
 
-    const items = ref(["Banana",
-          "Strawberry",
-          "Orange",
-          "Lemon",
-          "Pineapple",
-          "Watermelon",
-          "Melon"])
+    const items = ref(tagsManager.getTags())
 
     const tags = ref([])
 
@@ -206,6 +206,10 @@ export default defineComponent({
 
     function addTag(tag) {
       tags.value.push(tag)
+    }
+
+    function addTagToLibrary(tag) {
+      alert(tag)
     }
 
     //const position = ref(-1)
@@ -352,7 +356,7 @@ export default defineComponent({
       inputUrlContent,
       updateCaretPosition,
       cancel, confirm, onWillDismiss,
-      test, tags, items, addTag, alerta, closestItem
+      test, tags, items, addTag, alerta, closestItem, addTagToLibrary
     }
   }
 });

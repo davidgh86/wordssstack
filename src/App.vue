@@ -25,7 +25,7 @@
 import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonNote, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { logoBuffer, settingsOutline, archiveOutline, albumsOutline, refreshOutline, statsChartOutline, linkOutline } from 'ionicons/icons';
+import { logoBuffer, settingsOutline, archiveOutline, albumsOutline, refreshOutline, statsChartOutline, linkOutline, pricetagsOutline } from 'ionicons/icons';
 import debug from './service/debug';
 
 
@@ -72,6 +72,12 @@ export default defineComponent({
         url: '/templates',
         iosIcon: albumsOutline,
         mdIcon: albumsOutline
+      },
+      {
+        title: 'Tags',
+        url: '/tags',
+        iosIcon: pricetagsOutline,
+        mdIcon: pricetagsOutline
       },
       {
         title: 'Config',
