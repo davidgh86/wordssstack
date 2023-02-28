@@ -109,7 +109,7 @@
             <vue3-tags-input :tags="tags" placeholder="tags" />
           </ion-row>
           <ion-row>
-            <ion-col size="6">
+            <ion-col size="8">
               <autocomplete 
                 v-model="test"
                 :items="items"
@@ -117,13 +117,14 @@
                 @keyup="alerta()"
               />
             </ion-col>
-            <ion-col size="3">
+            <ion-col size="4">
               <ion-button @click="addTag(test)">{{ test }}</ion-button>
+            </ion-col>            
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" v-for="tag in suggestedTags" :key="tag">
+              <ion-button @click="addTag(tag)">{{ tag }}</ion-button>
             </ion-col>
-            <ion-col size="3">
-              <ion-button @click="addTag(closestItem)">{{ closestItem }}</ion-button>
-            </ion-col>
-            
           </ion-row>
           <ion-row>
             <ion-col>
@@ -151,7 +152,7 @@ import { quillEditor } from 'vue3-quill'
 import { closeCircle } from 'ionicons/icons';
 
 import _ from 'lodash'
-import { distance, closest } from 'fastest-levenshtein'
+import { distance, closest, suggested } from '@/service/wordDistanceService'
 
 import stackManager from '@/service/stackManager';
 
@@ -204,6 +205,8 @@ export default defineComponent({
 
     const closestItem = ref("")
 
+    const suggestedTags = ref([])
+
     function addTag(tag) {
       tags.value.push(tag)
     }
@@ -219,9 +222,9 @@ export default defineComponent({
     //store.state.caretPositionNodeName
     // caretPositionNodeName: ""
 
-    function alerta() {
-      closestItem.value = closest(test.value, items.value)
-    }
+    const alerta = _.debounce(() => {
+      suggestedTags.value = tagsManager.getSuggested(test.value)
+    }, 500)
 
     function setInputUrl(url) {
       inputUrlContent.value = url
@@ -356,7 +359,8 @@ export default defineComponent({
       inputUrlContent,
       updateCaretPosition,
       cancel, confirm, onWillDismiss,
-      test, tags, items, addTag, alerta, closestItem, addTagToLibrary
+      test, tags, items, addTag, alerta, closestItem, addTagToLibrary,
+      suggestedTags
     }
   }
 });

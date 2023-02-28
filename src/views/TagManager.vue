@@ -18,7 +18,7 @@
             </ion-col>
             
             <ion-col size="1">
-                <ion-icon :src="trashOutline" @click="removeOption(index)"></ion-icon>
+                <ion-icon :src="trashOutline" @click="removeOption(option)"></ion-icon>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -67,22 +67,25 @@ export default defineComponent({
   },
   setup() {
 
-    const options = ref(tagsManager.getTags())
+    const options = tagsManager.tags
     const inputTag = ref("")
 
     function setOption(option){
       inputTag.value = option
     }
 
-    function removeOption(index) {
-      tagsManager.removeTag(options.value[index])
-      options.value.splice(index, 1)
+    function removeOption(tag) {
+      tagsManager.removeTag(tag)
     }
 
     function addOption() {
-      tagsManager.addTag(inputTag.value)
-      options.value.push(inputTag.value)
-      inputTag.value=""
+      try {
+        tagsManager.addTag(inputTag.value)
+        inputTag.value = ""
+      } catch(e) {
+        alert(e.message)
+      }
+
     }
 
 
