@@ -56,7 +56,6 @@ router.isReady().then(() => {
   app.mount('#app');
 });
 
-
 const processTextUrl = (url: string) => {
   stackManager.processTextUrl(url)
 }

@@ -187,7 +187,6 @@ import { quillEditor } from 'vue3-quill'
 import { closeCircle } from 'ionicons/icons';
 
 import _ from 'lodash'
-import { distance, closest, suggested } from '@/service/wordDistanceService'
 
 import stackManager from '@/service/stackManager';
 
