@@ -44,8 +44,7 @@ class StackElementStorageManager {
 
     uploadStack(elements: Array<StackElement>): Promise<void> {
         return new Promise((resolve, reject) => {
-            alert("7¨¨¨¨¨ uploading stack>"+JSON.stringify(Object.fromEntries(this.ids)))
-        
+            
             const elementSize = elements.length
             let elementCount = 0
             const localStorageMap = new Map<string, StackElement>()
@@ -77,7 +76,7 @@ class StackElementStorageManager {
                 this.ids = new Map<string, StackElement>()
                 resolve()
             }
-            alert("5¨¨¨¨¨ el mapa con los items>"+JSON.stringify(Object.fromEntries(this.ids)))
+            
         
         });  
     }
@@ -111,7 +110,6 @@ class StackElementStorageManager {
             delete cp["data"]
             return cp
         })
-        alert("8¨¨¨¨¨ i think this should be a map>"+JSON.stringify(Object.fromEntries(this.ids)))
         localStorage.setItem(this.IDS_LOCAL_STORAGE_KEY, JSON.stringify(valueToLocalStorage))
         return elements
     }
@@ -141,7 +139,7 @@ class StackElementStorageManager {
             // delete el["filePath"]
             return cp
         })
-        alert("9¨¨¨¨¨ i think this should be a map>"+JSON.stringify(valuesSave))
+        
         
         localStorage.setItem(this.IDS_LOCAL_STORAGE_KEY, JSON.stringify(valuesSave))
         
@@ -151,12 +149,12 @@ class StackElementStorageManager {
     private async parseElements(items: string): Promise<Map<string, StackElement>> {
         const result = new Map<string, StackElement>()
         const jsonArray = JSON.parse(items)
-        alert("1¨¨¨¨¨ el mapa con los items>"+JSON.stringify(items))
+        
         for (const item of jsonArray){
             const element = await this.parseElement(item)
             result.set(element.getId(), element)
         }
-        alert("2¨¨¨¨¨ el mapa con los items>"+JSON.stringify(Object.fromEntries(result)))
+        
         return result
     }
 
