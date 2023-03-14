@@ -78,6 +78,7 @@
         if (myField.selectionStart || myField.selectionStart == 0) {
           var startPos = myField.selectionStart;
           var endPos = myField.selectionEnd;
+          console.log("substring 1")
           htmlEditorContent.value = myField.value.substring(0, startPos)
               + myValue
               + myField.value.substring(endPos, myField.value.length);

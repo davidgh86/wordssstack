@@ -31,11 +31,13 @@ abstract class UploadableStackElement implements StackElement {
     }
 
     getExtension() {
+        console.log("----->getExtension")
         return !this.extension?this.getFileName().split('.').pop():this.extension;
     }
 
     upload(): Promise<void> {
         return new Promise((resolve, reject) => {
+            console.log("----->upload")
             const filename = this.getFileName()
 
             const mimetype = TypesConstantsConfig.getMimeTypeFromExtension(filename.split('.').pop())
@@ -55,10 +57,15 @@ abstract class UploadableStackElement implements StackElement {
     }
 
     getFileName(): string {
+        console.log("----->getFileName")
+        console.log("substring 6")
+        console.log(JSON.stringify(this))
+        console.log(JSON.stringify(this.filePath))
         return this.filePath.substring(this.filePath.lastIndexOf('/') + 1)
     }
 
     getId(): string {
+        console.log("----->getId")
         return this.getFileName()
     }
 
@@ -67,6 +74,7 @@ abstract class UploadableStackElement implements StackElement {
     }
 
     getHtmlElement(): string {
+        console.log("------> getHtmlElement")
         if (this.isUploaded) {
             return this.getHtmlString(this.uploadedPath)
         } else {
@@ -76,14 +84,15 @@ abstract class UploadableStackElement implements StackElement {
 
     async removeFromDevice(){
         if (this.isSaved){
+            console.log("******->3 removeElement")
             await FileSystemStoreManager.remove(this.filePath)
             this.rawDataSrc = null
             this.isSaved = false
-            this.filePath = null
         }
     }
 
     async calculateRawData() {
+        console.log("------> calculateRawData")
         if (this.filePath.startsWith("file://")){
             debug.debugAlert("Calculating raw data")
             const fileType = this.getExtension()
@@ -95,6 +104,7 @@ abstract class UploadableStackElement implements StackElement {
 
     
     getPrevisualizedHtmlElement(): string {
+        console.log("------> getPrevisualizedHtmlElement")
         if (this.rawDataSrc){
             return this.getHtmlString(this.rawDataSrc)
         }

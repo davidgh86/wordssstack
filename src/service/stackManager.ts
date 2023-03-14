@@ -10,12 +10,12 @@ import StrawpollStackElement from '@/wordpressstack/strawpollStackElement';
 
 class StackManager {
 
-    stackElementStorageManager = new StackElementStorageManager()
-
     private static instance: StackManager;
+    private static stackElementStorageManager: StackElementStorageManager;
 
     public static getInstance(): StackManager {
         if (!StackManager.instance) {
+            this.stackElementStorageManager = new StackElementStorageManager()
             StackManager.instance = new StackManager()
         }
         
@@ -23,8 +23,8 @@ class StackManager {
     }
     
     async initialize(state){
-        await this.stackElementStorageManager.updateStackElementsFromLocalStorage();
-        Array.from(await this.stackElementStorageManager.getStackIds().values()).forEach(el =>{
+        await StackManager.stackElementStorageManager.updateStackElementsFromLocalStorage();
+        Array.from(await StackManager.stackElementStorageManager.getStackIds().values()).forEach(el =>{
           state.stack.push(el)
         });
     }
@@ -76,13 +76,14 @@ class StackManager {
         } else if(store.state.caretPosition == 0) {
             store.state.htmlEditorContent = link + " " + htmlContent
         } else {
+            console.log("substring 2")
             store.state.htmlEditorContent = htmlContent.substring(0, store.state.caretPosition) + " " + link + " " + htmlContent.substring(store.state.caretPosition)
         }
     }
 
     async addHtmlContent(state){
         const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: state.htmlEditorContent})
-        await this.stackElementStorageManager.saveStackElement(element);
+        await StackManager.stackElementStorageManager.saveStackElement(element);
         state.stack.push(element)
         state.htmlEditorContent = ""
     }
@@ -90,19 +91,19 @@ class StackManager {
     async addTwitterContent(state, url) {
         const element = StackElementFactory.getStackElementByString(FileTypes.TWITTER, {url: url}) as TwitterStackElement 
         await element.initialize()
-        await this.stackElementStorageManager.saveStackElement(element);
+        await StackManager.stackElementStorageManager.saveStackElement(element);
         state.stack.push(element)
     }
 
     async addStrawpollContent(state, url) {
         const element = StackElementFactory.getStackElementByString(FileTypes.STRAWPOLL, {url: url})
-        await this.stackElementStorageManager.saveStackElement(element);
+        await StackManager.stackElementStorageManager.saveStackElement(element);
         state.stack.push(element)
     }
 
     async addYoutubeContent(state, url){
         const element = StackElementFactory.getStackElementByString(FileTypes.YOUTUBE, {url: url})
-        await this.stackElementStorageManager.saveStackElement(element);
+        await StackManager.stackElementStorageManager.saveStackElement(element);
         state.stack.push(element)
     }
 
@@ -111,15 +112,20 @@ class StackManager {
     }
 
     async removeElement(state, index){
-        await this.stackElementStorageManager.removeElement(state.stack[index])
+        console.log("******->1 removeElement")
+        const element = state.stack[index]
         state.stack.splice(index, 1)
-        this.stackElementStorageManager.saveStack(state.stack)
+        StackManager.stackElementStorageManager.saveStack(state.stack)
+        await StackManager.stackElementStorageManager.removeElement(element)
     }
 
     async stackByPath(state, file){
+        console.info("1.-----> stacking by path")
         const stackElement = StackElementFactory.getStackElement(file)
+        console.log("2.-----> " +JSON.stringify(stackElement))
         if (stackElement instanceof UploadableStackElement){
-          await this.stackElementStorageManager.saveStackElement(stackElement);
+          await StackManager.stackElementStorageManager.saveStackElement(stackElement);
+          console.log("8.-----> Elemento apilado: "+ JSON.stringify(stackElement))
           state.stack.push(stackElement)
         }else {
           state.stack.push(stackElement)
@@ -127,11 +133,11 @@ class StackManager {
     }
 
     async saveStack(state){
-        await this.stackElementStorageManager.saveStack(state.stack)
+        await StackManager.stackElementStorageManager.saveStack(state.stack)
     }
 
     async publish(context) {
-        await this.stackElementStorageManager.publishStack(context.state.stack, context.state.title)
+        await StackManager.stackElementStorageManager.publishStack(context.state.stack, context.state.title)
     }
     
     async clear(context) {
@@ -149,7 +155,7 @@ class StackManager {
         const stackElement = StackElementFactory.getStackElementByString(fileType, {filePath: savedUrl, extension: extension})
         debug.debugAlert("store index addElementFromSavedExternalPath 3 stakElement: "+ JSON.stringify(stackElement) )
         if (stackElement instanceof UploadableStackElement){
-          await this.stackElementStorageManager.saveStackElement(stackElement)
+          await StackManager.stackElementStorageManager.saveStackElement(stackElement)
           await stackElement.calculateRawData()
         }
         debug.debugAlert("add stack " + JSON.stringify(stackElement))
