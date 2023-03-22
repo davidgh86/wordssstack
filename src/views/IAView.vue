@@ -192,7 +192,7 @@ export default defineComponent({
     const openAiBearerToken = ref("")
 
     function stackContent(idx){
-      stackManager.addTextToEditor(messages.value[idx])
+      stackManager.addTextToEditor(messages.value[idx].content)
       router.push("/inbox")
     }
 
