@@ -32,7 +32,7 @@ import './theme/variables.css';
 import { store } from './store'
 import debug from './service/debug';
 
-debug.enableDebug()
+debug.disableDebug()
 
 store.commit('initialize')
 

@@ -64,20 +64,25 @@ class StackManager {
     }
 
     public addLink(description: string, url: string) {
+        const link = `<a href="${url.trim()}" rel="noopener noreferrer" target="_blank">${description.trim()}</a>`
+        this.addTextToEditor(link)
+    }
+
+    public addTextToEditor(text: string) {
         let htmlContent = store.state.htmlEditorContent
         const htmlElement = document.createElement("div")
         htmlElement.innerHTML=htmlContent
         if (htmlElement.children.length == 1 && htmlElement.children[0].nodeName.toUpperCase() === "P") {
             htmlContent = htmlElement.children[0].innerHTML
         }
-        const link = `<a href="${url.trim()}" rel="noopener noreferrer" target="_blank">${description.trim()}</a>`
+        
         if (store.state.caretPositionNodeName.toUpperCase() === "A" || store.state.caretPosition === -1) {
-            store.state.htmlEditorContent = htmlContent + " " + link
+            store.state.htmlEditorContent = htmlContent + " " + text
         } else if(store.state.caretPosition == 0) {
-            store.state.htmlEditorContent = link + " " + htmlContent
+            store.state.htmlEditorContent = text + " " + htmlContent
         } else {
             console.log("substring 2")
-            store.state.htmlEditorContent = htmlContent.substring(0, store.state.caretPosition) + " " + link + " " + htmlContent.substring(store.state.caretPosition)
+            store.state.htmlEditorContent = htmlContent.substring(0, store.state.caretPosition) + " " + text + " " + htmlContent.substring(store.state.caretPosition)
         }
     }
 

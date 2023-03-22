@@ -25,7 +25,7 @@
 import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonNote, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
 import { defineComponent, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { logoBuffer, settingsOutline, archiveOutline, albumsOutline, refreshOutline, statsChartOutline, linkOutline, pricetagsOutline } from 'ionicons/icons';
+import { logoBuffer, settingsOutline, archiveOutline, albumsOutline, refreshOutline, statsChartOutline, linkOutline, pricetagsOutline, hardwareChipOutline } from 'ionicons/icons';
 import debug from './service/debug';
 
 
@@ -80,6 +80,12 @@ export default defineComponent({
         mdIcon: pricetagsOutline
       },
       {
+        title: 'AI',
+        url: '/ai',
+        iosIcon: hardwareChipOutline,
+        mdIcon: hardwareChipOutline
+      },
+      {
         title: 'Config',
         url: '/config',
         iosIcon: settingsOutline,
@@ -89,7 +95,8 @@ export default defineComponent({
         title: 'Restore',
         url: '/restore',
         iosIcon: refreshOutline,
-        mdIcon: refreshOutline
+        mdIcon: refreshOutline,
+
       }
     ];
     const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];

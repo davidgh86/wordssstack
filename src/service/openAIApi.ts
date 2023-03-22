@@ -3,36 +3,85 @@ import debug from './debug';
 
 class OpenAIApi {
 
+    private static OpenAIBearerToken = "OpenAIBearerToken"
+    private static OpenAIOrganization = "OpenAIOrganization"
+
+    private static instance: OpenAIApi;
+
     private bearerToken: string
     private openAIOrganization: string
 
-    constructor(bearerToken: string, openAIOrganization: string) {
-        this.bearerToken = bearerToken
-        this.openAIOrganization = openAIOrganization
+    constructor() {
+        this.bearerToken = localStorage.getItem(OpenAIApi.OpenAIBearerToken)
+        this.openAIOrganization = localStorage.getItem(OpenAIApi.OpenAIOrganization)
     }
 
-    public async generateText(text: string) {
+    public static getInstance(): OpenAIApi {
+        if(!OpenAIApi.instance) {
+            OpenAIApi.instance = new OpenAIApi()
+        }
+        return OpenAIApi.instance
+    }
+
+    public hasBearerToken() {
+        return !!this.bearerToken
+    }
+
+    public setBearerToken(bearerToken) {
+        this.bearerToken = bearerToken
+        localStorage.setItem(OpenAIApi.OpenAIBearerToken, this.bearerToken)
+    }
+
+    public hasOpenAIOrganization() {
+        return !!this.openAIOrganization
+    }
+
+    public setOpenAIOrganization(openAIOrganization) {
+        this.openAIOrganization = openAIOrganization
+        localStorage.setItem(OpenAIApi.OpenAIOrganization, this.openAIOrganization)
+    }
+
+    public async generateText(
+        messages: any[], 
+        temperature: number, 
+        maxTokens: number, 
+        topP: number, 
+        frequencyPenalty: number, 
+        presencePenalty: number) {
 
         const body = {
-            model: "text-davinci-003",
-            prompt: text
+            messages: messages,
+            temperature: temperature,
+            max_tokens: maxTokens,
+            top_p: topP,
+            frequency_penalty: frequencyPenalty,
+            presence_penalty: presencePenalty,
+            model: "gpt-3.5-turbo"
+        }
+
+        const headers = {
+            "Content-Type": "application/json",
+            //"Content-Length": JSON.stringify(body).length+"",
+            "Authorization": `Bearer ${this.bearerToken}`
+        }
+
+        if (this.openAIOrganization) {
+            headers["openai-organization"] = this.openAIOrganization
         }
 
         const options = {
-            url: `https://api.openai.com/v1/completions`,
+            url: `https://api.openai.com/v1/chat/completions`,
             data: body,
-            headers: {
-                "Content-Type": "application/json",
-                "Content-Length": JSON.stringify(body).length+"",
-                "Authorization": `Bearer ${this.bearerToken}`
-            }
+            headers: headers
         };
         
         const response = await Http.post(options)
         debug.debugAlert(JSON.stringify(response))
 
-        return response.data
+        console.log("-----> " + JSON.stringify(response))
+
+        return response.data.choices[0].message
     }
 }
 
-export default OpenAIApi
+export default OpenAIApi.getInstance()

@@ -31,6 +31,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import ('../views/AddUrlToText.vue')
   },
   {
+    path: '/ai',
+    component: () => import ('../views/IAView.vue')
+  },
+  {
     path: '/',
     component: () => import ('../views/StackPage.vue')
   }
