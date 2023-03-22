@@ -248,6 +248,7 @@ export default defineComponent({
         openAiConfigOpen.value = true
       } else {
         fetchOpenApi()
+        prompt.value = ""
         openAiConfigOpen.value = false
       }
       
