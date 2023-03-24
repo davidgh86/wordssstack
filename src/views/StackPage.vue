@@ -45,14 +45,18 @@
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-col>
-              <ion-button color="primary" @click="askForFile">Add File</ion-button>
+            <ion-col size="4">
+              <ion-button color="primary" @click="askForFile">Add</ion-button>
             </ion-col>
-            <ion-col>
+            <ion-col size="4">
               <ion-button color="primary" 
               id="open-modal" expand="block"
               
               >Publish</ion-button>
+              <!-- @click="publish" -->
+            </ion-col>
+            <ion-col size="4">
+              <ion-button color="primary" @click="takePhoto()">Photo</ion-button>
               <!-- @click="publish" -->
             </ion-col>
           </ion-row>
@@ -179,7 +183,8 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
           IonButton, IonInput, IonItem, IonLabel, IonIcon, 
           loadingController, IonRadioGroup, IonRadio, IonList,
-          IonModal } from '@ionic/vue'
+          IonModal } from '@ionic/vue';
+import { Camera, CameraResultType } from '@capacitor/camera';
 import { OverlayEventDetail } from '@ionic/core/components';
 import { VueDraggableNext } from 'vue-draggable-next'
 import { quillEditor } from 'vue3-quill'
@@ -294,6 +299,24 @@ export default defineComponent({
       } catch (e){
         alert(e.message)
       }
+    }
+
+    async function takePhoto(){
+      const image = await Camera.getPhoto({
+        quality: 90,
+        //allowEditing: true,
+        resultType: CameraResultType.Uri,
+
+      });
+
+      // image.webPath will contain a path that can be set as an image src.
+      // You can access the original file using image.path, which can be
+      // passed to the Filesystem API to read the raw data of the image,
+      // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
+      const imageUrl = image.webPath;
+
+      // Can be set to the src of an image now
+      console.log("------->" + JSON.stringify(image));
     }
 
     function setInputUrl(url) {
@@ -451,7 +474,8 @@ export default defineComponent({
       addTagToLibrary,
       tagsToAddToLibrary,
       tagInLibrary,
-      suggestionsObject
+      suggestionsObject,
+      takePhoto
     }
   }
 });
