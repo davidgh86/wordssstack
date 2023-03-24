@@ -185,6 +185,8 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
           loadingController, IonRadioGroup, IonRadio, IonList,
           IonModal } from '@ionic/vue';
 import { Camera, CameraResultType } from '@capacitor/camera';
+//import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture';
+
 import { OverlayEventDetail } from '@ionic/core/components';
 import { VueDraggableNext } from 'vue-draggable-next'
 import { quillEditor } from 'vue3-quill'
@@ -302,21 +304,43 @@ export default defineComponent({
     }
 
     async function takePhoto(){
-      const image = await Camera.getPhoto({
-        quality: 90,
-        //allowEditing: true,
-        resultType: CameraResultType.Uri,
+      // const image = await Camera.getPhoto({
+      //   quality: 90,
+      //   //allowEditing: true,
+      //   resultType: CameraResultType.Uri,
 
-      });
+      // });
 
-      // image.webPath will contain a path that can be set as an image src.
-      // You can access the original file using image.path, which can be
-      // passed to the Filesystem API to read the raw data of the image,
-      // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
-      const imageUrl = image.webPath;
+      // // image.webPath will contain a path that can be set as an image src.
+      // // You can access the original file using image.path, which can be
+      // // passed to the Filesystem API to read the raw data of the image,
+      // // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
+      // const imageUrl = image.webPath;
 
-      // Can be set to the src of an image now
-      console.log("------->" + JSON.stringify(image));
+      // // Can be set to the src of an image now
+      // console.log("------->" + JSON.stringify(image));
+
+      // const options: CaptureImageOptions = { limit: 3 };
+      // this.mediaCapture.captureVideo(options)
+      //   .then(
+      //     (data: MediaFile[]) => console.log("**********" + data),
+      //     (err: CaptureError) => console.error("************" + err)
+      //   );
+
+      const captureSuccess = function(mediaFiles) {
+          let i, path, len;
+          for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+              path = mediaFiles[i].fullPath;
+              // do something interesting with the file
+          }
+      };
+
+      // capture error callback
+      const captureError = function(error) {
+          navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
+      };
+
+      navigator.device.capture.captureVideo(captureSuccess, captureError, {limit:2});
     }
 
     function setInputUrl(url) {
