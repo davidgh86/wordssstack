@@ -74,13 +74,13 @@ export default defineComponent({
 
     function radioGroupChange(event) {
       templateType.value = event.target.value
-      let type = event.target.value
+      const type = event.target.value
 
       htmlEditorContent.value = templateEditor.getTemplate(type)
     }
 
     function saveTemplate(event) {
-      let type = templateType.value
+      const type = templateType.value
       debugger;
       templateManagerService.setTemplateAndVariables(type, event.template, event.variables)
     } 

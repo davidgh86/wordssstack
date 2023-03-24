@@ -305,7 +305,7 @@ export default defineComponent({
     }
     
     function askForFile() {
-      var fileSelector = document.getElementById("fileSelector")
+      const fileSelector = document.getElementById("fileSelector")
       fileSelector?.click()
     }
 
@@ -330,12 +330,12 @@ export default defineComponent({
         if (window.getSelection().rangeCount == 0) {
           return -1
         }
-        var range = window.getSelection().getRangeAt(0);
-        var selectedObj = window.getSelection();
-        var rangeCount = 0;
-        var childNodes = selectedObj.anchorNode.parentNode.childNodes;
+        const range = window.getSelection().getRangeAt(0);
+        const selectedObj = window.getSelection();
+        let rangeCount = 0;
+        const childNodes = selectedObj.anchorNode.parentNode.childNodes;
         store.state.caretPositionNodeName = selectedObj.anchorNode.parentNode.nodeName
-        for (var i = 0; i < childNodes.length; i++) {
+        for (let i = 0; i < childNodes.length; i++) {
             if (childNodes[i] == selectedObj.anchorNode) {
                 break;
             }
