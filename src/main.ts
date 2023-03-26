@@ -31,6 +31,7 @@ import './theme/variables.css';
 
 import { store } from './store'
 import debug from './service/debug';
+import mediaService from './service/mediaService';
 
 debug.disableDebug()
 
@@ -98,3 +99,8 @@ document.addEventListener('deviceReady', () => {
     intentManager(Intent)
   })
 })
+
+document.addEventListener('deviceReady', () => {
+  mediaService.initialize()
+})
+

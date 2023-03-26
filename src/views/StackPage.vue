@@ -56,8 +56,16 @@
               <!-- @click="publish" -->
             </ion-col>
             <ion-col size="4">
-              <ion-button color="primary" @click="takePhoto()">Photo</ion-button>
-              <!-- @click="publish" -->
+              <!-- <ion-button color="primary" @click="takePhoto()">Photo</ion-button> -->
+              <ion-button shape="round" @click="takePhoto()">
+                <ion-icon slot="icon-only" :src="camera"></ion-icon>
+              </ion-button>
+              <ion-button shape="round" @click="takeVideo()">
+                <ion-icon slot="icon-only" :src="videocam"></ion-icon>
+              </ion-button>
+              <ion-button shape="round" @click="recordSound()">
+                <ion-icon slot="icon-only" :src="mic"></ion-icon>
+              </ion-button> 
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -182,10 +190,8 @@ import { useStore } from 'vuex'
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
           IonButton, IonInput, IonItem, IonLabel, IonIcon, 
-          loadingController, IonRadioGroup, IonRadio, IonList,
+          IonRadioGroup, IonRadio, IonList,
           IonModal } from '@ionic/vue';
-import { Camera, CameraResultType } from '@capacitor/camera';
-//import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture';
 
 import { OverlayEventDetail } from '@ionic/core/components';
 import { VueDraggableNext } from 'vue-draggable-next'
@@ -200,6 +206,9 @@ import stackManager from '@/service/stackManager';
 import autocomplete from 'vue-autocomplete-input-tag'
 import Vue3TagsInput from 'vue3-tags-input';
 import tagsManager from '@/service/tagsManager';
+
+import { videocam, camera, mic  } from 'ionicons/icons';
+import mediaService from '@/service/mediaService';
 
 export default defineComponent({
   name: 'FolderPage',
@@ -303,44 +312,24 @@ export default defineComponent({
       }
     }
 
-    async function takePhoto(){
-      // const image = await Camera.getPhoto({
-      //   quality: 90,
-      //   //allowEditing: true,
-      //   resultType: CameraResultType.Uri,
+    function takePhoto(){
+      mediaService.captureImage()
+        .then((data)=> {
+          stackManager.processFileUrl(data[0].fullPath, data[0].type)
+        })
+        .catch((error)=> alert("ERROR "+ JSON.stringify(error)))
+    }
 
-      // });
+    function takeVideo() {
+      mediaService.captureVideo()
+        .then((data)=> stackManager.processFileUrl(data[0].fullPath, data[0].type))
+        .catch((error)=> alert("ERROR "+ JSON.stringify(error)))
+    }
 
-      // // image.webPath will contain a path that can be set as an image src.
-      // // You can access the original file using image.path, which can be
-      // // passed to the Filesystem API to read the raw data of the image,
-      // // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
-      // const imageUrl = image.webPath;
-
-      // // Can be set to the src of an image now
-      // console.log("------->" + JSON.stringify(image));
-
-      // const options: CaptureImageOptions = { limit: 3 };
-      // this.mediaCapture.captureVideo(options)
-      //   .then(
-      //     (data: MediaFile[]) => console.log("**********" + data),
-      //     (err: CaptureError) => console.error("************" + err)
-      //   );
-
-      const captureSuccess = function(mediaFiles) {
-          let i, path, len;
-          for (i = 0, len = mediaFiles.length; i < len; i += 1) {
-              path = mediaFiles[i].fullPath;
-              // do something interesting with the file
-          }
-      };
-
-      // capture error callback
-      const captureError = function(error) {
-          navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
-      };
-
-      navigator.device.capture.captureVideo(captureSuccess, captureError, {limit:2});
+    function recordSound() {
+      mediaService.captureAudio()
+        .then((data)=> alert("TODO "+ JSON.stringify(data)))
+        .catch((error)=> alert("ERROR "+ JSON.stringify(error)))
     }
 
     function setInputUrl(url) {
@@ -363,6 +352,7 @@ export default defineComponent({
     }
 
     function stackByPath(file: File){
+      alert(JSON.stringify(file.name))
       store.commit('stackByPath', file)
     }
 
@@ -499,7 +489,8 @@ export default defineComponent({
       tagsToAddToLibrary,
       tagInLibrary,
       suggestionsObject,
-      takePhoto
+      takePhoto, takeVideo, recordSound,
+      videocam, camera, mic
     }
   }
 });

@@ -9,7 +9,65 @@ interface Navigator {
           onSuccess: (mediaFiles: MediaFile[]) => void,
           onError: (error: CaptureError) => void,
           options?: CaptureVideoOptions
+        ): void,
+        captureImage(
+          onSuccess: (mediaFiles: MediaFile[]) => void,
+          onError: (error: CaptureError) => void,
+          options?: CaptureImageOptions
+        ): void,
+        captureAudio(
+          onSuccess: (mediaFiles: MediaFile[]) => void,
+          onError: (error: CaptureError) => void,
+          options?: CaptureAudioOptions
         ): void;
       };
     };
   }
+
+interface CaptureVideoOptions {
+  limit?: number,
+  duration?: number
+}
+
+interface CaptureImageOptions {
+  limit?: number
+}
+
+interface CaptureAudioOptions {
+  limit?: number,
+  duration?: number
+}
+
+interface CaptureError {
+  CAPTURE_INTERNAL_ERR: Error,
+  CAPTURE_APPLICATION_BUSY: Error,
+  CAPTURE_INVALID_ARGUMENT: Error,
+  CAPTURE_NO_MEDIA_FILES: Error,
+  CAPTURE_PERMISSION_DENIED: Error,
+  CAPTURE_NOT_SUPPORTED: Error
+}
+
+interface Error {
+  code: number,
+  message: string
+}
+
+interface MediaFile {
+  name,
+  fullPath,
+  type,
+  lastModifiedDate,
+  size,
+  getFormatData(
+    onSuccess: (mediaFile: MediaFileData) => void,
+    onError: (error: CaptureError) => void,
+  )
+}
+
+interface MediaFileData {
+  codecs?,
+  bitrate?,
+  height?,
+  width?,
+  duration?,
+}
