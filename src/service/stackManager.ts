@@ -5,7 +5,6 @@ import UploadableStackElement from '@/wordpressstack/uploadableStackElement';
 import {store} from '@/store'
 import debug from './debug';
 import { FileTypes, TypesConstantsConfig } from '@/constants/typesConstantsConfig';
-import StrawpollStackElement from '@/wordpressstack/strawpollStackElement';
 
 
 class StackManager {
@@ -45,7 +44,7 @@ class StackManager {
     }
 
     public processFileUrl(url: string, mimeType: string) {
-        const savedUrl = url
+        const savedUrl = decodeURI(url)
         store.commit("addElementFromSavedExternalPath", { savedUrl, mimeType })
     }
 
@@ -153,17 +152,18 @@ class StackManager {
     }
 
     async addElementFromSavedExternalPath(state, { savedUrl, mimeType }){
-        debug.debugAlert("store index addElementFromSavedExternalPath 1 "+ savedUrl)
+        alert("store index addElementFromSavedExternalPath 1 "+ savedUrl)
         const extension = !mimeType?savedUrl.split(".").pop():mimeType.split("/").pop()
         const fileType = TypesConstantsConfig.getFileTypeByExtension(extension)
-        debug.debugAlert("store index addElementFromSavedExternalPath 2 extension: "+ JSON.stringify(extension) + " filetype: " + JSON.stringify(fileType) )
+        alert("store index addElementFromSavedExternalPath 2 extension: "+ JSON.stringify(extension) + " filetype: " + JSON.stringify(fileType) )
         const stackElement = StackElementFactory.getStackElementByString(fileType, {filePath: savedUrl, extension: extension})
-        debug.debugAlert("store index addElementFromSavedExternalPath 3 stakElement: "+ JSON.stringify(stackElement) )
+        alert("store index addElementFromSavedExternalPath 3 stakElement: "+ JSON.stringify(stackElement) )
+        
         if (stackElement instanceof UploadableStackElement){
           await StackManager.stackElementStorageManager.saveStackElement(stackElement)
           await stackElement.calculateRawData()
         }
-        debug.debugAlert("add stack " + JSON.stringify(stackElement))
+        alert("add stack " + JSON.stringify(stackElement))
         state.stack.push(stackElement)
       }
    

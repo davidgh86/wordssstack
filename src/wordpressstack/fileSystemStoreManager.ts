@@ -6,14 +6,16 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 class FileSystemStoreManager {
 
     static async saveIntoDevice(filePath: string): Promise<string> {
-        console.log("substring 3")
+        console.log("substring 3 filepath " +filePath)
         const fileName = filePath.substring(filePath.lastIndexOf('/') + 1)
         
         if (filePath.startsWith("blob:")) {
+            alert("isBlob")
             return await this.saveBlob(filePath, fileName)
         }
 
         if (filePath.startsWith("content://")) {
+            alert("isContent write file")
             const data = await FileSystemStoreManager.getBase64BytesFromDisk(filePath)
             console.log("bbbbbbbb1")
             const uriResult = await Filesystem.writeFile({
@@ -24,16 +26,19 @@ class FileSystemStoreManager {
             return uriResult.uri
         }
         console.log("bbbbbbbb2")
+        alert("Copying from filePath: "+filePath+ " to fileName "+fileName)
         await Filesystem.copy({
             from: filePath,
-            to: fileName,
+            to: fileName.replaceAll(" ", "_"),
             toDirectory: Directory.Cache
         });
+        alert("obtaining")
         console.log("aaa1")
         const uriResult = await Filesystem.getUri({
             path: fileName,
             directory: Directory.Cache
         })
+        alert("Fin")
         
         return uriResult.uri
     }

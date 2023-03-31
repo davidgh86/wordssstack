@@ -4,7 +4,9 @@ import { TypesConstantsConfig, FileTypes } from "@/constants/typesConstantsConfi
 
 class StackElementFactory {
     public static getStackElement(file: File): StackElement {
+        console.log("***********" + file.name)
         const extension = file.name.split('.').pop();
+
         const url = URL.createObjectURL(file)
         if (extension){
             const fileType = TypesConstantsConfig.getFileTypeByExtension(extension)

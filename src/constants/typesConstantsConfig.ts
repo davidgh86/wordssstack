@@ -1,3 +1,4 @@
+import AudioStackElement from "@/wordpressstack/audioStackElement";
 import HTMLStackElement from "@/wordpressstack/htmlStackElement";
 import ImageStackElement from "@/wordpressstack/imageStackElement";
 import StackElement from "@/wordpressstack/stackElement";
@@ -10,6 +11,7 @@ import TemplateEntity from "../service/TemplateEntity"
 enum FileTypes {
     IMAGE = "IMAGE",
     VIDEO = "VIDEO",
+    AUDIO = "AUDIO",
     HTML = "HTML",
     YOUTUBE = "YOUTUBE",
     TWITTER = "TWITTER",
@@ -32,6 +34,12 @@ class TypesConstantsConfig {
             ["jpeg", FileTypes.IMAGE],
             ["png", FileTypes.IMAGE],
             ["gif", FileTypes.IMAGE],
+
+            ["mp3", FileTypes.AUDIO],
+            ["aac", FileTypes.AUDIO],
+            ["ogg", FileTypes.AUDIO],
+            ["opus", FileTypes.AUDIO],
+            ["m4a", FileTypes.AUDIO],
             
             ["mp4", FileTypes.VIDEO],
             ["youtube", FileTypes.YOUTUBE],
@@ -46,6 +54,7 @@ class TypesConstantsConfig {
 
         const imageTemplateDefaultVariables = '[{ "variableName": "src_image", "variableValue": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" }]';
         const videoTemplateDefaultVariables = '[{ "variableName": "src_video", "variableValue": "https://videos.files.wordpress.com/2IUdmeVU/fdgshdnfgt.mp4" }, { "variableName": "video_extension", "variableValue": "mp4" }]';
+        const audioTemplateDefaultVariables = '[{ "variableName": "src_audio", "variableValue": "https://download.samplelib.com/mp3/sample-6s.mp3" }]';
         const youtubeTemplateDefaultVariables = '[{ "variableName": "youtube_video_id", "variableValue": "3oOrd-oWlaE" }]';
         const strawpollTemplateDefaultVariables = '[{ "variableName": "strawpoll_embed_url", "variableValue": "https://strawpoll.com/embed/rae5gcp1" }]';
         const htmlTemplateDefaultVariables = '[{ "variableName": "content", "variableValue": "<p>Html content</p>" }]';
@@ -57,6 +66,10 @@ class TypesConstantsConfig {
         <source src="{src_video}" type="video/{video_extension}">
     </video>
 </div>`
+        const defaultAudioTemplate = `<audio controls>
+    <source src="{src_audio}">
+    Your browser does not support the audio element.
+</audio>`
         const defaultImageTemplate = `<img src="{src_image}"/>`
         const defaultYoutubeTemplate = `<iframe width="560" height="315" src="https://www.youtube.com/embed/{youtube_video_id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
         const defaultStrawpollTemplate = `<iframe width="620" height="512" src="{strawpoll_embed_url}" style="width: 100%; height: 515px;" frameborder="0" allowfullscreen></iframe>`
@@ -66,6 +79,7 @@ class TypesConstantsConfig {
 
         const imageTemplateVariables = JSON.parse(localStorage.getItem("imageTemplateVariables") || imageTemplateDefaultVariables);
         const videoTemplateVariables = JSON.parse(localStorage.getItem("videoTemplateVariables") || videoTemplateDefaultVariables);
+        const audioTemplateVariables = JSON.parse(localStorage.getItem("audioTemplateVariables") || audioTemplateDefaultVariables);
         const youtubeTemplateVariables = JSON.parse(localStorage.getItem("youtubeTemplateVariables") || youtubeTemplateDefaultVariables);
         const strawpollTemplateVariables = JSON.parse(localStorage.getItem("strawpollTemplateVariables") || strawpollTemplateDefaultVariables);
         const htmlTemplateVariables = JSON.parse(localStorage.getItem("htmlTemplateVariables") || htmlTemplateDefaultVariables);
@@ -73,6 +87,7 @@ class TypesConstantsConfig {
 
         const imageTemplate = localStorage.getItem("imageTemplate") || defaultImageTemplate;
         const videoTemplate = localStorage.getItem("videoTemplate") || defaultVideoTemplate;
+        const audioTemplate = localStorage.getItem("videoTemplate") || defaultAudioTemplate;
         const youtubeTemplate = localStorage.getItem("youtubeTemplate") || defaultYoutubeTemplate;
         const strawpollTemplate = localStorage.getItem("strawpollTemplate") || defaultStrawpollTemplate;
         const htmlTemplate = localStorage.getItem("htmlTemplate") || defaultHtmlTemplate;
@@ -91,6 +106,11 @@ class TypesConstantsConfig {
         TypesConstantsConfig.templateMap.set("video", new TemplateEntity(
             videoTemplate,
             videoTemplateVariables,
+            false
+        ));
+        TypesConstantsConfig.templateMap.set("audio", new TemplateEntity(
+            audioTemplate,
+            audioTemplateVariables,
             false
         ));
         TypesConstantsConfig.templateMap.set("youtube", new TemplateEntity(
@@ -135,6 +155,7 @@ class TypesConstantsConfig {
     }
 
     public static getStackElementByString(fileType: FileTypes, element: any): StackElement {
+        console.log("******++++++++++++"+fileType)
         switch(fileType) {
             case FileTypes.IMAGE: {
                 return new ImageStackElement(element.filePath, undefined)
@@ -146,6 +167,11 @@ class TypesConstantsConfig {
             }
             case FileTypes.VIDEO: {
                 return new VideoStackElement(element.filePath, element.extension)
+                break;
+            }
+            case FileTypes.AUDIO: {
+                console.log("******++++++++++++---------"+JSON.stringify(element))
+                return new AudioStackElement(element.filePath, element.extension)
                 break;
             }
             case FileTypes.YOUTUBE: {
@@ -187,7 +213,9 @@ class TypesConstantsConfig {
             }
         } else if (fileType === FileTypes.VIDEO) {
             return "video/"+extension
-        }
+        } else if (fileType === FileTypes.AUDIO) {
+            return "audio/"+extension
+        } 
         return ""
     }
 }

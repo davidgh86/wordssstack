@@ -112,6 +112,7 @@ abstract class UploadableStackElement implements StackElement {
     }
 
     async saveIntoDevice(): Promise<string>{
+        alert("File into device ---> " + this.filePath)
         const path = await FileSystemStoreManager.saveIntoDevice(this.filePath);
         this.isSaved = true;
         this.filePath = path

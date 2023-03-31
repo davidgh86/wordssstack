@@ -328,7 +328,12 @@ export default defineComponent({
 
     function recordSound() {
       mediaService.captureAudio()
-        .then((data)=> alert("TODO "+ JSON.stringify(data)))
+        .then((data)=> {
+          alert(JSON.stringify(data))
+          alert(JSON.stringify(data[0].fullPath))
+          alert(JSON.stringify(data[0].type))
+          stackManager.processFileUrl(data[0].fullPath, data[0].type)
+        })
         .catch((error)=> alert("ERROR "+ JSON.stringify(error)))
     }
 
@@ -352,7 +357,6 @@ export default defineComponent({
     }
 
     function stackByPath(file: File){
-      alert(JSON.stringify(file.name))
       store.commit('stackByPath', file)
     }
 
