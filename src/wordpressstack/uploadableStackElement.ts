@@ -92,9 +92,7 @@ abstract class UploadableStackElement implements StackElement {
     }
 
     async calculateRawData() {
-        console.log("------> calculateRawData")
         if (this.filePath.startsWith("file://")){
-            debug.debugAlert("Calculating raw data")
             const fileType = this.getExtension()
             const data = await FileSystemStoreManager.getBase64BytesFromCacheDisk(this.filePath)
             const src = `data:${this.fileType.toLowerCase()}/${fileType};base64,${data}`;
@@ -104,7 +102,6 @@ abstract class UploadableStackElement implements StackElement {
 
     
     getPrevisualizedHtmlElement(): string {
-        console.log("------> getPrevisualizedHtmlElement")
         if (this.rawDataSrc){
             return this.getHtmlString(this.rawDataSrc)
         }
@@ -112,7 +109,6 @@ abstract class UploadableStackElement implements StackElement {
     }
 
     async saveIntoDevice(): Promise<string>{
-        alert("File into device ---> " + this.filePath)
         const path = await FileSystemStoreManager.saveIntoDevice(this.filePath);
         this.isSaved = true;
         this.filePath = path

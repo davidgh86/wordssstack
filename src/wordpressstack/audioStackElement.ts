@@ -15,7 +15,7 @@ class AudioStackElement extends UploadableStackElement {
             { variableName: "src_audio", variableValue: src },
         ]
         const htmlSting = templateManagerService.renderTemplate(variables, templateManagerService.getTemplate("audio"))
-        alert(htmlSting)
+        
         return htmlSting;
     }
 

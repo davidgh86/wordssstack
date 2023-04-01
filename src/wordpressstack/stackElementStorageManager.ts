@@ -103,7 +103,6 @@ class StackElementStorageManager {
                 localStorageMap.set(element.getId(), element)
             }
         }
-        console.info("here2")
         debug.debugAlert("here2")
         const valueToLocalStorage = Array.from(localStorageMap.values()).map(el => {
             const cp = Object.assign({}, el)
@@ -115,7 +114,6 @@ class StackElementStorageManager {
     }
 
     async saveStackElement( element: StackElement) {
-        alert("stackElementStorageManager saveStackElement 1 " + JSON.stringify(element))
         const saveMap = new Map(this.ids)
         if (element instanceof UploadableStackElement) {
             if (!element.isSaved) {
@@ -124,7 +122,6 @@ class StackElementStorageManager {
                 } catch (e) {
                     alert("Falla guardado "+ e)
                 }
-                alert("stackElementStorageManager saveStackElement 2 Element saved")
             }
             const copy = Object.assign({}, element)
             delete copy.rawDataSrc

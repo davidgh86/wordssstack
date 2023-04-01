@@ -12,6 +12,7 @@ export const store = createStore({
     htmlEditorContent: "",
     caretPosition: -1,
     caretPositionNodeName: "",
+    editIndex: null,
     stack: stack
   },
   getters: {
@@ -38,7 +39,7 @@ export const store = createStore({
       await stackManager.stackByPath(state, file)
     },
     async addHtmlContent(state){
-      await stackManager.addHtmlContent(state)
+      await stackManager.addHtmlContent(state, state.editIndex)
     },
     async addUrlContent(state, url){
       await stackManager.addUrlContent(url)
@@ -65,7 +66,7 @@ export const store = createStore({
       context.commit('stackByPath', file)
     },
     addHtmlContent(context) {
-      context.commit('addHtmlContent')
+      context.commit('addHtmlContent', context.state.editIndex)
     },
     addUrlContent(context, url){
       context.commit('addUrlContent', url)

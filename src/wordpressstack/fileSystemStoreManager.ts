@@ -10,14 +10,11 @@ class FileSystemStoreManager {
         const fileName = filePath.substring(filePath.lastIndexOf('/') + 1)
         
         if (filePath.startsWith("blob:")) {
-            alert("isBlob")
             return await this.saveBlob(filePath, fileName)
         }
 
         if (filePath.startsWith("content://")) {
-            alert("isContent write file")
             const data = await FileSystemStoreManager.getBase64BytesFromDisk(filePath)
-            console.log("bbbbbbbb1")
             const uriResult = await Filesystem.writeFile({
                 path: fileName,
                 data: data,
@@ -25,29 +22,21 @@ class FileSystemStoreManager {
             })
             return uriResult.uri
         }
-        console.log("bbbbbbbb2")
-        alert("Copying from filePath: "+filePath+ " to fileName "+fileName)
         await Filesystem.copy({
             from: filePath,
             to: fileName.replaceAll(" ", "_"),
             toDirectory: Directory.Cache
         });
-        alert("obtaining")
-        console.log("aaa1")
         const uriResult = await Filesystem.getUri({
             path: fileName,
             directory: Directory.Cache
         })
-        alert("Fin")
         
         return uriResult.uri
     }
 
     static async remove(filePath: string): Promise<void> {
-        console.log("******->4 removeElement")
-        console.log("substring 4")
         const fileName = filePath.substring(filePath.lastIndexOf('/') + 1)
-        console.log("bbbbbbbb3")
         await Filesystem.deleteFile({
             path: fileName,
             directory: Directory.Cache
@@ -55,7 +44,6 @@ class FileSystemStoreManager {
     }
 
     static async getBase64BytesFromDisk(filePath: string) {
-        console.log("aaa2")
         const readResult = await Filesystem.readFile({
             path: filePath
         })
@@ -64,9 +52,7 @@ class FileSystemStoreManager {
     }
 
     static async getBase64BytesFromCacheDisk(filePath: string) {
-        console.log("aaa3")
         const fileName = filePath.split("/").pop()
-        console.log("filename "+ filePath)
         const readResult = await Filesystem.readFile({
             path: fileName,
             directory: Directory.Cache
@@ -78,11 +64,9 @@ class FileSystemStoreManager {
     static async saveBlob(filePath: string, fileName: string) {
         const response = await fetch(filePath)
         const blob: Blob = await response.blob()
-        console.log("substring 5")
         const fileNameWithExtension = fileName + "." + blob.type.substring(blob.type.lastIndexOf('/') + 1)
 
         const base64Data = await this.convertBlobToBase64(blob) as string
-        console.log("bbbbbbbb4")
         const uriResult = await Filesystem.writeFile({
             path: fileNameWithExtension,
             data: base64Data,
@@ -99,7 +83,6 @@ class FileSystemStoreManager {
             reader.onload = () => {
                 resolve(reader.result)
             };
-            console.log("aaa4")
             reader.readAsDataURL(blob)
         })
 

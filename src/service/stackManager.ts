@@ -50,8 +50,8 @@ class StackManager {
 
     public getUrlType(url: string) {
         const hostname = (new URL(url)).hostname
-        
-        if (hostname === "www.youtube.com" || hostname === "youtu.be") {
+        alert("hostname "+ hostname)
+        if (hostname === "www.youtube.com" || hostname === "youtu.be" || hostname === "youtube.com") {
             return FileTypes.YOUTUBE
         } else if (hostname === "twitter.com") {
             return FileTypes.TWITTER
@@ -85,10 +85,29 @@ class StackManager {
         }
     }
 
-    async addHtmlContent(state){
+    async addHtmlContent(state, index){
+        console.log("index...."+index)
+        if (index || index === 0) {
+            this.replaceHtmlContent(state, index)
+        } else {
+            this.appendHtmlContent(state)
+        }
+    }
+
+    async replaceHtmlContent(state, index) {
+        const elementToRemove = state.stack[index]
+        await StackManager.stackElementStorageManager.removeElement(elementToRemove)
+        const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: state.htmlEditorContent})
+        state.stack[index] = element
+        await StackManager.stackElementStorageManager.saveStack(state.stack)
+    }
+
+    async appendHtmlContent(state){
         const element = StackElementFactory.getStackElementByString(FileTypes.HTML, {html: state.htmlEditorContent})
         await StackManager.stackElementStorageManager.saveStackElement(element);
+        
         state.stack.push(element)
+        
         state.htmlEditorContent = ""
     }
 
@@ -106,7 +125,9 @@ class StackManager {
     }
 
     async addYoutubeContent(state, url){
+        console.log("URL ........." + url)
         const element = StackElementFactory.getStackElementByString(FileTypes.YOUTUBE, {url: url})
+        console.log("ELEMENT ..........."+ JSON.stringify(element))
         await StackManager.stackElementStorageManager.saveStackElement(element);
         state.stack.push(element)
     }
@@ -116,7 +137,6 @@ class StackManager {
     }
 
     async removeElement(state, index){
-        console.log("******->1 removeElement")
         const element = state.stack[index]
         state.stack.splice(index, 1)
         StackManager.stackElementStorageManager.saveStack(state.stack)
@@ -124,12 +144,9 @@ class StackManager {
     }
 
     async stackByPath(state, file){
-        console.info("1.-----> stacking by path")
         const stackElement = StackElementFactory.getStackElement(file)
-        console.log("2.-----> " +JSON.stringify(stackElement))
         if (stackElement instanceof UploadableStackElement){
           await StackManager.stackElementStorageManager.saveStackElement(stackElement);
-          console.log("8.-----> Elemento apilado: "+ JSON.stringify(stackElement))
           state.stack.push(stackElement)
         }else {
           state.stack.push(stackElement)
@@ -152,18 +169,14 @@ class StackManager {
     }
 
     async addElementFromSavedExternalPath(state, { savedUrl, mimeType }){
-        alert("store index addElementFromSavedExternalPath 1 "+ savedUrl)
         const extension = !mimeType?savedUrl.split(".").pop():mimeType.split("/").pop()
         const fileType = TypesConstantsConfig.getFileTypeByExtension(extension)
-        alert("store index addElementFromSavedExternalPath 2 extension: "+ JSON.stringify(extension) + " filetype: " + JSON.stringify(fileType) )
         const stackElement = StackElementFactory.getStackElementByString(fileType, {filePath: savedUrl, extension: extension})
-        alert("store index addElementFromSavedExternalPath 3 stakElement: "+ JSON.stringify(stackElement) )
         
         if (stackElement instanceof UploadableStackElement){
           await StackManager.stackElementStorageManager.saveStackElement(stackElement)
           await stackElement.calculateRawData()
         }
-        alert("add stack " + JSON.stringify(stackElement))
         state.stack.push(stackElement)
       }
    

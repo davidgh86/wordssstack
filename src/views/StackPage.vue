@@ -29,10 +29,11 @@
             <ion-col size="6">
               
               <ion-grid>
-                <draggable :list="store.state.stack" @change="saveOrder">
+                <draggable :list="store.state.stack" @change="saveOrder" :disabled="isEditing">
                   <ion-row v-for="(item, index) in store.state.stack" :key="index">
                     <ion-col class="element">
-                      <ion-icon :src="closeCircle" class="x" @click="removeElement(index)"></ion-icon>
+                      <ion-icon :src="closeCircle" class="x" @click="removeElement(index)" v-if="!isEditing"></ion-icon>
+                      <ion-icon :src="pencil" class="edit" @click="editElement(index)" v-if="isHtml(item) && !isEditing"></ion-icon>
                       <div v-html="item.getPrevisualizedHtmlElement()">
                       </div>
                     </ion-col>
@@ -63,9 +64,9 @@
               <ion-button shape="round" @click="takeVideo()">
                 <ion-icon slot="icon-only" :src="videocam"></ion-icon>
               </ion-button>
-              <ion-button shape="round" @click="recordSound()">
+              <!-- <ion-button shape="round" @click="recordSound()">
                 <ion-icon slot="icon-only" :src="mic"></ion-icon>
-              </ion-button> 
+              </ion-button>  -->
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -86,6 +87,9 @@
           </ion-radio-group>
         </ion-list>
         <!-- <ion-row>Here {{ store.state.caretPosition }} - Node name - {{ store.state.caretPositionNodeName }} - {{ store.state.htmlEditorContent }}</ion-row> -->
+        <ion-row v-if="isEditing">
+          Editing element!!!
+        </ion-row>
         <ion-row v-if="plainShareType==='html'">
           <ion-col>
             <quill-editor
@@ -185,7 +189,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { useStore } from 'vuex'
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
@@ -197,7 +201,7 @@ import { OverlayEventDetail } from '@ionic/core/components';
 import { VueDraggableNext } from 'vue-draggable-next'
 import { quillEditor } from 'vue3-quill'
 
-import { closeCircle } from 'ionicons/icons';
+import { closeCircle, pencil } from 'ionicons/icons';
 
 import _ from 'lodash'
 
@@ -209,6 +213,7 @@ import tagsManager from '@/service/tagsManager';
 
 import { videocam, camera, mic  } from 'ionicons/icons';
 import mediaService from '@/service/mediaService';
+import HTMLStackElement from '@/wordpressstack/htmlStackElement';
 
 export default defineComponent({
   name: 'FolderPage',
@@ -264,6 +269,12 @@ export default defineComponent({
     const tagInLibrary = ref(false)
 
     const suggestionsObject = ref({})
+
+    //const editIndex = ref(null)
+
+    const isEditing = computed(() => {
+      return !!store.state.editIndex || store.state.editIndex === 0
+    })
 
     function addTag(tag) {
       try {
@@ -329,9 +340,6 @@ export default defineComponent({
     function recordSound() {
       mediaService.captureAudio()
         .then((data)=> {
-          alert(JSON.stringify(data))
-          alert(JSON.stringify(data[0].fullPath))
-          alert(JSON.stringify(data[0].type))
           stackManager.processFileUrl(data[0].fullPath, data[0].type)
         })
         .catch((error)=> alert("ERROR "+ JSON.stringify(error)))
@@ -398,10 +406,19 @@ export default defineComponent({
         stackManager.processTextUrl(inputUrlContent.value)
         inputUrlContent.value = ""
       }
+      if (isEditing.value) {
+        store.state.editIndex = null
+      }      
     }
 
     function removeElement(index){
       store.commit('removeElement', index)
+    }
+
+    function editElement(index) {
+      store.state.editIndex = index
+      const element = (store.state.stack[index]) as HTMLStackElement
+      store.state.htmlEditorContent = element.getHtmlElement()
     }
 
     function saveOrder() {
@@ -449,6 +466,10 @@ export default defineComponent({
       this.$refs.modal.$el.dismiss(name, 'confirm');
     }
 
+    function isHtml(stackElement) {
+      return stackElement instanceof HTMLStackElement
+    }
+
     function addTagToLibrary() {
 
       tagsToAddToLibrary.value = tagsManager.getSplittedTags(test.value)
@@ -478,6 +499,7 @@ export default defineComponent({
       plainShareType,
       setTitle,
       closeCircle,
+      pencil,
       removeElement,
       radioGroupChange,
       store,
@@ -494,7 +516,11 @@ export default defineComponent({
       tagInLibrary,
       suggestionsObject,
       takePhoto, takeVideo, recordSound,
-      videocam, camera, mic
+      videocam, camera, mic,
+      isHtml,
+      editElement,
+      //editIndex,
+      isEditing
     }
   }
 });
@@ -512,5 +538,11 @@ export default defineComponent({
     position: absolute;
     top: -10px;
     right: -10px;
+}
+.edit {
+  font-size: 24px;
+  position: absolute;
+  top: 12px;
+  right: -10px;
 }
 </style>
