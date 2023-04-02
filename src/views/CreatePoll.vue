@@ -53,7 +53,7 @@
 import { defineComponent, ref } from 'vue';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
-          IonInput, IonItem, IonLabel, IonIcon } from '@ionic/vue'
+          IonInput, IonItem, IonLabel, IonIcon, IonButton } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 import { addCircleOutline, trashOutline } from 'ionicons/icons';
 import strawpollApi from '@/service/strawpollApi';
@@ -76,7 +76,7 @@ export default defineComponent({
     IonItem,
     IonLabel,
     IonIcon,
-    
+    IonButton
   },
   setup() {
     

@@ -41,13 +41,14 @@ class OpenAIApi {
         localStorage.setItem(OpenAIApi.OpenAIOrganization, this.openAIOrganization)
     }
 
-    public async generateText(
+    public async generateChatResponse(
         messages: any[], 
         temperature: number, 
         maxTokens: number, 
         topP: number, 
         frequencyPenalty: number, 
-        presencePenalty: number) {
+        presencePenalty: number,
+        model: string ) {
 
         const body = {
             messages: messages,
@@ -56,12 +57,11 @@ class OpenAIApi {
             top_p: topP,
             frequency_penalty: frequencyPenalty,
             presence_penalty: presencePenalty,
-            model: "gpt-3.5-turbo"
+            model: model
         }
 
         const headers = {
             "Content-Type": "application/json",
-            //"Content-Length": JSON.stringify(body).length+"",
             "Authorization": `Bearer ${this.bearerToken}`
         }
 
@@ -76,9 +76,6 @@ class OpenAIApi {
         };
         
         const response = await Http.post(options)
-        debug.debugAlert(JSON.stringify(response))
-
-        console.log("-----> " + JSON.stringify(response))
 
         return response.data.choices[0].message
     }

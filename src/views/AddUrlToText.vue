@@ -44,7 +44,7 @@
 import { defineComponent, ref } from 'vue';
 import { IonButtons, IonContent, IonHeader, IonMenuButton, 
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
-          IonInput, IonItem, IonLabel } from '@ionic/vue'
+          IonInput, IonItem, IonLabel, IonButton } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 import { addCircleOutline, trashOutline } from 'ionicons/icons';
 
@@ -66,7 +66,8 @@ export default defineComponent({
     IonCol,
     IonInput,
     IonItem,
-    IonLabel    
+    IonLabel   ,
+    IonButton 
   },
   setup() {
 

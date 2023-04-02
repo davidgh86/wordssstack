@@ -6,7 +6,6 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 class FileSystemStoreManager {
 
     static async saveIntoDevice(filePath: string): Promise<string> {
-        console.log("substring 3 filepath " +filePath)
         const fileName = filePath.substring(filePath.lastIndexOf('/') + 1)
         
         if (filePath.startsWith("blob:")) {

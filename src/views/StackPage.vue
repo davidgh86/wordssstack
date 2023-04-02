@@ -519,7 +519,6 @@ export default defineComponent({
       videocam, camera, mic,
       isHtml,
       editElement,
-      //editIndex,
       isEditing
     }
   }
