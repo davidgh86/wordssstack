@@ -81,7 +81,6 @@ export default defineComponent({
 
     function saveTemplate(event) {
       const type = templateType.value
-      debugger;
       templateManagerService.setTemplateAndVariables(type, event.template, event.variables)
     } 
 

@@ -50,7 +50,6 @@ class StackManager {
 
     public getUrlType(url: string) {
         const hostname = (new URL(url)).hostname
-        alert("hostname "+ hostname)
         if (hostname === "www.youtube.com" || hostname === "youtu.be" || hostname === "youtube.com") {
             return FileTypes.YOUTUBE
         } else if (hostname === "twitter.com") {
@@ -80,13 +79,11 @@ class StackManager {
         } else if(store.state.caretPosition == 0) {
             store.state.htmlEditorContent = text + " " + htmlContent
         } else {
-            console.log("substring 2")
             store.state.htmlEditorContent = htmlContent.substring(0, store.state.caretPosition) + " " + text + " " + htmlContent.substring(store.state.caretPosition)
         }
     }
 
     async addHtmlContent(state, index){
-        console.log("index...."+index)
         if (index || index === 0) {
             this.replaceHtmlContent(state, index)
         } else {
@@ -125,9 +122,7 @@ class StackManager {
     }
 
     async addYoutubeContent(state, url){
-        console.log("URL ........." + url)
         const element = StackElementFactory.getStackElementByString(FileTypes.YOUTUBE, {url: url})
-        console.log("ELEMENT ..........."+ JSON.stringify(element))
         await StackManager.stackElementStorageManager.saveStackElement(element);
         state.stack.push(element)
     }
@@ -167,6 +162,15 @@ class StackManager {
         }
         context.commit('setTitle', "")
     }
+
+    async addElementFromBase64Src(state, base64Src: string) {
+        const uploadableElement = StackElementFactory.getStackElementByDataBase64(base64Src)
+        if (uploadableElement instanceof UploadableStackElement){
+            await StackManager.stackElementStorageManager.saveStackElement(uploadableElement)
+            await uploadableElement.calculateRawData()
+            state.stack.push(uploadableElement)
+        }
+    } 
 
     async addElementFromSavedExternalPath(state, { savedUrl, mimeType }){
         const extension = !mimeType?savedUrl.split(".").pop():mimeType.split("/").pop()

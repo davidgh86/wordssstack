@@ -1,14 +1,12 @@
 <template>
-      <ion-header :translucent="true">
-        <ion-toolbar>
-          <ion-buttons slot="start">
-            <ion-menu-button color="primary"></ion-menu-button>
-          </ion-buttons>
-          <ion-title>{{ $route.params.id }}</ion-title>
-        </ion-toolbar>
-      </ion-header>
       <ion-content :fullscreen="true">
           <ion-grid>
+            <ion-row>
+                <ion-select aria-label="mode" placeholder="Select model" v-model="iaModel" value="gpt-3.5-turbo">
+                    <ion-select-option value="gpt-3.5-turbo">gpt-3.5-turbo</ion-select-option>
+                    <ion-select-option value="gpt-3.5-turbo-0301">gpt-3.5-turbo-0301</ion-select-option>
+                </ion-select>
+            </ion-row>
             <ion-row  v-for="(message, index) in messages" :key="index">
               <ion-col v-if="message.role === 'user'" size="8">
                 {{ message.content }}
@@ -113,9 +111,10 @@
   <script lang="ts">
   import { defineComponent, ref, /**defineExpose*/ } from 'vue';
   import { 
-            IonButtons, IonContent, IonHeader, IonMenuButton, 
-            IonTitle, IonToolbar, IonRow, IonGrid, IonCol,
-            IonItem, IonLabel, IonInput, IonRange, IonToggle, IonButton
+            //IonButtons, IonHeader, IonMenuButton, IonTitle, IonToolbar, 
+            IonContent, IonRow, IonGrid, IonCol,
+            IonItem, IonLabel, IonInput, IonRange, IonToggle, IonButton,
+            IonSelect, IonSelectOption
           } from '@ionic/vue'
   
   import { useRouter } from 'vue-router'
@@ -128,24 +127,21 @@
     emits: ['wrong-credentials'],
     expose: ['callOpenAi'],
     components: {
-      IonButtons,
       IonContent,
-      IonHeader,
-      IonMenuButton,
-      IonTitle,
-      IonToolbar,
       IonGrid,
       IonRow,
       IonCol,
       IonItem, IonLabel, IonInput,
       IonRange,
-      IonToggle,
-      //IonModal, 
-      IonButton
+      IonToggle, 
+      IonButton,
+      IonSelect, IonSelectOption
     },
     setup(props, { emit }) {
   
       const router = useRouter()
+
+      const iaModel = ref("gpt-3.5-turbo")
   
       const prompt = ref("")
   
@@ -201,7 +197,6 @@
       }
 
       const callOpenAi = () => {
-        debugger;
         if (!openAIApi.hasBearerToken()) {
           emit("wrong-credentials")
         } else {
@@ -222,7 +217,7 @@
                   topP.value/100, 
                   freqPenalty.value/100, 
                   presPenalty.value/100,
-                  "gpt-3.5-turbo"
+                  iaModel.value
                   ).then(response => {
                     messages.value.push(response)
                   }).catch(e => {
@@ -249,7 +244,8 @@
         advancedConfig,
         updateAdvancedConfig,
         callOpenAi,
-        ask
+        ask,
+        iaModel
       }
     }
   });

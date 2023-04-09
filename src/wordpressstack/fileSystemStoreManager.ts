@@ -1,19 +1,27 @@
 'use strict';
 
 import { Filesystem, Directory } from '@capacitor/filesystem';
-//import { render } from 'vue';
+import { v4 as uuid } from 'uuid'
 
 class FileSystemStoreManager {
 
     static async saveIntoDevice(filePath: string): Promise<string> {
-        const fileName = filePath.substring(filePath.lastIndexOf('/') + 1)
+
+        let savingPath = filePath;
+
+        if (savingPath.startsWith("data:")) {
+            savingPath = await this.saveBlob(filePath, uuid())
+            return savingPath;
+        } 
+
+        const fileName = savingPath.substring(savingPath.lastIndexOf('/') + 1)
         
-        if (filePath.startsWith("blob:")) {
-            return await this.saveBlob(filePath, fileName)
+        if (savingPath.startsWith("blob:")) {
+            return await this.saveBlob(savingPath, fileName)
         }
 
-        if (filePath.startsWith("content://")) {
-            const data = await FileSystemStoreManager.getBase64BytesFromDisk(filePath)
+        if (savingPath.startsWith("content://")) {
+            const data = await FileSystemStoreManager.getBase64BytesFromDisk(savingPath)
             const uriResult = await Filesystem.writeFile({
                 path: fileName,
                 data: data,
@@ -21,11 +29,13 @@ class FileSystemStoreManager {
             })
             return uriResult.uri
         }
+
         await Filesystem.copy({
-            from: filePath,
-            to: fileName.replaceAll(" ", "_"),
+            from: savingPath,
+            to: fileName.replace(/ /g, "_"),
             toDirectory: Directory.Cache
         });
+
         const uriResult = await Filesystem.getUri({
             path: fileName,
             directory: Directory.Cache

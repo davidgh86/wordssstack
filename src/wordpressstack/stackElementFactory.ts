@@ -4,7 +4,6 @@ import { TypesConstantsConfig, FileTypes } from "@/constants/typesConstantsConfi
 
 class StackElementFactory {
     public static getStackElement(file: File): StackElement {
-        console.log("***********" + file.name)
         const extension = file.name.split('.').pop();
 
         const url = URL.createObjectURL(file)
@@ -14,6 +13,10 @@ class StackElementFactory {
         } else {
             throw new Error("not valid filename")
         }
+    }
+
+    public static getStackElementByDataBase64(dataBase64: string): StackElement {
+        return TypesConstantsConfig.getStackElementByBase64String(dataBase64)
     }
 
     public static getStackElementByString(fileType: FileTypes, element: any): StackElement {

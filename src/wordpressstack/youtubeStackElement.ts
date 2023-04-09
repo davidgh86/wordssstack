@@ -87,7 +87,6 @@ console.log(youTubeGetID('BGL22PTIOAM'));
     }
 
     getPrevisualizedHtmlElement(): string {
-        alert("Video id" + this.getYoutubeVideoId())
         return `<div style="width: 100%;height: 100%;overflow: hidden;">
             <iframe src="https://www.youtube.com/embed/${this.getYoutubeVideoId()}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" style="width: 100%;height: 100%;object-fit: contain;display: inline-block;" allowfullscreen></iframe>
         </div>`   

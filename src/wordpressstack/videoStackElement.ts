@@ -12,13 +12,11 @@ class VideoStackElement extends UploadableStackElement {
     }
 
     getHtmlString(src:string|null): string {
-        console.log("------> getHtmlString")
         const variables = [
             { variableName: "src_video", variableValue: src },
             { variableName: "video_extension", variableValue: this.getExtension() }
         ]
         const htmlSting = templateManagerService.renderTemplate(variables, templateManagerService.getTemplate("video"))
-        console.log("9. -------> " + htmlSting)
         return htmlSting;
     }
 

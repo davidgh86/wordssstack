@@ -154,8 +154,33 @@ class TypesConstantsConfig {
         return result
     }
 
+    private static getMimeTypeFromBase64String(base64String: string): string {
+        return base64String.substring(5, base64String.indexOf(';'))
+    }
+
+    public static getStackElementByBase64String(base64String: string): StackElement {
+        const extension = this.getMimeTypeFromBase64String(base64String).split("/")[1]
+        const fileType = this.extensions.get(extension)
+        switch(fileType) {
+            case FileTypes.IMAGE: {
+                return new ImageStackElement(base64String, undefined)
+                break;
+            }
+            case FileTypes.VIDEO: {
+                return new VideoStackElement(base64String, undefined)
+                break;
+            }
+            case FileTypes.AUDIO: {
+                return new AudioStackElement(base64String, undefined)
+                break;
+            }
+            default: {
+                throw new Error("Not implemented exception")
+            }
+        } 
+    }
+
     public static getStackElementByString(fileType: FileTypes, element: any): StackElement {
-        console.log("******++++++++++++"+fileType)
         switch(fileType) {
             case FileTypes.IMAGE: {
                 return new ImageStackElement(element.filePath, undefined)
@@ -170,7 +195,6 @@ class TypesConstantsConfig {
                 break;
             }
             case FileTypes.AUDIO: {
-                console.log("******++++++++++++---------"+JSON.stringify(element))
                 return new AudioStackElement(element.filePath, element.extension)
                 break;
             }
