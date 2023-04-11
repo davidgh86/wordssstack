@@ -1,12 +1,38 @@
+import { VoiceRecorder, VoiceRecorderPlugin, RecordingData, GenericResponse, CurrentRecordingStatus } from 'capacitor-voice-recorder';
+import { ref } from 'vue';
+
 class MediaService {
 
     private static isInitialized = false;
     private static instance: MediaService;
+    private static canRecord = ref(false)
 
     private static INITIALIZATION_ERROR = new Error("Media services not ready");
 
     public initialize() {
         MediaService.isInitialized = true
+        VoiceRecorder.canDeviceVoiceRecord().then(
+            (result: GenericResponse) => {
+                if (result.value) {
+                    VoiceRecorder.hasAudioRecordingPermission().then(
+                        (result: GenericResponse) => {
+                            if (result.value) {
+                                MediaService.canRecord.value = true
+                            } else {
+                                // TODO if permission asked before do not ask again
+                                VoiceRecorder.requestAudioRecordingPermission().then((result: GenericResponse) => {
+                                    if (result.value) {
+                                        MediaService.canRecord.value = true
+                                    }
+                                })
+                            }
+                        })
+                }
+            })
+    }
+
+    public getCanRecord() {
+        return MediaService.canRecord
     }
 
     public static getInstance(): MediaService {
@@ -36,6 +62,14 @@ class MediaService {
 
     public captureImage(): Promise<MediaFile[]> {
         return MediaService.checkInitializationBeforPromiseAndThen(navigator.device.capture.captureImage)
+    }
+
+    public startRecording(): Promise<GenericResponse> {
+        return VoiceRecorder.startRecording()
+    }
+
+    public stopRecording(): Promise<RecordingData> {
+        return VoiceRecorder.stopRecording()
     }
 }
 

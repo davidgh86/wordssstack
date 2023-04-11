@@ -116,11 +116,6 @@ setup(props, { emit }) {
      return getSize()
   })
 
-  function stackContent(){
-    stackManager.addTextToEditor(prompt.value)
-    router.push("/inbox")
-  }
-
   function reset() {
     prompt.value = ""
   }
@@ -136,6 +131,7 @@ setup(props, { emit }) {
   
   function stack(index) {
     stackManager.addElementFromBase64Src(store.state, generatedImages.value[index].url)
+    router.push("/inbox")
   }
 
   function ask() {
@@ -154,7 +150,6 @@ setup(props, { emit }) {
   return {
     prompt,
     reset,
-    stackContent,
     callOpenAi,
     ask,
     stack,

@@ -64,9 +64,9 @@
               <ion-button shape="round" @click="takeVideo()">
                 <ion-icon slot="icon-only" :src="videocam"></ion-icon>
               </ion-button>
-              <!-- <ion-button shape="round" @click="recordSound()">
+              <ion-button shape="round" v-if="canRecord" :color="recordButtonColor" @touchstart="startRecording()" @touchend="stopRecording()">
                 <ion-icon slot="icon-only" :src="mic"></ion-icon>
-              </ion-button>  -->
+              </ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -270,7 +270,17 @@ export default defineComponent({
 
     const suggestionsObject = ref({})
 
-    //const editIndex = ref(null)
+    const canRecord = mediaService.getCanRecord()
+
+    const recording = ref(false)
+
+    const recordButtonColor = computed(() => {
+      if (recording.value) {
+        return "danger"
+      } else {
+        return "primary"
+      }
+    })
 
     const isEditing = computed(() => {
       return !!store.state.editIndex || store.state.editIndex === 0
@@ -371,6 +381,33 @@ export default defineComponent({
     function updateCaretPosition(event) {
       
       store.state.caretPosition = getCaretPosition()
+    }
+
+    function startRecording() {
+      console.log("start recording")
+      if (recording.value) {
+        return
+      }
+      mediaService.startRecording().then(resp => {
+        if (resp.value) {
+          recording.value = true
+        }
+      }).catch(e => {
+        alert("Error starting recording "+ JSON.stringify(e))
+      })
+    }
+
+    function stopRecording() {
+      console.log("stop recording")
+      if (!recording.value) {
+        return
+      }
+      mediaService.stopRecording().then(resp => {
+        stackManager.addElementFromBase64Src(store.state, `data:${resp.value.mimeType};base64,${resp.value.recordDataBase64}`)
+        recording.value=false
+      }).catch(e => {
+        alert("Error finishing recording "+ JSON.stringify(e))
+      })
     }
 
     function getCaretPosition() {
@@ -519,7 +556,12 @@ export default defineComponent({
       videocam, camera, mic,
       isHtml,
       editElement,
-      isEditing
+      isEditing,
+      canRecord,
+      startRecording,
+      stopRecording,
+      recording,
+      recordButtonColor
     }
   }
 });
