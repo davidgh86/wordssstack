@@ -180,6 +180,40 @@ class OpenAIApi {
             return {url: `data:image/png;base64,${item.b64_json}`}
         })
     }
+
+    public async createImageVariation(
+        file: File,
+        fileName: string,
+        n: number,
+        size: string,
+    ) {
+
+        const formData = new FormData();
+        formData.append('image', file, fileName);
+        formData.append('n', n+"");
+        formData.append('size', size);
+        formData.append('response_format', "b64_json");     
+
+        const headers = {
+            "Content-Type": 'multipart/form-data',
+            "Authorization": `Bearer ${this.bearerToken}`
+        }
+
+        if (this.openAIOrganization) {
+            headers["openai-organization"] = this.openAIOrganization
+        }
+
+        const options = {
+            url: 'https://api.openai.com/v1/images/variations',
+            data: formData,
+            headers: headers
+        };
+        
+        const response = await Http.post(options)
+        return response.data.data.map(item => {
+            return {url: `data:image/png;base64,${item.b64_json}`}
+        })
+    }
 }
 
 export default OpenAIApi.getInstance()

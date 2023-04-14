@@ -232,7 +232,6 @@ setup(props, { emit }) {
   }
 
   const callOpenAi = () => {
-    debugger;
     if (!openAIApi.hasBearerToken()) {
       emit("wrong-credentials")
     } else {

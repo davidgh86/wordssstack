@@ -6,47 +6,14 @@
                 <ion-select-option v-for="item of actions" :value="item.value" :key="item.value">{{ item.value }}</ion-select-option>
             </ion-select>
         </ion-row>
-        <ion-row>
-          <ion-item>
-            <ion-label>Prompt</ion-label>
-            <ion-input v-model="prompt"></ion-input>
-          </ion-item>
+        <ion-row v-if="action === 'create'">
+          <create-images-component @wrong-credentials="emitWrongCredentials"></create-images-component>
         </ion-row>
-
-        <ion-row>
-          <ion-col size="3">
-            <ion-button @click="ask()">ASK</ion-button>
-          </ion-col>
+        <ion-row v-if="action === 'edit'">
+          <edit-images-component @wrong-credentials="emitWrongCredentials"></edit-images-component>
         </ion-row>
-        
-
-        <ion-row>
-          <ion-col size="3">
-            Number or images
-          </ion-col>
-          <ion-col size="1">
-            {{ n }}
-          </ion-col>
-          <ion-col size="3">
-            <ion-range :min="1" :max="10" v-model="n"></ion-range>
-          </ion-col>
-        </ion-row>
-
-        <ion-row>
-          <ion-col size="2">
-            Size
-          </ion-col>
-          <ion-col size="2">
-            {{ size }}
-          </ion-col>
-          <ion-col size="3">
-            <ion-range :min="0" :max="2" v-model="imageSize"></ion-range>
-          </ion-col>
-        </ion-row>
-
-        <ion-row v-for="(generatedImage, index) in generatedImages" :key="index">
-          <ion-col size="8"><img :src="generatedImage.url" /></ion-col>
-          <ion-col size="4"><ion-button @click="stack(index)">Stack</ion-button></ion-col>
+        <ion-row v-if="action === 'variation'">
+          <variate-images-component @wrong-credentials="emitWrongCredentials"></variate-images-component>
         </ion-row>
 
       </ion-grid>
@@ -54,19 +21,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { 
         IonContent, IonRow, IonGrid, 
-        IonSelect, IonSelectOption, 
-        IonInput, IonCol, IonRange, 
-        IonItem, IonLabel, IonButton
+        IonSelect, IonSelectOption
       } from '@ionic/vue'
-
-import { useRouter } from 'vue-router'
-
-import openAIApi from '@/service/openAIApi';
-import stackManager from '@/service/stackManager';
-import { useStore } from 'vuex';
+import CreateImagesComponent from './images/CreateImagesComponent.vue';
+import EditImagesComponent from './images/EditImagesComponent.vue';
+import VariateImagesComponent from './images/VariateImagesComponent.vue';
 
 export default defineComponent({
 name: 'ImagesComponent',
@@ -75,97 +37,35 @@ expose: ['callOpenAi'],
 components: {
   IonContent,
   IonGrid,
-  IonRange,
-  IonCol,
   IonRow,
   IonSelect,
   IonSelectOption,
-  IonInput,
-  IonItem,
-  IonLabel,
-  IonButton
+  CreateImagesComponent,
+  EditImagesComponent,
+  VariateImagesComponent,
 },
 setup(props, { emit }) {
 
-  const store = useStore()
-
-  const router = useRouter()
-
   const actions = ref([
     { value: "create" },
-    { value: "edit" },
+    //{ value: "edit" },
     { value: "variation" }
   ]);
 
-  const action = ref("create")
+  const action = ref("transform")
 
-  const prompt = ref("")
-
-  const n = ref(1)
-
-  const imageSize = ref(2)
-
-  const generatedImages = ref([])
-
-  function getSize() {
-    const height = 2 ** (imageSize.value + 8)
-     return `${height}x${height}`
+  function emitWrongCredentials() {
+    emit("wrong-credentials")
   }
-
-  const size = computed(() => {
-     return getSize()
-  })
-
-  function reset() {
-    prompt.value = ""
-  }
-
-  const callOpenAi = () => {
-    if (!openAIApi.hasBearerToken()) {
-      emit("wrong-credentials")
-    } else {
-      fetchOpenApi()
-      prompt.value = ""
-    }
-  }
-  
-  function stack(index) {
-    stackManager.addElementFromBase64Src(store.state, generatedImages.value[index].url)
-    router.push("/inbox")
-  }
-
-  function ask() {
-    callOpenAi()
-  }
-  
-  function fetchOpenApi() {
-    openAIApi.generateImage(prompt.value, n.value, getSize()
-              ).then(response => {
-                generatedImages.value = response
-              }).catch(e => {
-                alert(JSON.stringify(e))
-              })
-    }
 
   return {
-    prompt,
-    reset,
-    callOpenAi,
-    ask,
-    stack,
     action,
     actions,
-    n,
-    imageSize,
-    size,
-    generatedImages
+    emitWrongCredentials
   }
 }
 });
 </script>
 
 <style scoped>
-.input-tag > div {
-  background-color: grey !important
-}
 </style>

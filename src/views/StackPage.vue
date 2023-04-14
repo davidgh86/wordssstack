@@ -70,7 +70,7 @@
             </ion-col>
           </ion-row>
         </ion-grid>
-      <input id="fileSelector" hidden type="file" name="myFile" @change="stackFile "/>
+      <input id="fileSelector" hidden type="file" name="myFile" @change="stackFile"/>
     </ion-content>
     <ion-content>
       <ion-grid>
