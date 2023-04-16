@@ -34,6 +34,7 @@
                     <ion-col class="element">
                       <ion-icon :src="closeCircle" class="x" @click="removeElement(index)" v-if="!isEditing"></ion-icon>
                       <ion-icon :src="pencil" class="edit" @click="editElement(index)" v-if="isHtml(item) && !isEditing"></ion-icon>
+                      <ion-icon :src="pencil" class="variate-by-ai" @click="variateImage(index)" v-if="isImage(item) && !isEditing"></ion-icon>
                       <div v-html="item.getPrevisualizedHtmlElement()">
                       </div>
                     </ion-col>
@@ -214,6 +215,9 @@ import tagsManager from '@/service/tagsManager';
 import { videocam, camera, mic  } from 'ionicons/icons';
 import mediaService from '@/service/mediaService';
 import HTMLStackElement from '@/wordpressstack/htmlStackElement';
+import ImageStackElement from '@/wordpressstack/imageStackElement';
+import { v4 as uuid } from 'uuid'
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'FolderPage',
@@ -245,6 +249,8 @@ export default defineComponent({
   setup() {
     
     const store = useStore()
+
+    const router = useRouter()
 
     const title = ref("")
 
@@ -292,6 +298,17 @@ export default defineComponent({
       } catch(e) {
         alert(e.message)
       }
+    }
+
+    function variateImage(index) {
+      
+      router.push({
+        name: "variation",
+        params: {
+          stackIndex: index
+        }
+      })
+
     }
 
     function openAddTagToLibraryMenu(tag) {
@@ -507,6 +524,10 @@ export default defineComponent({
       return stackElement instanceof HTMLStackElement
     }
 
+    function isImage(stackElement) {
+      return stackElement instanceof ImageStackElement
+    }
+
     function addTagToLibrary() {
 
       tagsToAddToLibrary.value = tagsManager.getSplittedTags(test.value)
@@ -561,7 +582,9 @@ export default defineComponent({
       startRecording,
       stopRecording,
       recording,
-      recordButtonColor
+      recordButtonColor,
+      isImage,
+      variateImage
     }
   }
 });
@@ -585,5 +608,12 @@ export default defineComponent({
   position: absolute;
   top: 12px;
   right: -10px;
+}
+
+.variate-by-ai {
+  font-size: 24px;
+  position: absolute;
+  top: -10px;
+  left: -10px;
 }
 </style>

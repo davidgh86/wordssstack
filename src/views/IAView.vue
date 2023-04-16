@@ -1,15 +1,13 @@
 <template>
   <ion-page>
     <ion-row>
-      <ion-select aria-label="mode" placeholder="Select mode" v-model="iaMode">
+      <ion-select aria-label="mode" placeholder="Select mode" v-model="iaMode" @ion-change="handleOptionChange">
         <ion-select-option value="chat">Chat</ion-select-option>
         <ion-select-option value="complete">Complete</ion-select-option>
-        <ion-select-option value="images">Images</ion-select-option>
+        <ion-select-option value="image">Images</ion-select-option>
       </ion-select>
     </ion-row>
-    <chat-component @wrong-credentials="askCredentials()" ref="chat" v-if="iaMode === 'chat'"></chat-component>
-    <complete-component @wrong-credentials="askCredentials()" ref="complete" v-if="iaMode === 'complete'"></complete-component>
-    <images-component @wrong-credentials="askCredentials()" ref="images" v-if="iaMode === 'images'"></images-component>
+    <router-view @wrong-credentials="askCredentials($event)"></router-view>
     <ion-modal :is-open="openAiConfigOpen">
       <ion-header>
         <ion-toolbar>
@@ -43,9 +41,6 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 
-import ChatComponent from '@/components/openai/ChatComponent.vue';
-import CompleteComponent from "@/components/openai/CompleteComponent.vue"
-import ImagesComponent from "@/components/openai/ImagesComponent.vue"
 import openAIApi from '@/service/openAIApi';
 import { IonButton, IonButtons, IonContent, IonHeader, 
   IonInput, IonItem, IonLabel, IonModal, IonRow, 
@@ -53,24 +48,24 @@ import { IonButton, IonButtons, IonContent, IonHeader,
   //IonMenuButton, 
   } from '@ionic/vue';
 
+import { RouterView, useRouter } from 'vue-router';
+
 export default defineComponent({
   name: 'IAView',
   components: {
-    ChatComponent, CompleteComponent,
     IonModal, IonHeader, IonToolbar, IonButtons, 
     IonButton, IonTitle, IonContent, IonRow, 
     IonItem, IonLabel, IonInput, IonPage,
     IonSelect, IonSelectOption,
-    ImagesComponent, 
-    //IonMenuButton
+    RouterView
   },
   setup() {
 
-    const chat = ref(null)
+    const router = useRouter()
 
-    const complete = ref(null)
+    let callOpenAiMethod = null
 
-    const images = ref(null)
+    //const childComponentType = ref(null)
 
     const iaMode = ref("images")
 
@@ -86,7 +81,8 @@ export default defineComponent({
       openAIApi.setBearerToken(openAiBearerToken.value)
     }
 
-    function askCredentials() {
+    function askCredentials(method) {
+      callOpenAiMethod = method
       openAiConfigOpen.value = true
     }
 
@@ -94,16 +90,16 @@ export default defineComponent({
       openAiConfigOpen.value = false
     }
 
+    function handleOptionChange() {
+      router.push({ name: iaMode.value })
+    }
+
     function callOpenAi() {
       saveOpenAiToken()
-      if (iaMode.value==="chat") {
-        this.$refs.chat.callOpenAi()
-      } else if (iaMode.value==="complete") {
-        this.$refs.complete.callOpenAi()
-      } else if (iaMode.value==="images") {
-        this.$refs.images.callOpenAi()
-      } else {
-        alert("Not valid model")
+      
+      if (callOpenAiMethod) {
+        callOpenAiMethod()
+        callOpenAiMethod = null
       }
       
       openAiConfigOpen.value = false
@@ -117,7 +113,8 @@ export default defineComponent({
       callOpenAi,
       askCredentials,
       closeOpenAiConfigOpen,
-      iaMode
+      iaMode,
+      handleOptionChange
     }
   }
 });

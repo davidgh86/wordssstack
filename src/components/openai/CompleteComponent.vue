@@ -233,7 +233,7 @@ setup(props, { emit }) {
 
   const callOpenAi = () => {
     if (!openAIApi.hasBearerToken()) {
-      emit("wrong-credentials")
+      emit("wrong-credentials", callOpenAi)
     } else {
       fetchOpenApi()
       prompt.value = ""

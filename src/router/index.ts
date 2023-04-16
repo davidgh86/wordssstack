@@ -32,7 +32,36 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/ai',
-    component: () => import ('../views/IAView.vue')
+    component: () => import ('../views/IAView.vue'),
+    children: [
+      {
+        path: "/chat",
+        name: "chat",
+        component: () => import ('../components/openai/ChatComponent.vue')
+      },
+      {
+        path: "/complete",
+        name: "complete",
+        component: () => import ('../components/openai/CompleteComponent.vue')
+      },
+      {
+        path: "/image",
+        name: "image",
+        component: () => import ('../components/openai/ImagesComponent.vue'),
+        children: [
+          { 
+            path: "/create",
+            name: "create",
+            component: () => import ('../components/openai/images/CreateImagesComponent.vue')
+          },
+          { 
+            path: "/variation/:stackIndex?",
+            name: "variation",
+            component: () => import ('../components/openai/images/VariateImagesComponent.vue'),
+          }
+        ]
+      }
+    ]
   },
   {
     path: '/',

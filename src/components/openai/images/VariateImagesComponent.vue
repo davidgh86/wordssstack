@@ -53,14 +53,15 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, watch, ref, Ref } from 'vue';
 import { 
         IonContent, IonRow, IonGrid,
         IonCol, IonRange, 
         IonItem, IonLabel, IonButton
       } from '@ionic/vue'
 
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+
 
 import openAIApi from '@/service/openAIApi';
 import stackManager from '@/service/stackManager';
@@ -68,6 +69,7 @@ import imageService from '@/service/imageService';
 import { useStore } from 'vuex';
 
 import { v4 as uuid } from 'uuid'
+import ImageStackElement from '@/wordpressstack/imageStackElement';
 
 interface ImageData {
   url: string;
@@ -94,13 +96,41 @@ setup(props, { emit }) {
 
   const router = useRouter()
 
+  const route = useRoute()
+
   const file = ref(null);
+
+  const imageUrl = computed(() => {
+    if (file.value) {
+      return URL.createObjectURL(file.value);
+    }
+    return null;
+  });
+
+  const getInitialFile = () => {
+    if (route.params.stackIndex) {
+      const stackIndex = parseInt(route.params.stackIndex as string)
+      const element = (store.state.stack[stackIndex]) as ImageStackElement
+
+      fetch(element.rawDataSrc)
+      .then(response => {
+        return response.blob()
+      })
+      .then(blob => {
+        file.value = blob
+      });
+    } 
+  }
+
+  getInitialFile()
 
   const n = ref(1)
 
   const imageSize = ref(2)
 
   const generatedImages = ref([])
+
+  
 
   function getSize() {
     const height = 2 ** (imageSize.value + 8)
@@ -115,16 +145,11 @@ setup(props, { emit }) {
     file.value = null
   }
 
-  const imageUrl = computed(() => {
-      if (file.value) {
-        return URL.createObjectURL(file.value);
-      }
-      return null;
-    });
+  
 
   const callOpenAi = () => {
     if (!openAIApi.hasBearerToken()) {
-      emit("wrong-credentials")
+      emit("wrong-credentials", callOpenAi)
     } else {
       fetchOpenApi()
       file.value = null
@@ -146,19 +171,21 @@ setup(props, { emit }) {
       return;
     }
 
-    const squareBlob = await imageService.cropToSquare(file.value);
-    const squareFile = new File([squareBlob], `${uuid()}.png`, { type: 'image/png' });
-    openAIApi.createImageVariation(squareFile, squareFile.name, n.value, getSize()).then(response => {
+    // console.log("1")
+    const squareBlob = await imageService.cropToSquarePng(file.value);
+    // console.log("2")
+    // const squareFile = new File([squareBlob], `${uuid()}.png`, { type: 'image/png' });
+    openAIApi.createImageVariation(squareBlob, `${uuid()}.png`, n.value, getSize()).then(response => {
                 generatedImages.value = response
               }).catch(e => {
-                alert(JSON.stringify(e))
+                alert(e.message)
               })
   }
 
   function loadFile(event){
     if(event.target.files.length > 0){
       alert("TODO check png less 4MB")
-      file.value = event.target.files[0]
+      file.value = event.target.files[0] as Blob
       
     }
   }

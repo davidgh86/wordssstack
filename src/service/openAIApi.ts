@@ -182,37 +182,39 @@ class OpenAIApi {
     }
 
     public async createImageVariation(
-        file: File,
+        file: Blob,
         fileName: string,
         n: number,
         size: string,
     ) {
-
-        const formData = new FormData();
-        formData.append('image', file, fileName);
-        formData.append('n', n+"");
-        formData.append('size', size);
-        formData.append('response_format', "b64_json");     
-
         const headers = {
-            "Content-Type": 'multipart/form-data',
-            "Authorization": `Bearer ${this.bearerToken}`
-        }
-
-        if (this.openAIOrganization) {
-            headers["openai-organization"] = this.openAIOrganization
-        }
-
-        const options = {
+            'Authorization': `Bearer ${this.bearerToken}`,
+            'Content-Type': 'multipart/form-data'
+          };
+          if (this.openAIOrganization) {
+            headers['openai-organization'] = this.openAIOrganization;
+          }
+          
+          const formData = new FormData();
+          formData.append('image', file, fileName);
+          formData.append('n', n.toString());
+          formData.append('size', size);
+          formData.append('response_format', 'b64_json');
+          
+          const options = {
+            method: 'POST',
+            headers,
             url: 'https://api.openai.com/v1/images/variations',
-            data: formData,
-            headers: headers
-        };
-        
-        const response = await Http.post(options)
-        return response.data.data.map(item => {
-            return {url: `data:image/png;base64,${item.b64_json}`}
-        })
+            data: formData
+          };
+          
+          const response = await Http.request(options);
+          if (response.status !== 200) {
+            throw new Error(response.data.error.message);
+          }
+          return response.data.data.map(item => {
+            return { url: `data:image/png;base64,${item.b64_json}` };
+          });
     }
 }
 
