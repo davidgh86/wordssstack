@@ -25,7 +25,7 @@ class TypesConstantsConfig {
 
     public static templateMap: Map<string, TemplateEntity> = new Map();
 
-    private static extensions = new Map<string, FileTypes>(
+    public static extensions = new Map<string, FileTypes>(
         [
             ["html", FileTypes.HTML],
             ["htm", FileTypes.HTML],
