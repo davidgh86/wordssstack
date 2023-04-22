@@ -40,6 +40,7 @@ class TypesConstantsConfig {
             ["ogg", FileTypes.AUDIO],
             ["opus", FileTypes.AUDIO],
             ["m4a", FileTypes.AUDIO],
+            ["wav", FileTypes.AUDIO],
             
             ["mp4", FileTypes.VIDEO],
             ["youtube", FileTypes.YOUTUBE],

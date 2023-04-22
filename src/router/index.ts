@@ -60,6 +60,23 @@ const routes: Array<RouteRecordRaw> = [
             component: () => import ('../components/openai/images/VariateImagesComponent.vue'),
           }
         ]
+      },
+      {
+        path: "/audio",
+        name: "audio",
+        component: () => import ('../components/openai/AudioComponent.vue'),
+        children: [
+          { 
+            path: "/transcription/:stackIndex?",
+            name: "transcription",
+            component: () => import ('../components/openai/audio/CreateTranscriptionComponent.vue')
+          },
+          { 
+            path: "/translation/:stackIndex?",
+            name: "translation",
+            component: () => import ('../components/openai/audio/CreateTranslationComponent.vue'),
+          }
+        ]
       }
     ]
   },

@@ -1,4 +1,5 @@
 import { Http } from '@capacitor-community/http';
+import { HTTP } from '@ionic-native/http';
 import debug from './debug';
 
 class OpenAIApi {
@@ -201,20 +202,101 @@ class OpenAIApi {
           formData.append('size', size);
           formData.append('response_format', 'b64_json');
           
-          const options = {
-            method: 'POST',
-            headers,
-            url: 'https://api.openai.com/v1/images/variations',
-            data: formData
-          };
-          
-          const response = await Http.request(options);
+          const response = await HTTP.sendRequest('https://api.openai.com/v1/images/variations', {
+            method: "post",
+            data: formData,
+            serializer: 'multipart',
+            headers: headers
+          })
+
           if (response.status !== 200) {
-            throw new Error(response.data.error.message);
+           throw new Error(response.data.error.message);
           }
-          return response.data.data.map(item => {
+          return (JSON.parse(response.data)).data.map(item => {
             return { url: `data:image/png;base64,${item.b64_json}` };
           });
+    }
+
+    public async createAudioTranscription(
+        file: Blob,
+        fileName: string,
+        model: string,
+        prompt?: string,
+        temperature?: number,
+        language?: string
+    ) {
+        debugger;
+        const headers = {
+            'Authorization': `Bearer ${this.bearerToken}`,
+            'Content-Type': 'multipart/form-data'
+          };
+          if (this.openAIOrganization) {
+            headers['openai-organization'] = this.openAIOrganization;
+          }
+          
+          const formData = new FormData();
+          formData.append('file', file, fileName);
+          formData.append('model', model);
+          if (prompt) {
+            formData.append('prompt', prompt);
+          }
+          if (temperature) {
+            formData.append('temperature', temperature.toString());
+          }
+          if (language) {
+            formData.append('language', language);
+          }
+
+          formData.append('response_format', 'text');
+          
+          const response = await HTTP.sendRequest('https://api.openai.com/v1/audio/transcriptions', {
+            method: "post",
+            data: formData,
+            serializer: 'multipart',
+            headers: headers
+          })
+
+          if (response.status !== 200) {
+           throw new Error(response.data);
+          }
+          return response.data;
+    }
+
+    public async createAudioTranslation(
+        file: Blob,
+        fileName: string,
+        model: string,
+        temperature?: number
+    ) {
+        debugger;
+        const headers = {
+            'Authorization': `Bearer ${this.bearerToken}`,
+            'Content-Type': 'multipart/form-data'
+          };
+          if (this.openAIOrganization) {
+            headers['openai-organization'] = this.openAIOrganization;
+          }
+          
+          const formData = new FormData();
+          formData.append('file', file, fileName);
+          formData.append('model', model);
+          if (temperature) {
+            formData.append('temperature', temperature.toString());
+          }
+
+          formData.append('response_format', 'text');
+          
+          const response = await HTTP.sendRequest('https://api.openai.com/v1/audio/translations', {
+            method: "post",
+            data: formData,
+            serializer: 'multipart',
+            headers: headers
+          })
+
+          if (response.status !== 200) {
+           throw new Error(response.data);
+          }
+          return response.data;
     }
 }
 

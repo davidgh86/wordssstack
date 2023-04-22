@@ -35,6 +35,8 @@
                       <ion-icon :src="closeCircle" class="x" @click="removeElement(index)" v-if="!isEditing"></ion-icon>
                       <ion-icon :src="pencil" class="edit" @click="editElement(index)" v-if="isHtml(item) && !isEditing"></ion-icon>
                       <ion-icon :src="pencil" class="variate-by-ai" @click="variateImage(index)" v-if="isImage(item) && !isEditing"></ion-icon>
+                      <ion-icon :src="pencil" class="variate-by-ai" @click="transcribeAudio(index)" v-if="isAudio(item) && !isEditing"></ion-icon>
+                      <ion-icon :src="languageOutline" class="translate-by-ai" @click="translateAudioToEnglish(index)" v-if="isAudio(item) && !isEditing"></ion-icon>
                       <div v-html="item.getPrevisualizedHtmlElement()">
                       </div>
                     </ion-col>
@@ -202,7 +204,7 @@ import { OverlayEventDetail } from '@ionic/core/components';
 import { VueDraggableNext } from 'vue-draggable-next'
 import { quillEditor } from 'vue3-quill'
 
-import { closeCircle, pencil } from 'ionicons/icons';
+import { closeCircle, languageOutline, pencil } from 'ionicons/icons';
 
 import _ from 'lodash'
 
@@ -218,6 +220,7 @@ import HTMLStackElement from '@/wordpressstack/htmlStackElement';
 import ImageStackElement from '@/wordpressstack/imageStackElement';
 import { v4 as uuid } from 'uuid'
 import { useRouter } from 'vue-router';
+import AudioStackElement from '@/wordpressstack/audioStackElement';
 
 export default defineComponent({
   name: 'FolderPage',
@@ -298,6 +301,24 @@ export default defineComponent({
       } catch(e) {
         alert(e.message)
       }
+    }
+
+    function transcribeAudio(index) {
+      router.push({
+        name: "transcription",
+        params: {
+          stackIndex: index
+        }
+      })
+    }
+
+    function translateAudioToEnglish(index) {
+      router.push({
+        name: "translation",
+        params: {
+          stackIndex: index
+        }
+      })
     }
 
     function variateImage(index) {
@@ -528,6 +549,10 @@ export default defineComponent({
       return stackElement instanceof ImageStackElement
     }
 
+    function isAudio(stackElement) {
+      return stackElement instanceof AudioStackElement
+    }
+
     function addTagToLibrary() {
 
       tagsToAddToLibrary.value = tagsManager.getSplittedTags(test.value)
@@ -558,6 +583,7 @@ export default defineComponent({
       setTitle,
       closeCircle,
       pencil,
+      languageOutline,
       removeElement,
       radioGroupChange,
       store,
@@ -584,7 +610,11 @@ export default defineComponent({
       recording,
       recordButtonColor,
       isImage,
-      variateImage
+      isAudio,
+      variateImage,
+      transcribeAudio,
+      translateAudioToEnglish
+    
     }
   }
 });
@@ -614,6 +644,13 @@ export default defineComponent({
   font-size: 24px;
   position: absolute;
   top: -10px;
+  left: -10px;
+}
+
+.translate-by-ai {
+  font-size: 24px;
+  position: absolute;
+  top: 12px;
   left: -10px;
 }
 </style>

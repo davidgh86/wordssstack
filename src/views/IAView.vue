@@ -5,6 +5,7 @@
         <ion-select-option value="chat">Chat</ion-select-option>
         <ion-select-option value="complete">Complete</ion-select-option>
         <ion-select-option value="image">Images</ion-select-option>
+        <ion-select-option value="audio">Audio</ion-select-option>
       </ion-select>
     </ion-row>
     <router-view @wrong-credentials="askCredentials($event)"></router-view>
