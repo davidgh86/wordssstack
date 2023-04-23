@@ -58,7 +58,7 @@ describe('html template parser', () => {
     expect(result.audio[0]).toBe(`[audio {audio_extension}="{src_audio}"][/audio]`)
     expect(result.youtube[0]).toBe('<iframe title="YouTube video player" src="https://www.youtube.com/embed/{youtube_video_id}" width="560" height="315" frameborder="0" allowfullscreen="allowfullscreen"></iframe>')
     expect(result.strawpoll[0]).toBe("<iframe width=\"620\" height=\"512\" src=\"{strawpoll_embed_url}\" style=\"width: 100%; height: 515px;\" frameborder=\"0\" allowfullscreen=\"\"></iframe>")
-    //expect(result.html[0]).toBe(`{content}`)
+    expect(result.html[0]).toBe(`{content}`)
     expect(result.twitter[0]).toBe('<div>\n      <div>\n        {content}\n        \n      </div>\n    </div>')
   })
 })

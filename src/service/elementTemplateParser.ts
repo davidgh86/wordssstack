@@ -48,7 +48,7 @@ class ElementTemplateParser {
     private getHtmlTemplates(parentElement) {
         const nodes = parentElement.childNodes;
 
-        const result = []
+        let result = []
         let bufferResult = []
 
         for (let i = 0; i < nodes.length; i++) {
@@ -61,16 +61,19 @@ class ElementTemplateParser {
                 bufferResult = []
             }
           } else if (node.nodeType === Node.TEXT_NODE) {
-            console.log(node.nodeValue)
-            bufferResult = [...bufferResult, ...node.nodeValue.split(ElementTemplateParser.WP_ELEMENT)]
+            //const wpSplittedElements = node.nodeValue.split(ElementTemplateParser.WP_ELEMENT)
+            result = [...result, ...node.nodeValue.split(ElementTemplateParser.WP_ELEMENT)]
           } 
         }
 
-        return [...result, ...bufferResult]
+        result = [...result, ...bufferResult.join("\n")]
+        return result.map(e => e.trim()).filter(e=>!!e)
     }
 
-    private getTwitterTemplates(parentElement) {
-        const parentId = parentElement.id
+    private getTwitterTemplates(parntElement) {
+        const parentId = parntElement.id
+
+        const parentElement = parntElement.cloneNode(true)
 
         //const elements = Array.from(auxParent.querySelectorAll('*')).filter(el => el.innerHTML.includes(element));
         const twitterElements = Array.from(parentElement.querySelectorAll(".twitter-tweet")).filter(el => {
@@ -334,13 +337,21 @@ class ElementTemplateParser {
         return matches ? matches.length : 0;
     }
 
+    private isVideoElement(element: HTMLElement) {
+        return element.tagName.toLowerCase() === "video"
+    }
+
     private containsVideo(element, admitOneException){
         const strElement = element.outerHTML;
         const count = this.countVideoWPElements(strElement)
 
         const allVideos = element.querySelectorAll("video")
 
-        const countVideoTags = allVideos ? allVideos.length : 0;
+        let countVideoTags = allVideos ? allVideos.length : 0;
+
+        if (this.isVideoElement(element)) {
+            countVideoTags += 1
+        }
 
         let result = count + countVideoTags;
 
@@ -349,6 +360,10 @@ class ElementTemplateParser {
         }
 
         return result > 0
+    }
+
+    private isAudioElement(element: HTMLElement) {
+        return element.tagName.toLowerCase() === "audio"
     }
 
     private containsAudio(element, admitOneException){
@@ -357,7 +372,11 @@ class ElementTemplateParser {
 
         const allVideos = element.querySelectorAll("audio")
 
-        const countVideoTags = allVideos ? allVideos.length : 0;
+        let countVideoTags = allVideos ? allVideos.length : 0;
+
+        if (this.isAudioElement(element)) {
+            countVideoTags += 1;
+        }
 
         let result = count + countVideoTags;
 
@@ -368,25 +387,41 @@ class ElementTemplateParser {
         return result > 0
     }
 
+    private isImageElement(element: HTMLElement) {
+        return element.tagName.toLowerCase() === "img"
+    }
+
     private containsImage(element, admitOneException){
         const allImages = element.querySelectorAll("img")
 
         let result = allImages ? allImages.length : 0;
 
+        if (this.isImageElement(element)) {
+            result += 1
+        }
+
         if (admitOneException){
             result -= 1;
         }
 
         return result > 0
+    }
+
+    private isYoutubeElement(element: HTMLElement) {
+        return element.tagName.toLowerCase()==="iframe" && element.getAttribute("src") && element.getAttribute("src").toLowerCase().includes("www.youtube.com")
     }
 
     private containsYoutube(element, admitOneException) {
         const allYoutubeVideos = Array.from(element.querySelectorAll("iframe")).filter(el => {
             const elem = el as HTMLElement
-            return elem.getAttribute("src") && elem.getAttribute("src").toLowerCase().includes("www.youtube.com")
+            return this.isYoutubeElement(elem)
         })
 
         let result = allYoutubeVideos ? allYoutubeVideos.length : 0;
+
+        if (this.isYoutubeElement(element)) {
+            result += 1;
+        }
 
         if (admitOneException){
             result -= 1;
@@ -395,27 +430,48 @@ class ElementTemplateParser {
         return result > 0
     }
 
+    private isStrawpollElement(element: HTMLElement) {
+        return element.tagName.toLowerCase()==="iframe" && element.getAttribute("src") && element.getAttribute("src").toLowerCase().includes("strawpoll.com")
+    }
+
     private containsStrawpoll(element, admitOneException) {
 
-        const allYoutubeVideos = Array.from(element.querySelectorAll("iframe")).filter(el => {
+        const allStrawpollElements = Array.from(element.querySelectorAll("iframe")).filter(el => {
             const elem = el as HTMLElement
-            return elem.getAttribute("src") && elem.getAttribute("src").toLowerCase().includes("strawpoll.com")
+            return this.isStrawpollElement(elem)
         })
 
+        let result = allStrawpollElements ? allStrawpollElements.length : 0;
 
-        let result = allYoutubeVideos ? allYoutubeVideos.length : 0;
+        if (this.isStrawpollElement(element)) {
+            result += 1;
+        }
 
         if (admitOneException){
             result -= 1;
         }
 
         return result > 0
+    }
+
+    private isTwitterElement(element: HTMLElement) {
+        if (element.tagName.toLowerCase()==="blockquote" && element.classList.contains("twitter-tweet")) {
+            return true;
+        }
+        if (element.tagName.toLowerCase()==="script" && element.getAttribute("src") && element.getAttribute("src")==="https://platform.twitter.com/widgets.js") {
+            return true;
+        }
+        return false;
     }
 
     private containsTwitter(element, admitOneException) {
         const allTweets = element.querySelectorAll(".twitter-tweet")
 
         let result = allTweets ? allTweets.length : 0;
+
+        if (this.isTwitterElement(element)) {
+            result += 1
+        }
 
         if (admitOneException){
             result -= 1;
