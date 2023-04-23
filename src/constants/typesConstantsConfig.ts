@@ -43,6 +43,9 @@ class TypesConstantsConfig {
             ["wav", FileTypes.AUDIO],
             
             ["mp4", FileTypes.VIDEO],
+            ["avi", FileTypes.VIDEO],
+            ["mpg", FileTypes.VIDEO],
+
             ["youtube", FileTypes.YOUTUBE],
             ["twitter", FileTypes.TWITTER],
             ["strawpoll", FileTypes.STRAWPOLL],

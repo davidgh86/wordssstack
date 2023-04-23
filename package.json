@@ -50,6 +50,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-static-block": "^7.21.0",
     "@capacitor/cli": "4.7.1",
     "@ionic/cli": "6.20.9",
     "@types/jest": "^27.0.0",

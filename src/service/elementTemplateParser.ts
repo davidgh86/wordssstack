@@ -3,8 +3,9 @@ import { TypesConstantsConfig, FileTypes } from "@/constants/typesConstantsConfi
 
 class ElementTemplateParser {
     
-    private static WP_VIDEO_REGEX = /\[\s*video\s+(?<attributes>.+)?\s*\]\s*\[\/\s*video\s*\]/gi;
-    private static WP_AUDIO_REGEX = /\[\s*audio\s+(?<attributes>.+)?\s*\]\s*\[\/\s*audio\s*\]/gi;
+    private static WP_VIDEO_REGEX = /\[\s*video(?<attributes>\s+.*)\s*\]\s*\[\/\s*video\s*\]/gi;
+    private static WP_AUDIO_REGEX = /\[\s*audio(?<attributes>\s+.*)\s*\]\s*\[\/\s*audio\s*\]/gi;
+    private static WP_ELEMENT = new RegExp(/\[\s*video\s+.*\s*\]\s*\[\/\s*video\s*\]/gi.source + "|" + /\[\s*audio\s+.*\s*\]\s*\[\/\s*audio\s*\]/gi.source, 'gi')
     private static WP_ATTRIBUTE_REGEX = /(\w+)\s*=\s*(['"])(.*?)\2/g;
     private static instance: ElementTemplateParser;
 
@@ -26,11 +27,113 @@ class ElementTemplateParser {
         const videoTemplates = this.getVideoTemplates(parentElement)
         const audioTemplates = this.getAudioTemplates(parentElement)
 
+        const youtubeTemplates = this.getYoutubeTemplates(parentElement)
+        const strawpollTemplates = this.getStrawpollTemplates(parentElement)
+
+        const twitterTemplates = this.getTwitterTemplates(parentElement)
+
+        const htmlTemplates = this.getHtmlTemplates(parentElement)
+
         return {
             image: imageTemplates,
             video: videoTemplates,
-            audio: audioTemplates
+            audio: audioTemplates,
+            youtube: youtubeTemplates,
+            strawpoll: strawpollTemplates,
+            twitter: twitterTemplates,
+            html: htmlTemplates
         }
+    }
+
+    private getHtmlTemplates(parentElement) {
+        const nodes = parentElement.childNodes;
+
+        const result = []
+        let bufferResult = []
+
+        for (let i = 0; i < nodes.length; i++) {
+          const node = nodes[i];
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            if (!this.containAny(node as HTMLElement, undefined)) {
+                bufferResult.push(node.outerHTML)
+            } else {
+                result.push(bufferResult.join("\n"))
+                bufferResult = []
+            }
+          } else if (node.nodeType === Node.TEXT_NODE) {
+            console.log(node.nodeValue)
+            bufferResult = [...bufferResult, ...node.nodeValue.split(ElementTemplateParser.WP_ELEMENT)]
+          } 
+        }
+
+        return [...result, ...bufferResult]
+    }
+
+    private getTwitterTemplates(parentElement) {
+        const parentId = parentElement.id
+
+        //const elements = Array.from(auxParent.querySelectorAll('*')).filter(el => el.innerHTML.includes(element));
+        const twitterElements = Array.from(parentElement.querySelectorAll(".twitter-tweet")).filter(el => {
+            const element = el as HTMLElement
+            const stringElement = element.nextElementSibling
+            return stringElement.getAttribute("src") && stringElement.getAttribute("src") === "https://platform.twitter.com/widgets.js"
+        })
+
+        const result = []
+        for (const twitterElement of twitterElements) {
+            let element = twitterElement as HTMLElement
+            const greaterStrawpollElement = this.getGreater(element, parentId, "twitter")
+            element = greaterStrawpollElement.querySelector(".twitter-tweet")
+            const textPlaceholder = document.createTextNode("{content}");
+            
+            const elementToRemove = element.nextElementSibling;
+            const parentElementToRemove = elementToRemove.parentNode;
+            
+            parentElementToRemove.removeChild(elementToRemove)
+            element.replaceWith(textPlaceholder);
+            result.push(greaterStrawpollElement.outerHTML)
+        }
+        return result
+    }
+
+    private getStrawpollTemplates(parentElement) {
+        const parentId = parentElement.id
+
+        //const elements = Array.from(auxParent.querySelectorAll('*')).filter(el => el.innerHTML.includes(element));
+        const strawpollElements = Array.from(parentElement.querySelectorAll("iframe")).filter(el => {
+            const element = el as HTMLElement
+            return element.getAttribute("src") && element.getAttribute("src").includes("https://strawpoll.com/embed/")
+        })
+
+        const result = []
+        for (const strawpollElement of strawpollElements) {
+            const element = strawpollElement as HTMLElement
+            const src = element.getAttribute("src")
+            const greaterStrawpollElement = this.getGreater(element, parentId, "strawpoll")
+            const elementString = greaterStrawpollElement.outerHTML;
+            result.push(elementString.replace(src, "{strawpoll_embed_url}"))
+        }
+        return result
+    }
+
+    private getYoutubeTemplates(parentElement) {
+        const parentId = parentElement.id
+
+        //const elements = Array.from(auxParent.querySelectorAll('*')).filter(el => el.innerHTML.includes(element));
+        const youtubeElements = Array.from(parentElement.querySelectorAll("iframe")).filter(el => {
+            const element = el as HTMLElement
+            return element.getAttribute("src") && element.getAttribute("src").includes("https://www.youtube.com/embed/")
+        })
+
+        const result = []
+        for (const ytElement of youtubeElements) {
+            const element = ytElement as HTMLElement
+            const src = element.getAttribute("src")
+            const greaterYT = this.getGreater(element, parentId, "youtube")
+            const elementString = greaterYT.outerHTML;
+            result.push(elementString.replace(src, "https://www.youtube.com/embed/{youtube_video_id}"))
+        }
+        return result
     }
 
     private getImageTemplates(parentElement) {
@@ -117,7 +220,7 @@ class ElementTemplateParser {
         // Iterate over the property names using a for...of loop
         for (const key of keys) {
             if (TypesConstantsConfig.extensions.has(key) && TypesConstantsConfig.extensions.get(key) == fileType) {
-                attrs.push(`{video_extension}="{src_video}"`)
+                attrs.push(`{${type}_extension}="{src_${type}}"`)
             } else {
                 attrs.push(`${key}="${attr[key]}"`)
             }
@@ -146,7 +249,8 @@ class ElementTemplateParser {
 
     private getWPElementAttributes(wpElement:string, regex) {
         const match = regex.exec(wpElement)
-        const attributes = match.groups?.attributes
+        const attributes = match.groups?.attributes.trim()
+        regex.lastIndex=0
         const attributesSplitted = this.attrsToDict(attributes)
         return attributesSplitted;
     }
@@ -220,10 +324,19 @@ class ElementTemplateParser {
         return current;
     }
 
+    private countVideoWPElements(str: string) {
+        const matches = str.match(ElementTemplateParser.WP_VIDEO_REGEX)
+        return matches ? matches.length : 0;
+    }
+
+    private countAudioWPElements(str: string) {
+        const matches = str.match(ElementTemplateParser.WP_AUDIO_REGEX)
+        return matches ? matches.length : 0;
+    }
+
     private containsVideo(element, admitOneException){
-        const strElement = element.outerHTML.toLowerCase();
-        const matches = strElement.match(ElementTemplateParser.WP_VIDEO_REGEX)
-        const count = matches ? matches.length : 0;
+        const strElement = element.outerHTML;
+        const count = this.countVideoWPElements(strElement)
 
         const allVideos = element.querySelectorAll("video")
 
@@ -239,9 +352,8 @@ class ElementTemplateParser {
     }
 
     private containsAudio(element, admitOneException){
-        const strElement = element.outerHTML.toLowerCase();
-        const matches = strElement.match(ElementTemplateParser.WP_AUDIO_REGEX)
-        const count = matches ? matches.length : 0;
+        const strElement = element.outerHTML;
+        const count = this.countAudioWPElements(strElement)
 
         const allVideos = element.querySelectorAll("audio")
 
@@ -271,7 +383,7 @@ class ElementTemplateParser {
     private containsYoutube(element, admitOneException) {
         const allYoutubeVideos = Array.from(element.querySelectorAll("iframe")).filter(el => {
             const elem = el as HTMLElement
-            return !!elem.id && elem.getAttribute("src") && elem.getAttribute("src").toLowerCase().includes("www.youtube.com")
+            return elem.getAttribute("src") && elem.getAttribute("src").toLowerCase().includes("www.youtube.com")
         })
 
         let result = allYoutubeVideos ? allYoutubeVideos.length : 0;
@@ -287,7 +399,7 @@ class ElementTemplateParser {
 
         const allYoutubeVideos = Array.from(element.querySelectorAll("iframe")).filter(el => {
             const elem = el as HTMLElement
-            return !!elem.id && elem.getAttribute("src") && elem.getAttribute("src").toLowerCase().includes("strawpoll.com")
+            return elem.getAttribute("src") && elem.getAttribute("src").toLowerCase().includes("strawpoll.com")
         })
 
 
