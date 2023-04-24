@@ -20,11 +20,11 @@ class ElementTemplateParser {
     public getTemplates(html: string): any {
 
         let preparedHtml = html.replace(ElementTemplateParser.WP_VIDEO_REGEX, function(match) {
-            return match.replace(/\[\s*video\s/gi, `\n[video worpressstackUUID="${uuid()}" `).replace(/\[\/\s*video\s*\]/gi, "[/video]\n")
+            return match.replace(/^\[\s*video\s/gi, `\n[video worpressstackUUID="${uuid()}" `).replace(/\[\/\s*video\s*\]$/gi, "[/video]\n")
         });
 
         preparedHtml = preparedHtml.replace(ElementTemplateParser.WP_AUDIO_REGEX, function(match) {
-            return match.replace(/\[\s*audio\s/gi, `\n[audio worpressstackUUID="${uuid()}" `).replace(/\[\/\s*audio\s*\]/gi, "[/audio]\n")
+            return match.replace(/^\[\s*audio\s/gi, `\n[audio worpressstackUUID="${uuid()}" `).replace(/\[\/\s*audio\s*\]$/gi, "[/audio]\n")
         });
 
         const parentElement = document.createElement("div")
