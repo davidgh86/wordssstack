@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import { TypesConstantsConfig, FileTypes } from "@/constants/typesConstantsConfig";
+import { buffer } from 'stream/consumers';
 
 class ElementTemplateParser {
     
@@ -61,8 +62,14 @@ class ElementTemplateParser {
                 bufferResult = []
             }
           } else if (node.nodeType === Node.TEXT_NODE) {
-            //const wpSplittedElements = node.nodeValue.split(ElementTemplateParser.WP_ELEMENT)
-            result = [...result, ...node.nodeValue.split(ElementTemplateParser.WP_ELEMENT)]
+            const textSplittedByWpAudioAndVideo = node.nodeValue.split(ElementTemplateParser.WP_ELEMENT)
+            if (textSplittedByWpAudioAndVideo.length >0 && bufferResult.length > 1) {
+                bufferResult.push(textSplittedByWpAudioAndVideo.shift())
+                result.push(bufferResult.join("\n"))
+                bufferResult = []
+            }
+            
+            result = [...result, ...textSplittedByWpAudioAndVideo]
           } 
         }
 
