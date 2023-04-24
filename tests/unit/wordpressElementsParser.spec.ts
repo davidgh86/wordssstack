@@ -43,7 +43,8 @@ describe('html template parser', () => {
 
     adfa[video width="480" height ="270" mp4 = 'http://localhost:9090/wp-content/uploads/2023/04/file_example_MP4_480_1_5MG.mp4'][/video]
     
-    ewrefew[video avi="https://marca.com/video.avi"][/video]`
+    ewrefew[video avi="https://marca.com/video.avi"][/video]erwtqwerqrwe[video avi="https://marca.com/video.avi"][/video]
+    <div>[video avi="https://marca.com/video.avi"][/video]</diV>`
 
     const result = elementTemplateParser.getTemplates(html)
 
@@ -51,19 +52,21 @@ describe('html template parser', () => {
     console.log(result.image[0])
     expect(result.image.length).toBe(1)
     expect(result.image[0]).toBe('<div>\n      <img class="alignnone size-medium wp-image-6" src="{src_image}" alt="" width="289" height="300">\n    </div>')
-    expect(result.video.length).toBe(3)
+    expect(result.video.length).toBe(5)
     expect(result.video[0]).toBe('<div style="width: 100%;height: 100%;overflow: hidden;">\n        <video controls="" style="width: 100%;height: 100%;object-fit: contain;display: inline-block;">\n            <source src="{src_video}" type="video/{video_extension}">\n        </video>\n    </div>')
     expect(result.video[1]).toBe(`[video width="480" height="270" {video_extension}="{src_video}"][/video]`)
     expect(result.video[2]).toBe(`[video {video_extension}="{src_video}"][/video]`)
+    expect(result.video[3]).toBe(`[video {video_extension}="{src_video}"][/video]`)
+    expect(result.video[4]).toBe(`<div>\n[video {video_extension}="{src_video}"][/video]\n</div>`)
     expect(result.audio[0]).toBe(`[audio {audio_extension}="{src_audio}"][/audio]`)
     expect(result.youtube[0]).toBe('<iframe title="YouTube video player" src="https://www.youtube.com/embed/{youtube_video_id}" width="560" height="315" frameborder="0" allowfullscreen="allowfullscreen"></iframe>')
     expect(result.strawpoll[0]).toBe("<iframe width=\"620\" height=\"512\" src=\"{strawpoll_embed_url}\" style=\"width: 100%; height: 515px;\" frameborder=\"0\" allowfullscreen=\"\"></iframe>")
     expect(result.html.length).toBe(5)
-    expect(result.html[0]).toBe(`vamos a probar`)
-    expect(result.html[1]).toBe(`<a href="https://finofilipino.org/">finofilipino</a>`)
-    expect(result.html[2]).toBe(`adfsdafdsas`)
-    expect(result.html[3]).toBe(`adfa`)
-    expect(result.html[4]).toBe(`ewrefew`)
+    expect(result.html[0]).toBe('vamos a probar\n\n    \n<a href="https://finofilipino.org/">finofilipino</a>')
+    expect(result.html[1]).toBe(`adfsdafdsas`)
+    expect(result.html[2]).toBe(`adfa`)
+    expect(result.html[3]).toBe(`ewrefew`)
+    expect(result.html[4]).toBe(`erwtqwerqrwe`)
     expect(result.twitter[0]).toBe('<div>\n      <div>\n        {content}\n        \n      </div>\n    </div>')
   })
 })

@@ -1,6 +1,5 @@
 import { v4 as uuid } from 'uuid'
 import { TypesConstantsConfig, FileTypes } from "@/constants/typesConstantsConfig";
-import { buffer } from 'stream/consumers';
 
 class ElementTemplateParser {
     
@@ -19,8 +18,18 @@ class ElementTemplateParser {
     }
 
     public getTemplates(html: string): any {
+
+        let preparedHtml = html.replace(/\[\s*video\s/gi, function() {
+            return `\n[video worpressstackUUID="${uuid()}" `
+        });
+        preparedHtml = preparedHtml.replace(/\[\/\s*video\s*\]/gi, "[/video]\n");
+        preparedHtml = preparedHtml.replace(/\[\s*audio\s/gi, function() {
+            return `\n[audio worpressstackUUID="${uuid()}" `
+        });
+        preparedHtml = preparedHtml.replace(/\[\/\s*audio\s*\]/gi, "[/audio]\n");
+
         const parentElement = document.createElement("div")
-        parentElement.innerHTML = html
+        parentElement.innerHTML = preparedHtml
         const parentId = uuid()
         parentElement.id = parentId
         const imageTemplates = this.getImageTemplates(parentElement)
@@ -63,13 +72,14 @@ class ElementTemplateParser {
             }
           } else if (node.nodeType === Node.TEXT_NODE) {
             const textSplittedByWpAudioAndVideo = node.nodeValue.split(ElementTemplateParser.WP_ELEMENT)
-            if (textSplittedByWpAudioAndVideo.length >0 && bufferResult.length > 1) {
-                bufferResult.push(textSplittedByWpAudioAndVideo.shift())
-                result.push(bufferResult.join("\n"))
-                bufferResult = []
+
+            for (let i=0; i < textSplittedByWpAudioAndVideo.length; i++) {
+                bufferResult.push(textSplittedByWpAudioAndVideo[i])
+                if (i<textSplittedByWpAudioAndVideo.length-1) {
+                    result.push(bufferResult.join("\n"))
+                    bufferResult = []
+                }
             }
-            
-            result = [...result, ...textSplittedByWpAudioAndVideo]
           } 
         }
 
@@ -183,7 +193,7 @@ class ElementTemplateParser {
             const greaterVideo = this.getGreaterWP(videoWpElement, parentElement, "video")
 
             const attributes = this.getWPElementAttributes(greaterVideo, ElementTemplateParser.WP_VIDEO_REGEX)
-            const replacement = this.getWPReplacement(attributes, "video")
+            const replacement = this.getWPReplacement(greaterVideo, attributes, "video")
             result.push(replacement)
         }
 
@@ -213,14 +223,14 @@ class ElementTemplateParser {
             const greaterAudio = this.getGreaterWP(audioWpElement, parentElement, "audio")
 
             const attributes = this.getWPElementAttributes(greaterAudio, ElementTemplateParser.WP_AUDIO_REGEX)
-            const replacement = this.getWPReplacement(attributes, "audio")
+            const replacement = this.getWPReplacement(greaterAudio, attributes, "audio")
             result.push(replacement)
         }
 
         return result
     }
 
-    private getWPReplacement(attr, type) {
+    private getWPReplacement(htmlContainerString, attr, type) {
         const keys = Object.keys(attr);
 
         const fileType = type=="video"?FileTypes.VIDEO:FileTypes.AUDIO
@@ -231,12 +241,20 @@ class ElementTemplateParser {
         for (const key of keys) {
             if (TypesConstantsConfig.extensions.has(key) && TypesConstantsConfig.extensions.get(key) == fileType) {
                 attrs.push(`{${type}_extension}="{src_${type}}"`)
-            } else {
+            } else if (key!=="worpressstackUUID"){
                 attrs.push(`${key}="${attr[key]}"`)
             }
         }
 
-        return `[${type} ${attrs.join(" ")}][/${type}]`
+        const replacement = `[${type} ${attrs.join(" ")}][/${type}]`
+        let regexReplacement
+        if (type == "audio") {
+            regexReplacement = ElementTemplateParser.WP_AUDIO_REGEX;
+        } else if (type== "video") {
+            regexReplacement = ElementTemplateParser.WP_VIDEO_REGEX;
+        }
+
+        return htmlContainerString.replace(regexReplacement, replacement)
     }
 
     private attrsToDict(attrs: string) {
