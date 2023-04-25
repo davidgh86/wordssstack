@@ -56,7 +56,7 @@ class TypesConstantsConfig {
 
     static {
 
-        const imageTemplateDefaultVariables = '[{ "variableName": "src_image", "variableValue": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" }]';
+        const imageTemplateDefaultVariables = '[{ "variableName": "src_image", "variableValue": "https://onlineimagetools.com/images/examples-onlineimagetools/plants.jpg" }]';
         const videoTemplateDefaultVariables = '[{ "variableName": "src_video", "variableValue": "https://videos.files.wordpress.com/2IUdmeVU/fdgshdnfgt.mp4" }, { "variableName": "video_extension", "variableValue": "mp4" }]';
         const audioTemplateDefaultVariables = '[{ "variableName": "src_audio", "variableValue": "https://download.samplelib.com/mp3/sample-6s.mp3" }]';
         const youtubeTemplateDefaultVariables = '[{ "variableName": "youtube_video_id", "variableValue": "3oOrd-oWlaE" }]';

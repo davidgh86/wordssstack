@@ -40,11 +40,8 @@ describe('html template parser', () => {
     </div>
 
     <iframe width="620" height="512" src="https://strawpoll.com/embed/rae5gcp1" style="width: 100%; height: 515px;" frameborder="0" allowfullscreen></iframe>
-
-    adfa[video width="480" height ="270" mp4 = 'http://localhost:9090/wp-content/uploads/2023/04/file_example_MP4_480_1_5MG.mp4'][/video]
-    
-    ewrefew[video avi="https://marca.com/video.avi"][/video]erwtqwerqrwe[video avi="https://marca.com/video.avi"][/video]
-    <div>[video avi="https://marca.com/video.avi"][/video]</diV>`
+    adfa[video width="480" height ="270" mp4 = 'http://localhost:9090/wp-content/uploads/2023/04/file_example_MP4_480_1_5MG.mp4'][/video]ewrefew[video avi="https://marca.com/video.avi"][/video]erwtqwerqrwe
+    [video avi="https://marca.com/video.avi"][/video]<div>[video avi="https://marca.com/video.avi"][/video]</diV>`
 
     const result = elementTemplateParser.getTemplates(html)
 
