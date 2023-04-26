@@ -12,7 +12,19 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/templates',
-    component: () => import ('../views/TemplateEditor.vue')
+    component: () => import ('../views/TemplateManager.vue'),
+        children: [
+          { 
+            path: "/edit/:templateUUID?",
+            name: "templateEditor",
+            component: () => import ('../views/TemplateEditor.vue')
+          },
+          { 
+            path: "/loader",
+            name: "templateLoader",
+            component: () => import ('../views/TemplateLoader.vue'),
+          }
+        ]
   },
   {
     path: '/tags',

@@ -33,6 +33,8 @@ import { store } from './store'
 import debug from './service/debug';
 import mediaService from './service/mediaService';
 
+import database from './service/database/database';
+
 debug.disableDebug()
 
 store.commit('initialize')
@@ -41,17 +43,6 @@ const app = createApp(App)
   .use(store)
   .use(IonicVue)
   .use(router);
-
-// router.beforeResolve((to, from, next) =>{
-//   if (!wordpressApi.isInitialized()) {
-//     next({
-//       path: '/config',
-//       replace: true
-//     })
-//   } else {
-//     next()
-//   }
-// });
 
 router.isReady().then(() => {
   app.mount('#app');
@@ -102,5 +93,9 @@ document.addEventListener('deviceReady', () => {
 
 document.addEventListener('deviceReady', () => {
   mediaService.initialize()
+})
+
+document.addEventListener('deviceReady', () => {
+  database.connect()
 })
 

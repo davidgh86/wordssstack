@@ -16,6 +16,7 @@
     "@awesome-cordova-plugins/core": "6.3.0",
     "@awesome-cordova-plugins/media-capture": "6.3.0",
     "@capacitor-community/http": "^1.4.1",
+    "@capacitor-community/sqlite": "4.6.3",
     "@capacitor/android": "4.7.1",
     "@capacitor/app": "4.1.1",
     "@capacitor/camera": "^4.1.4",

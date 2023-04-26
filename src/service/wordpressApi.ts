@@ -103,9 +103,8 @@ class WordpressApi {
                 debug.debugAlert("KO saving post")
                 reject(error)
             });
-        });
-        
-    } 
+        });   
+    }
 
 
 }
