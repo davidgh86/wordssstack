@@ -15,21 +15,25 @@ class Database {
     public connect() {
         if (!Database.connecting && !Database.connected) {
             Database.connecting = true;
+            console.log("Creando conexion")
             SQLite.createConnection({
                 database: Database.DATABASE,
                 version: 1,
                 encrypted: false
             }).then(async () => {
+                console.log("creada conexion")
                 await this.initialize()
                 Database.connected = true;
                 Database.connecting = false;
-            }).catch(() => {
+            }).catch((error) => {
+                console.log("ERROR db " + error.message)
                 Database.connecting = false;
             })
         }
     }
 
     private async initialize() {
+        console.log("Creando tabla")
         await this.executeWithoutSecurityAsertions(
 `CREATE TABLE IF NOT EXISTS templates (
 id TEXT PRIMARY KEY,
@@ -49,9 +53,9 @@ template TEXT
 
     
     public async execute(statement: string) {
-        if (!Database.initialized || !Database.connected || Database.connecting) {
-            throw new Error("Not initialized db")
-        }
+        // if (!Database.initialized || !Database.connected || Database.connecting) {
+        //     throw new Error("Not initialized db")
+        // }
         return this.executeWithoutSecurityAsertions(statement)
     }
 
