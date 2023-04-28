@@ -10,80 +10,62 @@
       </ion-row>
       <ion-row>
         <ion-col>
-          <h3>Image</h3>
+          Image
         </ion-col>
       </ion-row>
       <ion-row v-for="(template, index) in imageTemplates" :key="index">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
-        </ion-col>
-        <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'image')"></ion-button>
+          {{ template }}
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <h3>Audio</h3>
+          Audio
         </ion-col>
       </ion-row>
       <ion-row v-for="(template, index) in audioTemplates" :key="index">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
-        </ion-col>
-        <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'audio')"></ion-button>
+          {{ template }}
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <h3>Video</h3>
+          Video
         </ion-col>
       </ion-row>
       <ion-row v-for="(template, index) in videoTemplates" :key="index">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
-        </ion-col>
-        <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'video')"></ion-button>
+          {{ template }}
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <h3>Youtube</h3>          
+          Youtube
         </ion-col>
       </ion-row>
       <ion-row v-for="(template, index) in youtubeTemplates" :key="index">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
-        </ion-col>
-        <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'youtube')"></ion-button>
+          {{ template }}
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <h3>Twitter</h3>          
+          Twitter
         </ion-col>
       </ion-row>
       <ion-row v-for="(template, index) in twitterTemplates" :key="index">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
-        </ion-col>
-        <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'twitter')"></ion-button>
+          {{ template }}
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <h3>Strawpoll</h3>          
+          Strawpoll
         </ion-col>
       </ion-row>
       <ion-row v-for="(template, index) in strawpollTemplates" :key="index">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
-        </ion-col>
-        <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'strawpoll')"></ion-button>
+          {{ template }}
         </ion-col>
       </ion-row>
     </ion-content>
@@ -95,10 +77,10 @@
 import { defineComponent, ref } from 'vue';
 import { IonContent,
           IonPage, IonRow, IonCol,
-          IonButton, IonTextarea
+          IonButton
         } from '@ionic/vue'
 import templateLoaderService from "@/service/template/templateLoaderService"
-import temaplateDB from '@/service/database/temaplateDB'
+//import { quillEditor } from 'vue3-quill'
 
 export default defineComponent({
   name: 'TemplateLoader',
@@ -114,8 +96,7 @@ export default defineComponent({
     IonRow,
     IonCol,
     IonPage,
-    IonButton,
-    IonTextarea,
+    IonButton
     // IonItem,
     // IonList,
     // IonSelect,
@@ -145,10 +126,6 @@ export default defineComponent({
 
     }
 
-    function persistTemplate(template, type) {
-      temaplateDB.persistTemplate(template, type)
-    }
-
     return {
       imageTemplates,
       videoTemplates,
@@ -157,8 +134,7 @@ export default defineComponent({
       strawpollTemplates,
       twitterTemplates,
       htmlTemplates,
-      obtainTemplates,
-      persistTemplate
+      obtainTemplates
     }
   }
 });

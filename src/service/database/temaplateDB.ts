@@ -1,5 +1,4 @@
 import database from "./database";
-import { v4 as uuid } from 'uuid'
 
 class TemplateDB {
 
@@ -14,10 +13,6 @@ class TemplateDB {
 
     public async getTemplatesByType(type: string) {
         return await database.query(`SELECT * from templates where type='${type}';`)
-    }
-
-    public async persistTemplate(template: string, type: string) {
-        await database.execute(`INSERT INTO templates (id, type, template) VALUES ('${uuid()}', '${type}', '${template}')`)
     }
 
 }
