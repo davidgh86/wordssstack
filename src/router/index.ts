@@ -15,7 +15,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import ('../views/TemplateManager.vue'),
         children: [
           { 
-            path: "/edit/:templateUUID?",
+            path: "/edit/:type?",
             name: "templateEditor",
             component: () => import ('../views/TemplateEditor.vue')
           },
@@ -23,7 +23,13 @@ const routes: Array<RouteRecordRaw> = [
             path: "/loader",
             name: "templateLoader",
             component: () => import ('../views/TemplateLoader.vue'),
-          }
+          },
+          { 
+            path: "/library",
+            name: "templateLibrary",
+            component: () => import ('../views/TemplateLibrary.vue'),
+          },
+          
         ]
   },
   {

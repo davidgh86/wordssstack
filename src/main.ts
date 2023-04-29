@@ -32,8 +32,7 @@ import './theme/variables.css';
 import { store } from './store'
 import debug from './service/debug';
 import mediaService from './service/mediaService';
-
-import database from './service/database/database';
+import databaseManager from './service/database/databaseManager';
 
 debug.disableDebug()
 
@@ -96,6 +95,6 @@ document.addEventListener('deviceReady', () => {
 })
 
 document.addEventListener('deviceReady', () => {
-  database.connect()
+  databaseManager.open();
+  databaseManager.initialize();
 })
-

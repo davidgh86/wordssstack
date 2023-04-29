@@ -5,6 +5,7 @@
         <ion-select aria-label="mode" placeholder="Select mode" v-model="templateMode" @ion-change="handleOptionChange">
           <ion-select-option value="templateEditor">Editor</ion-select-option>
           <ion-select-option value="templateLoader">Loader</ion-select-option>
+          <ion-select-option value="templateLibrary">Library</ion-select-option>
         </ion-select>
         <router-view></router-view>
       </ion-row>

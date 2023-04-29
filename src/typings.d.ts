@@ -1,3 +1,5 @@
+/* Media typings */
+
 interface Navigator {
     notification?: {
       // eslint-disable-next-line @typescript-eslint/ban-types
@@ -70,4 +72,32 @@ interface MediaFileData {
   height?,
   width?,
   duration?,
+}
+
+/* SQLite typings */
+
+interface SQLiteDB {
+  transaction(
+    callback: (tx: SQLiteTransaction) => void,
+    error?: (err: any) => void,
+    success?: () => void
+  ): void;
+}
+
+interface SQLiteTransaction {
+  executeSql(
+    statement: string,
+    params?: any[],
+    success?: (tx: SQLiteTransaction, resultSet: SQLiteResultSet) => void,
+    error?: (tx: SQLiteTransaction, err: any) => void
+  ): void;
+}
+
+interface SQLiteResultSet {
+  insertId: number;
+  rowsAffected: number;
+  rows: {
+    length: number;
+    item(index: number): any;
+  };
 }

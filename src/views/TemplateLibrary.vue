@@ -3,22 +3,15 @@
     <ion-content>
       <ion-row>
         <ion-col>
-          <ion-button @click="obtainTemplates">
-            Load
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
           <h3>Image</h3>
         </ion-col>
       </ion-row>
-      <ion-row v-for="(template, index) in imageTemplates" :key="index">
+      <ion-row v-for="template in imageTemplates" :key="template.uuid">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
+          <ion-textarea :readonly="true">{{ template.template }}</ion-textarea>
         </ion-col>
         <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'image')">save</ion-button>
+          <ion-button @click="persistTemplate(template)">choose</ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
@@ -26,12 +19,12 @@
           <h3>Audio</h3>
         </ion-col>
       </ion-row>
-      <ion-row v-for="(template, index) in audioTemplates" :key="index">
+      <ion-row v-for="template in audioTemplates" :key="template.uuid">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
+          <ion-textarea :readonly="true">{{ template.template }}</ion-textarea>
         </ion-col>
         <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'audio')">save</ion-button>
+          <ion-button @click="persistTemplate(template)">choose</ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
@@ -39,12 +32,12 @@
           <h3>Video</h3>
         </ion-col>
       </ion-row>
-      <ion-row v-for="(template, index) in videoTemplates" :key="index">
+      <ion-row v-for="template in videoTemplates" :key="template.uuid">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
+          <ion-textarea :readonly="true">{{ template.template }}</ion-textarea>
         </ion-col>
         <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'video')">save</ion-button>
+          <ion-button @click="persistTemplate(template)">choose</ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
@@ -52,12 +45,12 @@
           <h3>Youtube</h3>          
         </ion-col>
       </ion-row>
-      <ion-row v-for="(template, index) in youtubeTemplates" :key="index">
+      <ion-row v-for="template in youtubeTemplates" :key="template.uuid">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
+          <ion-textarea :readonly="true">{{ template.template }}</ion-textarea>
         </ion-col>
         <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'youtube')">save</ion-button>
+          <ion-button @click="persistTemplate(template)">choose</ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
@@ -65,12 +58,12 @@
           <h3>Twitter</h3>          
         </ion-col>
       </ion-row>
-      <ion-row v-for="(template, index) in twitterTemplates" :key="index">
+      <ion-row v-for="template in twitterTemplates" :key="template.uuid">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
+          <ion-textarea :readonly="true">{{ template.template }}</ion-textarea>
         </ion-col>
         <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'twitter')">save</ion-button>
+          <ion-button @click="persistTemplate(template)">choose</ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
@@ -78,12 +71,12 @@
           <h3>Strawpoll</h3>          
         </ion-col>
       </ion-row>
-      <ion-row v-for="(template, index) in strawpollTemplates" :key="index">
+      <ion-row v-for="template in strawpollTemplates" :key="template.uuid">
         <ion-col col="6">
-          <ion-textarea :readonly="true">{{ template }}</ion-textarea>
+          <ion-textarea :readonly="true">{{ template.template }}</ion-textarea>
         </ion-col>
         <ion-col col="6">
-          <ion-button @click="persistTemplate(template, 'strawpoll')">save</ion-button>
+          <ion-button @click="persistTemplate(template)">choose</ion-button>
         </ion-col>
       </ion-row>
     </ion-content>
@@ -97,8 +90,10 @@ import { IonContent,
           IonPage, IonRow, IonCol,
           IonButton, IonTextarea
         } from '@ionic/vue'
-import templateLoaderService from "@/service/template/templateLoaderService"
 import templateRepository from "@/service/database/templateRepository"
+import templateService from '@/service/templateService';
+
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'TemplateLoader',
@@ -124,6 +119,8 @@ export default defineComponent({
 },
   setup() {
 
+    const router = useRouter()
+
     const imageTemplates = ref([])
     const videoTemplates = ref([])
     const audioTemplates = ref([])
@@ -132,21 +129,29 @@ export default defineComponent({
     const twitterTemplates = ref([])
     const htmlTemplates = ref([])
 
-    function obtainTemplates() {
-      const templates = templateLoaderService.inferTemplates()
-      
-      imageTemplates.value = templates.image?templates.image:[]
-      videoTemplates.value = templates.video?templates.video:[]
-      audioTemplates.value = templates.audio?templates.audio:[]
-      youtubeTemplates.value = templates.youtube?templates.youtube:[]
-      strawpollTemplates.value = templates.strawpoll?templates.strawpoll:[]
-      twitterTemplates.value = templates.twitter?templates.twitter:[]
-      htmlTemplates.value = templates.html?templates.html:[]
+    templateRepository.getAllTemplates().then(tmpls => {
+      tmpls.forEach(tmpl => {
+        if(tmpl.type == "audio") {
+          audioTemplates.value.push(tmpl)
+        } else if (tmpl.type == "video") {
+          videoTemplates.value.push(tmpl)
+        } else if (tmpl.type == "image") {
+          imageTemplates.value.push(tmpl)
+        } else if (tmpl.type == "youtube") {
+          youtubeTemplates.value.push(tmpl)
+        } else if (tmpl.type == "strawpoll") {
+          strawpollTemplates.value.push(tmpl)
+        } else if (tmpl.type == "twitter") {
+          twitterTemplates.value.push(tmpl)
+        } else if (tmpl.type == "html") {
+          htmlTemplates.value.push(tmpl)
+        } 
+      })
+    })
 
-    }
-
-    async function persistTemplate(template, type) {
-      await templateRepository.saveTemplate(template,type)
+    function persistTemplate(template) {
+      templateService.setTemplate(template.type, template.template)
+      router.push({name: "templateEditor", params: {type: template.type}})
     }
 
     return {
@@ -157,7 +162,6 @@ export default defineComponent({
       strawpollTemplates,
       twitterTemplates,
       htmlTemplates,
-      obtainTemplates,
       persistTemplate
     }
   }

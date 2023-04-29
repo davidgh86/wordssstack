@@ -152,8 +152,12 @@ class StackElementStorageManager {
         const jsonArray = JSON.parse(items)
         
         for (const item of jsonArray){
-            const element = await this.parseElement(item)
-            result.set(element.getId(), element)
+            try {
+                const element = await this.parseElement(item)
+                result.set(element.getId(), element)
+            } catch (err) {
+                console.error("Error removing old eleent")
+            }
         }
         
         return result

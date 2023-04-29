@@ -44,7 +44,7 @@ import templateEditor from '../service/templateService'
 import templateManagerService from '../service/templateManagerService'
 import SingleTemplateManager from '@/components/SingleTemplateManager.vue';
 import { TypesConstantsConfig } from '@/constants/typesConstantsConfig';
-//import { quillEditor } from 'vue3-quill'
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
   name: 'TemplateEditor',
@@ -68,9 +68,13 @@ export default defineComponent({
 
     const templateMap = ref(TypesConstantsConfig.getTemplateMap())
 
-    const templateType = ref("image")
+    const route = useRoute()
 
-    const htmlEditorContent = ref(templateEditor.getTemplate("image"))
+    const type = route.params.type?route.params.type as string:"image"
+
+    const templateType = ref(type)
+
+    const htmlEditorContent = ref(templateEditor.getTemplate(type))
 
     function radioGroupChange(event) {
       templateType.value = event.target.value
