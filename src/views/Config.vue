@@ -56,6 +56,7 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton,
           IonPage, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, 
           IonButton, IonInput, IonItem, IonLabel } from '@ionic/vue'
 import { useRouter } from 'vue-router'
+import wordpressApi from '@/service/wordpressApi';
 
 export default defineComponent({
   name: 'ConfigComponent',
@@ -108,12 +109,17 @@ export default defineComponent({
       user.value = user.value.trim()
       password.value = password.value.trim()
 
-      localStorage.setItem("host", hostName.value)
-      localStorage.setItem("user", user.value)
-      localStorage.setItem("password", password.value)
-      if (isConfigured()) {
-        router.push("/inbox")
-      }
+      wordpressApi.me().then(() => {
+        alert("valid conection")
+        localStorage.setItem("host", hostName.value)
+        localStorage.setItem("user", user.value)
+        localStorage.setItem("password", password.value)
+        if (isConfigured()) {
+          router.push("/inbox")
+        }
+      }).catch(e => {
+        alert("Not valid conection")
+      })
     }    
 
     function removeConfig() {

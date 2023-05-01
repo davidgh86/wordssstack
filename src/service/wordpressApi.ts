@@ -1,5 +1,7 @@
 import debug from './debug';
 
+import { HTTP } from '@ionic-native/http';
+
 class WordpressApi {
 
     private static instance: WordpressApi;
@@ -22,6 +24,36 @@ class WordpressApi {
         }
         
         return WordpressApi.instance
+    }
+
+    public async getPaginatedPosts(perPage:number, page: number): Promise<any> {
+
+        const headers = {
+            "Authorization": "Basic "+this.getBasicToken(),
+            'Content-Type': 'application/json'
+        }
+
+        const response = await HTTP.sendRequest(`${localStorage.getItem("host")}/wp-json/wp/v2/posts?per_page=${perPage}&page=${page}`, {
+            method: "get",
+            headers: headers
+        })
+
+        return JSON.parse(response.data)
+    }
+
+    public async getPostById(id: number): Promise<any> {
+
+        const headers = {
+            "Authorization": "Basic "+this.getBasicToken(),
+            'Content-Type': 'application/json'
+        }
+
+        const response = await HTTP.sendRequest(`${localStorage.getItem("host")}/wp-json/wp/v2/posts/${id}`, {
+            method: "get",
+            headers: headers
+        })
+
+        return JSON.parse(response.data)
     }
 
     private dataURLtoFile(dataurl, filename) {
@@ -104,6 +136,20 @@ class WordpressApi {
                 reject(error)
             });
         });   
+    }
+
+    public async me() {
+        const headers = {
+            "Authorization": "Basic "+this.getBasicToken(),
+            'Content-Type': 'application/json'
+        }
+
+        const response = await HTTP.sendRequest(`${localStorage.getItem("host")}/wp-json/wp/v2/users/me`, {
+            method: "get",
+            headers: headers
+        })
+
+        return JSON.parse(response.data)
     }
 
 
