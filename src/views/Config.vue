@@ -109,16 +109,20 @@ export default defineComponent({
       user.value = user.value.trim()
       password.value = password.value.trim()
 
+      localStorage.setItem("host", hostName.value)
+      localStorage.setItem("user", user.value)
+      localStorage.setItem("password", password.value)
+
       wordpressApi.me().then(() => {
         alert("valid conection")
-        localStorage.setItem("host", hostName.value)
-        localStorage.setItem("user", user.value)
-        localStorage.setItem("password", password.value)
+        
         if (isConfigured()) {
           router.push("/inbox")
         }
       }).catch(e => {
         alert("Not valid conection")
+        alert("Not valid conection " + e.message)
+        this.removeConfig()
       })
     }    
 

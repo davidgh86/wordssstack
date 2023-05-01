@@ -143,11 +143,18 @@ class WordpressApi {
             "Authorization": "Basic "+this.getBasicToken(),
             'Content-Type': 'application/json'
         }
+        
+        alert()
+        alert("token: "+ this.getBasicToken())
 
         const response = await HTTP.sendRequest(`${localStorage.getItem("host")}/wp-json/wp/v2/users/me`, {
             method: "get",
             headers: headers
         })
+
+        alert("status " + response.status)
+        alert("data " + response.data)
+        alert("data " + JSON.stringify(response.data))
 
         return JSON.parse(response.data)
     }
