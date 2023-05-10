@@ -12,6 +12,18 @@ class ImageStackElement extends UploadableStackElement {
     }
 
     getHtmlString(src:string|null): string {
+        console.log("**********> " + src)
+
+        console.log("**********> " + JSON.stringify(super.isUploaded));
+        console.log("**********> " + JSON.stringify(super.isSaved));
+        console.log("**********> " + JSON.stringify(super.filePath));
+        console.log("**********> " + JSON.stringify(super.uploadedPath));
+        console.log("**********> " + JSON.stringify(super.fileType));
+        console.log("**********> " + JSON.stringify(super.rawDataSrc));
+        console.log("**********> " + JSON.stringify(super.extension));
+        console.log("**********> " + JSON.stringify(super.uploadedInfo));
+
+
         const variables = [
             { variableName: "src_image", variableValue: src }
         ]

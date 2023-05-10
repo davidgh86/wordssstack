@@ -69,7 +69,7 @@ export default defineComponent({
       },
       {
         title: 'Templates',
-        url: '/templates',
+        url: '/loader',
         iosIcon: albumsOutline,
         mdIcon: albumsOutline
       },

@@ -505,7 +505,6 @@ export default defineComponent({
       }, 1000);
 
     function publish(){
-      alert("publish")
       
       // if (!store.state.title){
       //   alert("title is mandatory")
@@ -529,16 +528,27 @@ export default defineComponent({
       //     }
       //   )
       // })
+      store.dispatch("publish").then(
+          () => {
+            alert("Published")
+            store.dispatch("clear").then()
+          }
+        ).catch(
+          (error) => {
+            alert("Failed")
+            alert(JSON.stringify(error))
+          }
+        )
     }
 
     function cancel() {
-      this.$refs.modal.$el.dismiss(null, 'cancel');
+      //this.$refs.modal.$el.dismiss(null, 'cancel');
     }
     
     function confirm() {
       publish()
-      const name = this.$refs.input.$el.value;
-      this.$refs.modal.$el.dismiss(name, 'confirm');
+      // const name = this.$refs.input.$el.value;
+      // this.$refs.modal.$el.dismiss(name, 'confirm');
     }
 
     function isHtml(stackElement) {

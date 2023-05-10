@@ -29,17 +29,20 @@ class StackElementStorageManager {
 
     async publishStack(elements: Array<StackElement>, title: string): Promise<void> {
         await this.uploadStack(elements);
+
+        console.log("Uploaded stacks =>>>>>>")
         
         let content = ""
         for (const element of elements) {
             content += element.getHtmlElement()
         }
 
-        content = `<!-- wp:image {"id":12,"sizeSlug":"full","linkDestination":"none"} -->
-        <figure class="wp-block-image size-full">${content}</figure>
-        <!-- /wp:image -->`
+        // content = `<!-- wp:image {"id":12,"sizeSlug":"full","linkDestination":"none"} -->
+        // <figure class="wp-block-image size-full">${content}</figure>
+        // <!-- /wp:image -->`
 
         await wordpressApi.uploadPost(title, content)
+        console.log("Post uploaded =>>>>>>")
     }
 
     uploadStack(elements: Array<StackElement>): Promise<void> {

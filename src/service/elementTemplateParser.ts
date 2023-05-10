@@ -84,7 +84,7 @@ class ElementTemplateParser {
           } 
         }
 
-        result = [...result, ...bufferResult.join("\n")]
+        result = [...result, bufferResult.join("\n")]
         return result.map(e => e.trim()).filter(e=>!!e)
     }
 
@@ -178,9 +178,17 @@ class ElementTemplateParser {
         const result = []
         for (const videoElement of videoElements) {
             const greaterImg = this.getGreater(videoElement, parentId, "video")
-            const videoSource = videoElement.querySelector("source")
-            const src = videoSource.getAttribute("src")
-            const type = videoSource.getAttribute("type")
+            let src = videoElement.getAttribute("src")
+            let type
+
+            if (!src || !(src.trim())) {
+                const videoSource = videoElement.querySelector("source")
+                src = videoSource.getAttribute("src")
+                type = videoSource.getAttribute("type")
+            } else {
+                type = videoElement.getAttribute("type")
+            }
+            
             let elementString = greaterImg.outerHTML;
             elementString = elementString.replace(src, "{src_video}")
             if (type) {

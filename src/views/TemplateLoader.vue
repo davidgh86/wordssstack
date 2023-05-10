@@ -129,6 +129,19 @@
               <ion-button @click="persistTemplate(template, 'strawpoll')">save</ion-button>
             </ion-col>
           </ion-row>
+          <ion-row>
+            <ion-col>
+              <h3>HTML</h3>          
+            </ion-col>
+          </ion-row>
+          <ion-row v-for="(template, index) in htmlTemplates" :key="index">
+            <ion-col col="6">
+              <ion-textarea :readonly="true">{{ template }}</ion-textarea>
+            </ion-col>
+            <ion-col col="6">
+              <ion-button @click="persistTemplate(template, 'html')">save</ion-button>
+            </ion-col>
+          </ion-row>
         </ion-col>
       </ion-row>
 

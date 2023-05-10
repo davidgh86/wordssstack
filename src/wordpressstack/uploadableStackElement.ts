@@ -13,6 +13,7 @@ abstract class UploadableStackElement implements StackElement {
     fileType:FileTypes = FileTypes.UNKNOWN;
     rawDataSrc:string|null;
     extension:string|undefined;
+    uploadedInfo: any | undefined;
 
     constructor(filePath: string, extension:string|undefined) {
         this.isUploaded = false
@@ -41,6 +42,7 @@ abstract class UploadableStackElement implements StackElement {
 
             wordpressApi.uploadFile(mimetype, filename, this.rawDataSrc).then(response => {
                 this.uploadedPath = response["source_url"]
+                this.uploadedInfo = response
                 this.isUploaded = true
                 resolve()
             }).catch(error => {
@@ -64,6 +66,8 @@ abstract class UploadableStackElement implements StackElement {
     getUploadedPath() {
         return this.uploadedPath;
     }
+
+
 
     getHtmlElement(): string {
         if (this.isUploaded) {
